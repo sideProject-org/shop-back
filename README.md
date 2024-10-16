@@ -54,5 +54,3 @@
 https://www.erdcloud.com/d/NhQeqSxtmF3Yz5NFQ   
 
 수정될 가능성 농후...
-
-Github 이메일 변경 후 테스트
