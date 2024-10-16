@@ -48,3 +48,5 @@
     - [ ] 회원 삭제 및 제재 구현
 
 ## ERD
+
+![img.png](images/img.png)
