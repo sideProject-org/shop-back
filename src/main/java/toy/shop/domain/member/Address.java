@@ -40,6 +40,6 @@ public class Address {
     private String request;
 
     @Column(nullable = false)
-    @ColumnDefault("N")
+    @ColumnDefault("'N'")
     private char defaultType;
 }

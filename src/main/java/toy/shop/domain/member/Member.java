@@ -43,11 +43,11 @@ public class Member extends BaseEntity {
     private String phoneNumber;
 
     @Column(nullable = false)
-    @ColumnDefault("N")
+    @ColumnDefault("'N'")
     private char banType;
 
     @Column(nullable = false)
-    @ColumnDefault("N")
+    @ColumnDefault("'N'")
     private char deleteType;
 
     @Builder

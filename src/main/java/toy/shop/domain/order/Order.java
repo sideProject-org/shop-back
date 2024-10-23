@@ -11,7 +11,7 @@ import toy.shop.domain.member.Member;
 
 @Entity
 @Getter
-@Table(name = "order")
+@Table(name = "orders")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Order extends BaseEntity {
 
@@ -28,11 +28,13 @@ public class Order extends BaseEntity {
     @JoinColumn(name = "address_id")
     private Address address;
 
+    @OneToOne
+    private OrderDetail orderDetail;
+
     @Column(nullable = false)
     private int price;
 
     @Column(nullable = false)
-    @ColumnDefault("0")
     private char status;
 
     @Column

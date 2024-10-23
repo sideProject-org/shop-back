@@ -17,7 +17,7 @@ public class OrderDetail {
     @Column(name = "order_detail_id")
     private Long id;
 
-    @OneToOne(mappedBy = "order")
+    @OneToOne
     private Order order;
 
     @ManyToOne(fetch = FetchType.LAZY)

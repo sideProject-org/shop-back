@@ -34,6 +34,6 @@ public class Item extends BaseEntity {
     private int quantity;
 
     @Column(nullable = false)
-    @ColumnDefault("N")
+    @ColumnDefault("'N'")
     private char deleteType;
 }

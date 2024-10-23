@@ -35,10 +35,10 @@ public class Notice extends BaseEntity {
     @Column(nullable = false)
     private int viewCnt;
 
-    @OneToMany(mappedBy = "notice_image")
+    @OneToMany(mappedBy = "notice")
     private List<NoticeImage> imagePaths = new ArrayList<>();
 
     @Column(nullable = false)
-    @ColumnDefault("N")
+    @ColumnDefault("'N'")
     private char deleteType;
 }
