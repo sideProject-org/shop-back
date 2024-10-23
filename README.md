@@ -52,7 +52,7 @@
 
 ## ERD
 
-![img.png](images/img.png)
+![img.png](images/img2.png)
 
 https://www.erdcloud.com/d/NhQeqSxtmF3Yz5NFQ   
 
