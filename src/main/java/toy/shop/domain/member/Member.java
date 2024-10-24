@@ -20,7 +20,7 @@ public class Member extends BaseEntity {
     @Column(name = "member_id")
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String email;
 
     @Column(nullable = false)
@@ -51,12 +51,13 @@ public class Member extends BaseEntity {
     private char deleteType;
 
     @Builder
-    public Member(String email, String password, String nickName, char gender, Role role, String imagePath) {
+    public Member(String email, String password, String nickName, char gender, Role role, String imagePath, String phoneNumber) {
         this.email = email;
         this.password = password;
         this.nickName = nickName;
         this.gender = gender;
         this.role = role;
         this.imagePath = imagePath;
+        this.phoneNumber = phoneNumber;
     }
 }
