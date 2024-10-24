@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Configuration;
 @OpenAPIDefinition(
         info = @Info(
                 title = "쇼핑몰 프로젝트 API 명세서",
-                description = "",
+                description = "열심히 만들어 보는 쇼핑몰🖐️",
                 version = "v1"
         )
 )

@@ -37,7 +37,7 @@ public class ExceptionController {
 
         Response<Object> response = Response.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
-                .message("Validation Error")
+                .message("유효성 검증 오류")
                 .data(errorList)
                 .build();
 
