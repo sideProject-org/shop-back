@@ -1,9 +1,11 @@
 package toy.shop.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import toy.shop.dto.Response;
@@ -20,7 +22,7 @@ public class CmmnController implements CmmnDocs {
     private final MemberService memberService;
 
     @PostMapping("/joinMember")
-    public ResponseEntity<Response<?>> joinMember(SignupRequestDTO parameter) {
+    public ResponseEntity<Response<?>> joinMember(@RequestBody @Valid SignupRequestDTO parameter) {
         Long result = memberService.signup(parameter);
 
         return buildResponse(HttpStatus.OK, "회원가입 성공", result);

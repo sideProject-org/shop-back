@@ -2,6 +2,7 @@ package toy.shop.dto.member;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.Builder;
 import lombok.Data;
@@ -25,13 +26,13 @@ public class SignupRequestDTO {
     @NotBlank(message = "해당 값은 필수값 입니다.")
     private String nickname;
 
-    @Schema(description = "회원 성별", example = "'W' or 'M'")
+    @Schema(description = "회원 성별", example = "W or M")
     @NotBlank(message = "해당 값은 필수값 입니다.")
-    @Pattern(regexp = "W|M", message = "해당 값은 'W' 또는 'M' 이어야 합니다.")
-    private char gender;
+    @Pattern(regexp = "W|M", message = "해당 값은 W 또는 M 이어야 합니다.")
+    private String gender;
 
     @Schema(description = "회원 권한", example = "ROLE_USER or ROLE_COMPANY")
-    @NotBlank(message = "해당 값은 필수값 입니다.")
+    @NotNull(message = "해당 값은 필수값 입니다.")
     private Role role;
 
     @Schema(description = "휴대번호")
@@ -39,7 +40,7 @@ public class SignupRequestDTO {
     private String phone;
 
     @Builder
-    public SignupRequestDTO(String email, String password, String nickname, char gender, Role role, String phone) {
+    public SignupRequestDTO(String email, String password, String nickname, String gender, Role role, String phone) {
         this.email = email;
         this.password = password;
         this.nickname = nickname;

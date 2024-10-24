@@ -30,7 +30,7 @@ public class Member extends BaseEntity {
     private String nickName;
 
     @Column(nullable = false)
-    private char gender;
+    private String gender;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
@@ -44,14 +44,14 @@ public class Member extends BaseEntity {
 
     @Column(nullable = false)
     @ColumnDefault("'N'")
-    private char banType;
+    private char banType = 'N';
 
     @Column(nullable = false)
     @ColumnDefault("'N'")
-    private char deleteType;
+    private char deleteType = 'N';
 
     @Builder
-    public Member(String email, String password, String nickName, char gender, Role role, String imagePath, String phoneNumber) {
+    public Member(String email, String password, String nickName, String gender, Role role, String imagePath, String phoneNumber) {
         this.email = email;
         this.password = password;
         this.nickName = nickName;
