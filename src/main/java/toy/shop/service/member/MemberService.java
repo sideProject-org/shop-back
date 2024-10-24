@@ -19,6 +19,11 @@ public class MemberService {
     @Value("${path.profileImage}")
     private String profileImagePath;
 
+    /**
+     * 회원가입
+     * @param parameter SignupRequestDTO
+     * @return 회원 ID
+     */
     public Long signup(SignupRequestDTO parameter) {
         // 이메일 중복 체크
         memberRepository.findByEmail(parameter.getEmail())
