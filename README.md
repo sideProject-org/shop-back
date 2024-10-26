@@ -7,6 +7,10 @@
 
 ## 요구사항 정의서
 - 공통
+  - [ ] 서버 배포
+    - [x] WAS 배포 - https://burning-tersina-side-project-f358c35a.koyeb.app/swagger-ui/index.html
+    - [ ] DB 배포
+    - [ ] Redis 배포
   - [ ] 회원가입
       - [ ] 비밀번호 암호화
       - [ ] 프로필 사진 구현
