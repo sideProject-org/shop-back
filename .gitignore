@@ -38,3 +38,6 @@ out/
 
 ### Dot Env ###
 .env
+
+### Log File ###
+shopLogs/**

@@ -22,6 +22,8 @@ spring:
     hibernate:
       ddl-auto: update
 
+logging:
+  config: classpath:log4j2.xml
 
 path:
   profileImage: C://shopImages/profileImages

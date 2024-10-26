@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration>
     <Properties>
-        <Property name="LOG_PATH">ecmLogs</Property>
+        <Property name="LOG_PATH">shopLogs</Property>
         <Property name="DEFAULT_PATTERN">[%d{yyyy-MM-dd HH:mm:ss.SSS}] %5p ${sys:PID} --- [%15.15t] %-40.40c{1.} : %m%n%xwEx</Property>
         <Property name="COLOR_PATTERN">[%clr{%d{yyyy-MM-dd HH:mm:ss.SSS}}{faint}] %clr{%5p} %clr{${sys:PID}}{magenta} %clr{---}{faint} %clr{[%15.15t]}{faint} %clr{%-40.40c}{cyan} %clr{:}{faint} %m%n%xwEx</Property>
         <Property name="TEST_PATTERN">%d %5p [%c] %m%n</Property>
@@ -12,7 +12,7 @@
             <PatternLayout pattern="${COLOR_PATTERN}" />
         </Console>
 
-        <RollingFile name="RollingFileAppender" fileName="${LOG_PATH}/ecm.log" filePattern="${LOG_PATH}/ecm.%d{yyyy-MM-dd}.%i.log"> -->
+        <RollingFile name="RollingFileAppender" fileName="${LOG_PATH}/shop.log" filePattern="${LOG_PATH}/shop.%d{yyyy-MM-dd}.%i.log"> -->
             <PatternLayout>
                 <Pattern>${DEFAULT_PATTERN}</Pattern>
             </PatternLayout>
