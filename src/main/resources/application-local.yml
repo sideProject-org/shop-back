@@ -26,6 +26,6 @@ logging:
   config: classpath:log4j2.xml
 
 path:
-  profileImage: /shopImages/profileImages
-  noticeImage: /shopImages/noticeImages
-  boardImage: /shopImages/boardImages
+  profileImage: C://shopImages/profileImages
+  noticeImage: C://shopImages/noticeImages
+  boardImage: C://shopImages/boardImages
