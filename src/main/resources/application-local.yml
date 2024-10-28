@@ -22,8 +22,18 @@ spring:
     hibernate:
       ddl-auto: update
 
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
+
 logging:
   config: classpath:log4j2.xml
+
+jwt:
+  secret: ${JWT_KEY}
+  access_expire_time: ${A_EX_TIME}
+  refresh_expire_time: ${R_EX_TIME}
 
 path:
   profileImage: C://shopImages/profileImages
