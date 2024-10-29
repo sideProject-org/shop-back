@@ -41,3 +41,6 @@ out/
 
 ### Log File ###
 shopLogs/
+
+### Docker File ###
+Dockerfile

@@ -13,10 +13,10 @@ spring:
 #    username: sa
 #    password:
 
-  h2:
-    console:
-      enabled: true
-      path: /h2-console
+#  h2:
+#    console:
+#      enabled: true
+#      path: /h2-console
 
   jpa:
     hibernate:
@@ -34,6 +34,6 @@ jwt:
   secret: ${JWT_KEY}
 
 path:
-  profileImage: /shopImages/profileImages
-  noticeImage: /shopImages/noticeImages
-  boardImage: /shopImages/boardImages
+  profileImage: /home/ubuntu/shopImages/profileImages
+  noticeImage: /home/ubuntu/shopImages/noticeImages
+  boardImage: /home/ubuntu/shopImages/boardImages
