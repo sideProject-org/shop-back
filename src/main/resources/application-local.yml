@@ -3,15 +3,15 @@ spring:
     import: optional:file:.env[.properties]
 
   datasource:
-    #    driver-class-name: org.postgresql.Driver
-    #    url: ${DB_URL}
-    #    username: ${DB_USER_NAME}
-    #    password: ${DB_USER_PASSWORD}
+        driver-class-name: org.postgresql.Driver
+        url: ${DB_URL}
+        username: ${DB_USER_NAME}
+        password: ${DB_USER_PASSWORD}
 
-    driver-class-name: org.h2.Driver
-    url: jdbc:h2:mem://localhost/~/testdb;
-    username: sa
-    password:
+#    driver-class-name: org.h2.Driver
+#    url: jdbc:h2:mem://localhost/~/testdb;
+#    username: sa
+#    password:
 
   h2:
     console:
@@ -22,8 +22,18 @@ spring:
     hibernate:
       ddl-auto: update
 
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
+
 logging:
   config: classpath:log4j2.xml
+
+jwt:
+  secret: ${JWT_KEY}
+  access_expire_time: ${A_EX_TIME}
+  refresh_expire_time: ${R_EX_TIME}
 
 path:
   profileImage: C://shopImages/profileImages

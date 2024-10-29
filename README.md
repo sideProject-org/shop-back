@@ -9,12 +9,12 @@
 - 공통
   - [ ] 서버 배포
     - [x] WAS 배포 - https://burning-tersina-side-project-f358c35a.koyeb.app/swagger-ui/index.html
-    - [ ] DB 배포
-    - [ ] Redis 배포
-  - [ ] 회원가입
-      - [ ] 비밀번호 암호화
-      - [ ] 프로필 사진 구현
-      - [ ] 일반 사용자, 기업 사용자, 관리자로 권한 구분
+    - [x] DB 배포 - Koyab
+    - [x] Redis 배포 - Google Cloud Platform
+  - [x] 회원가입
+      - [x] 비밀번호 암호화
+      - [x] 프로필 사진 구현
+      - [x] 일반 사용자, 기업 사용자, 관리자로 권한 구분
   - [ ] 로그인
       - [ ] Spring Security / JWT 방식 구현
       - [ ] Redis 적용해서 RefreshToken 구현
