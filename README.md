@@ -8,7 +8,7 @@
 ## 요구사항 정의서
 - 공통
   - [X] 서버 배포
-    - [x] WAS 배포 - https://burning-tersina-side-project-f358c35a.koyeb.app/swagger-ui/index.html
+    - [x] WAS 배포 - http://ec2-13-124-28-200.ap-northeast-2.compute.amazonaws.com:8080/swagger-ui/index.html
     - [x] DB 배포 - Koyab, AWS
     - [x] Redis 배포 - AWS
   - [x] 회원가입
