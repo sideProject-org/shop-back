@@ -1,17 +1,21 @@
-# Java 17 이미지로 변경
-FROM bellsoft/liberica-openjdk-alpine:17
-
+# 빌드 스테이지
+FROM bellsoft/liberica-openjdk-alpine:17 AS build
 WORKDIR /app
 
-# Gradle 빌드를 수행하여 JAR 파일을 생성
+# Gradle 래퍼와 설정 파일 복사 및 빌드
+COPY gradlew gradlew
+COPY gradle gradle
+COPY build.gradle settings.gradle ./
+RUN chmod +x gradlew
 COPY . .
-RUN ./gradlew clean build -x test
+RUN ./gradlew clean build
 
-# 생성된 JAR 파일을 이미지에 포함
-ARG JAR_FILE=build/libs/*.jar
-COPY ${JAR_FILE} app.jar
+# 실행 스테이지 (최종 이미지)
+FROM bellsoft/liberica-openjdk-alpine:17
+WORKDIR /app
+
+# 빌드 스테이지에서 생성된 JAR 파일만 복사
+COPY --from=build /app/build/libs/*.jar app.jar
 
 EXPOSE 8080
-
-# 환경 변수를 로드하고 애플리케이션을 실행
-ENTRYPOINT ["java", "-jar", "/app.jar"]
+ENTRYPOINT ["java", "-jar", "/app/app.jar"]
