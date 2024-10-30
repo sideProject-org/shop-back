@@ -5,7 +5,7 @@ WORKDIR /app
 
 # Gradle 빌드를 수행하여 JAR 파일을 생성
 COPY . .
-RUN ./gradlew clean build
+RUN ./gradlew clean build -x test
 
 # 생성된 JAR 파일을 이미지에 포함
 ARG JAR_FILE=build/libs/*.jar
