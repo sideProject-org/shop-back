@@ -17,9 +17,6 @@ jobs:
       DB_URL: ${{ secrets.DB_URL }}
       DB_USER_NAME: ${{ secrets.DB_USER_NAME }}
       DB_USER_PASSWORD: ${{ secrets.DB_USER_PASSWORD }}
-      LOCAL_DB_URL: ${{ secrets.LOCAL_DB_URL }}
-      LOCAL_DB_USER_NAME: ${{ secrets.LOCAL_DB_USER_NAME }}
-      LOCAL_DB_USER_PASSWORD: ${{ secrets.LOCAL_DB_USER_PASSWORD }}
       JWT_KEY: ${{ secrets.JWT_KEY }}
       A_EX_TIME: ${{ secrets.A_EX_TIME }}
       R_EX_TIME: ${{ secrets.R_EX_TIME }}
