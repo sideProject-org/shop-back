@@ -34,9 +34,11 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
+      - name: Set executable permission for gradlew
+        run: chmod +x ./gradlew
+
       - name: Build project
-        run: |
-          ./gradlew clean build
+        run: ./gradlew clean build
 
       - name: Build Docker image
         run: |
