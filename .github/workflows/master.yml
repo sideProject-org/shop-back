@@ -52,7 +52,7 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no $USER@$HOST "
             cd $(dirname $DOCKER_COMPOSE_PATH) && \
+            sudo docker-compose --env-file $ENV_FILE_PATH down --remove-orphans && \
             sudo docker-compose --env-file $ENV_FILE_PATH pull && \
-            sudo docker-compose --env-file $ENV_FILE_PATH down && \
             sudo docker-compose --env-file $ENV_FILE_PATH up -d
           "
