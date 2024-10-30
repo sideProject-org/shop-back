@@ -55,19 +55,7 @@ jobs:
       - name: Deploy to EC2
         run: |
           ssh -o StrictHostKeyChecking=no $USER@$HOST "
-            export DB_URL=$DB_URL \
-                   DB_USER_NAME=$DB_USER_NAME \
-                   DB_USER_PASSWORD=$DB_USER_PASSWORD \
-                   LOCAL_DB_URL=$LOCAL_DB_URL \
-                   LOCAL_DB_USER_NAME=$LOCAL_DB_USER_NAME \
-                   LOCAL_DB_USER_PASSWORD=$LOCAL_DB_USER_PASSWORD \
-                   JWT_KEY=$JWT_KEY \
-                   A_EX_TIME=$A_EX_TIME \
-                   R_EX_TIME=$R_EX_TIME \
-                   REDIS_HOST=$REDIS_HOST \
-                   REDIS_PORT=$REDIS_PORT \
-                   SHOP_WAS_TAG=${GITHUB_SHA} && \
-            cd $(dirname $DOCKER_COMPOSE_PATH) && \
+            export cd $(dirname $DOCKER_COMPOSE_PATH) && \
             sudo docker-compose down && \
             sudo docker-compose pull && \
             sudo docker-compose up -d
