@@ -9,8 +9,10 @@
 - 공통
   - [X] 서버 배포
     - [x] WAS 배포 - http://ec2-13-124-28-200.ap-northeast-2.compute.amazonaws.com:8080/swagger-ui/index.html
-    - [x] DB 배포 - Koyab, AWS
+    - [x] DB 배포 - AWS
     - [x] Redis 배포 - AWS
+    - [x] EC2 docker-compose 적용
+    - [x] GitHub Actions CI/CD 적용
   - [x] 회원가입
       - [x] 비밀번호 암호화
       - [x] 프로필 사진 구현
