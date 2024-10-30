@@ -45,10 +45,9 @@ jobs:
           ssh-private-key: ${{ secrets.EC2_KEY }}
 
       - name: Deploy to EC2
-        env:
-          SHOP_WAS_TAG: ${{ github.sha }}  # shop_was 이미지의 태그를 SHA 해시로 설정
         run: |
           ssh -o StrictHostKeyChecking=no $USER@$HOST "
+            export SHOP_WAS_TAG=${GITHUB_SHA} && \
             cd $(dirname $DOCKER_COMPOSE_PATH) && \
             sudo docker-compose --env-file $ENV_FILE_PATH pull && \
             sudo docker-compose --env-file $ENV_FILE_PATH down && \
