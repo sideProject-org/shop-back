@@ -58,9 +58,6 @@ jobs:
             export DB_URL=$DB_URL \
                    DB_USER_NAME=$DB_USER_NAME \
                    DB_USER_PASSWORD=$DB_USER_PASSWORD \
-                   LOCAL_DB_URL=$LOCAL_DB_URL \
-                   LOCAL_DB_USER_NAME=$LOCAL_DB_USER_NAME \
-                   LOCAL_DB_USER_PASSWORD=$LOCAL_DB_USER_PASSWORD \
                    JWT_KEY=$JWT_KEY \
                    A_EX_TIME=$A_EX_TIME \
                    R_EX_TIME=$R_EX_TIME \
