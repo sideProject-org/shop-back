@@ -14,16 +14,8 @@ jobs:
       HOST: ${{ secrets.EC2_HOST }}
       USER: ${{ secrets.EC2_USER }}
       DOCKER_COMPOSE_PATH: /home/ubuntu/compose/docker-compose.yml
+      ENV_FILE_PATH: /home/ubuntu/.env  # .env 파일의 위치
       IMAGE_NAME: rlaalsrl9569/shop_was
-      DB_URL: ${{ secrets.DB_URL }}
-      DB_USER_NAME: ${{ secrets.DB_USER_NAME }}
-      DB_USER_PASSWORD: ${{ secrets.DB_USER_PASSWORD }}
-      JWT_KEY: ${{ secrets.JWT_KEY }}
-      A_EX_TIME: ${{ secrets.A_EX_TIME }}
-      R_EX_TIME: ${{ secrets.R_EX_TIME }}
-      REDIS_HOST: ${{ secrets.REDIS_HOST }}
-      REDIS_PORT: ${{ secrets.REDIS_PORT }}
-      SHOP_WAS_TAG: ${{ github.sha }}
 
     steps:
       - name: Checkout code
@@ -56,7 +48,7 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no $USER@$HOST "
             cd $(dirname $DOCKER_COMPOSE_PATH) && \
-            sudo docker-compose down && \
-            sudo docker-compose pull && \
-            sudo docker-compose up -d
+            sudo docker-compose --env-file $ENV_FILE_PATH pull && \
+            sudo docker-compose --env-file $ENV_FILE_PATH down && \
+            sudo docker-compose --env-file $ENV_FILE_PATH up -d
           "
