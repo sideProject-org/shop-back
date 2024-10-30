@@ -3,7 +3,7 @@ name: Deploy to AWS EC2
 on:
   pull_request:
     branches:
-      - master          # mater 브랜치에서 PR 발생 시
+      - master          # master 브랜치에서 PR 발생 시
   workflow_dispatch:  # 수동 실행을 허용
 
 jobs:
@@ -53,13 +53,22 @@ jobs:
           ssh-private-key: ${{ secrets.EC2_KEY }}
 
       - name: Deploy to EC2
-        env:
-          SHOP_WAS_TAG: ${{ github.sha }}
         run: |
           ssh -o StrictHostKeyChecking=no $USER@$HOST "
-            export $(printf '%s ' $(env | grep 'DB_\|LOCAL_DB_\|JWT_\|A_EX_TIME\|R_EX_TIME\|REDIS_' | cut -d= -f1)) && \
+            export DB_URL=$DB_URL \
+                   DB_USER_NAME=$DB_USER_NAME \
+                   DB_USER_PASSWORD=$DB_USER_PASSWORD \
+                   LOCAL_DB_URL=$LOCAL_DB_URL \
+                   LOCAL_DB_USER_NAME=$LOCAL_DB_USER_NAME \
+                   LOCAL_DB_USER_PASSWORD=$LOCAL_DB_USER_PASSWORD \
+                   JWT_KEY=$JWT_KEY \
+                   A_EX_TIME=$A_EX_TIME \
+                   R_EX_TIME=$R_EX_TIME \
+                   REDIS_HOST=$REDIS_HOST \
+                   REDIS_PORT=$REDIS_PORT \
+                   SHOP_WAS_TAG=${GITHUB_SHA} && \
             cd $(dirname $DOCKER_COMPOSE_PATH) && \
-            docker-compose down && \
-            docker-compose pull && \
-            docker-compose up -d
+            sudo docker-compose down && \
+            sudo docker-compose pull && \
+            sudo docker-compose up -d
           "
