@@ -45,6 +45,8 @@ jobs:
           ssh-private-key: ${{ secrets.EC2_KEY }}
 
       - name: Deploy to EC2
+        env:
+          SHOP_WAS_TAG: ${{ github.sha }}  # shop_was 이미지의 태그를 SHA 해시로 설정
         run: |
           ssh -o StrictHostKeyChecking=no $USER@$HOST "
             cd $(dirname $DOCKER_COMPOSE_PATH) && \
