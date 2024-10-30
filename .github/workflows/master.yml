@@ -4,7 +4,7 @@ on:
   pull_request:
     branches:
       - master          # mater 브랜치에서 PR 발생 시
-    workflow_dispatch:  # 수동 실행을 허용
+  workflow_dispatch:  # 수동 실행을 허용
 
 jobs:
   build_and_deploy:
