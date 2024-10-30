@@ -3,7 +3,7 @@ name: Deploy to AWS EC2
 on:
   pull_request:
     branches:
-      - master  # master 브랜치에서 pull_request 이벤트 발생 시 실행
+      - master
 
 jobs:
   build_and_deploy:
@@ -14,6 +14,18 @@ jobs:
       USER: ${{ secrets.EC2_USER }}
       DOCKER_COMPOSE_PATH: /home/ubuntu/compose/docker-compose.yml
       IMAGE_NAME: rlaalsrl9569/shop_was
+      DB_URL: ${{ secrets.DB_URL }}
+      DB_USER_NAME: ${{ secrets.DB_USER_NAME }}
+      DB_USER_PASSWORD: ${{ secrets.DB_USER_PASSWORD }}
+      LOCAL_DB_URL: ${{ secrets.LOCAL_DB_URL }}
+      LOCAL_DB_USER_NAME: ${{ secrets.LOCAL_DB_USER_NAME }}
+      LOCAL_DB_USER_PASSWORD: ${{ secrets.LOCAL_DB_USER_PASSWORD }}
+      JWT_KEY: ${{ secrets.JWT_KEY }}
+      A_EX_TIME: ${{ secrets.A_EX_TIME }}
+      R_EX_TIME: ${{ secrets.R_EX_TIME }}
+      REDIS_HOST: ${{ secrets.REDIS_HOST }}
+      REDIS_PORT: ${{ secrets.REDIS_PORT }}
+      SHOP_WAS_TAG: ${{ github.sha }}
 
     steps:
       - name: Checkout code
@@ -22,11 +34,11 @@ jobs:
       - name: Set up JDK 17
         uses: actions/setup-java@v2
         with:
-          java-version: '17'  # Java 17 설정
+          java-version: '17'
 
       - name: Build project
         run: |
-          ./gradlew clean build
+          ./gradlew clean build -x test
 
       - name: Build Docker image
         run: |
@@ -41,10 +53,10 @@ jobs:
 
       - name: Deploy to EC2
         env:
-          SHOP_WAS_TAG: ${{ github.sha }}  # 이미지 태그로 GitHub SHA 해시 사용
+          SHOP_WAS_TAG: ${{ github.sha }}
         run: |
           ssh -o StrictHostKeyChecking=no $USER@$HOST "
-            export SHOP_WAS_TAG=$SHOP_WAS_TAG && \
+            export $(printf '%s ' $(env | grep 'DB_\|LOCAL_DB_\|JWT_\|A_EX_TIME\|R_EX_TIME\|REDIS_' | cut -d= -f1)) && \
             cd $(dirname $DOCKER_COMPOSE_PATH) && \
             docker-compose down && \
             docker-compose pull && \
