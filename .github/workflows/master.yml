@@ -36,8 +36,10 @@ jobs:
       - name: Build Docker image
         run: |
           echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
-          docker build -t $IMAGE_NAME:${GITHUB_SHA} .
+          docker build -t $IMAGE_NAME:${GITHUB_SHA} -t $IMAGE_NAME:latest .
           docker push $IMAGE_NAME:${GITHUB_SHA}
+          docker push $IMAGE_NAME:latest
+
 
       - name: Set up SSH
         uses: webfactory/ssh-agent@v0.5.3
@@ -46,11 +48,11 @@ jobs:
 
       - name: Deploy to EC2
         env:
-          SHOP_WAS_TAG: ${{ github.sha }}  # shop_was 이미지의 태그를 SHA 해시로 설정
+          SHOP_WAS_TAG: ${{ github.sha }}
         run: |
           ssh -o StrictHostKeyChecking=no $USER@$HOST "
             cd $(dirname $DOCKER_COMPOSE_PATH) && \
+            sudo docker-compose --env-file $ENV_FILE_PATH down --remove-orphans && \
             sudo docker-compose --env-file $ENV_FILE_PATH pull && \
-            sudo docker-compose --env-file $ENV_FILE_PATH down && \
             sudo docker-compose --env-file $ENV_FILE_PATH up -d
           "
