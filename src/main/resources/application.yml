@@ -32,6 +32,8 @@ logging:
 
 jwt:
   secret: ${JWT_KEY}
+  access_expire_time: ${A_EX_TIME}
+  refresh_expire_time: ${R_EX_TIME}
 
 path:
   profileImage: /home/ubuntu/shopImages/profileImages
