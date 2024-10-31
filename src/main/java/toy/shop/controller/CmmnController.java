@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import toy.shop.dto.Response;
+import toy.shop.dto.jwt.JwtReissueDTO;
 import toy.shop.dto.member.LoginRequestDTO;
 import toy.shop.dto.member.SignupRequestDTO;
 import toy.shop.dto.jwt.JwtResponseDTO;
@@ -35,8 +36,8 @@ public class CmmnController implements CmmnControllerDocs {
     }
 
     @PostMapping("/reissue")
-    public ResponseEntity<?> reissue(@CookieValue(name = "refresh-token") String requestRefreshToken, @RequestHeader("Authorization") String requestAccessToken) {
-        JwtResponseDTO result = memberService.reissue(requestAccessToken, requestRefreshToken);
+    public ResponseEntity<?> reissue(@RequestHeader("Authorization") String requestAccessToken, @RequestBody @Valid JwtReissueDTO parameter) {
+        JwtResponseDTO result = memberService.reissue(requestAccessToken, parameter.getRefreshToken());
 
         if (result != null) {
             return buildResponse(HttpStatus.OK, "토큰 재발급 성공", result);

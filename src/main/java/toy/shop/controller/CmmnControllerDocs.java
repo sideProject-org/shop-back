@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import toy.shop.dto.Response;
+import toy.shop.dto.jwt.JwtReissueDTO;
 import toy.shop.dto.member.LoginRequestDTO;
 import toy.shop.dto.member.SignupRequestDTO;
 
@@ -118,5 +119,5 @@ public interface CmmnControllerDocs {
                     }
                     """))),
     })
-    ResponseEntity<?> reissue(String requestRefreshToken, String requestAccessToken);
+    ResponseEntity<?> reissue(String requestAccessToken, JwtReissueDTO parameter);
 }

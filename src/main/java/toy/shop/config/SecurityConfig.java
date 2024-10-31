@@ -15,7 +15,6 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import toy.shop.jwt.JwtAccessDeniedHandler;
 import toy.shop.jwt.JwtAuthenticationFilter;
-import toy.shop.jwt.JwtExceptionFilter;
 import toy.shop.jwt.JwtProvider;
 
 import java.util.Arrays;
@@ -25,9 +24,8 @@ import java.util.Arrays;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final String[] allowedUrls = {"/swagger-ui/**", "/v3/**", "/h2-console/**", "/api/cmmn/joinMember", "api/cmmn/signIn"};
+    private final String[] allowedUrls = {"/swagger-ui/**", "/v3/**", "/h2-console/**", "/api/cmmn/joinMember", "api/cmmn/signIn", "/api/cmmn/reissue"};
     private final JwtProvider jwtProvider;
-    private final JwtExceptionFilter jwtExceptionFilter;
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
 
     @Bean
@@ -50,7 +48,6 @@ public class SecurityConfig {
                                 .requestMatchers("/api/**").hasAnyRole("USER", "COMPANY")
                                 .anyRequest().authenticated()
                 )
-                .addFilterBefore(jwtExceptionFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(new JwtAuthenticationFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(handling -> handling.accessDeniedHandler(jwtAccessDeniedHandler))
 
