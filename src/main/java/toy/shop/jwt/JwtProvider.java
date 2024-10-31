@@ -11,6 +11,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import toy.shop.dto.jwt.JwtResponseDTO;
 import toy.shop.service.RedisService;
 
 import java.security.Key;
@@ -56,7 +57,7 @@ public class JwtProvider implements InitializingBean {
     }
 
     @Transactional
-    public JwtDTO createToken(String email, String authorities){
+    public JwtResponseDTO createToken(String email, String authorities){
         Long now = System.currentTimeMillis();
 
         String accessToken = Jwts.builder()
@@ -78,7 +79,7 @@ public class JwtProvider implements InitializingBean {
                 .signWith(signingKey, SignatureAlgorithm.HS512)
                 .compact();
 
-        return JwtDTO.builder()
+        return JwtResponseDTO.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .build();

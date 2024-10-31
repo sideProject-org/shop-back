@@ -8,7 +8,6 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,12 +15,11 @@ import toy.shop.cmmn.exception.ConflictException;
 import toy.shop.domain.member.Member;
 import toy.shop.dto.member.LoginRequestDTO;
 import toy.shop.dto.member.SignupRequestDTO;
-import toy.shop.jwt.JwtDTO;
+import toy.shop.dto.jwt.JwtResponseDTO;
 import toy.shop.jwt.JwtProvider;
 import toy.shop.repository.member.MemberRepository;
 import toy.shop.service.RedisService;
 
-import java.util.Date;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -65,6 +63,7 @@ public class MemberService {
         return memberRepository.save(member).getId();
     }
 
+    /* ----------------------------------------------------- 로그인 관련 메서드 ----------------------------------------------------- */
     /**
      * 사용자가 로그인할 때 호출되는 메서드.
      * 사용자 인증 후, JWT 액세스 토큰 및 리프레시 토큰을 생성하여 반환합니다.
@@ -73,7 +72,7 @@ public class MemberService {
      * @return 생성된 JWT 정보 (액세스 토큰, 리프레시 토큰 포함)
      */
     @Transactional
-    public JwtDTO login(LoginRequestDTO parameter) {
+    public JwtResponseDTO login(LoginRequestDTO parameter) {
         try {
             Authentication authentication = authenticateUser(parameter.getEmail(), parameter.getPassword());
             String email = authentication.getName();
@@ -111,14 +110,14 @@ public class MemberService {
      * @param authorities 사용자의 권한 목록을 콤마로 연결한 문자열
      * @return 생성된 JWT 정보 (액세스 토큰 및 리프레시 토큰 포함)
      */
-    private JwtDTO generateAndStoreToken(String provider, String email, String authorities) {
+    private JwtResponseDTO generateAndStoreToken(String provider, String email, String authorities) {
         String redisKey = "RT(" + provider + "):" + email;
 
         // Redis에 기존 RT가 있으면 삭제
         Optional.ofNullable(redisService.getValues(redisKey)).ifPresent(rt -> redisService.deleteValues(redisKey));
 
         // 새로운 토큰 생성 및 Redis에 저장
-        JwtDTO tokenDto = jwtProvider.createToken(email, authorities);
+        JwtResponseDTO tokenDto = jwtProvider.createToken(email, authorities);
         redisService.setValuesWithTimeout(redisKey, tokenDto.getRefreshToken(), jwtProvider.getTokenExpirationTime(tokenDto.getRefreshToken()));
 
         return tokenDto;
@@ -135,4 +134,133 @@ public class MemberService {
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
     }
+    /* ----------------------------------------------------- 로그인 관련 메서드 ----------------------------------------------------- */
+
+    /* ----------------------------------------------------- 로그아웃 관련 메서드 ----------------------------------------------------- */
+    /**
+     * 사용자가 로그아웃할 때 호출되는 메서드.
+     * 리프레시 토큰을 Redis에서 삭제하고, 액세스 토큰을 로그아웃 상태로 Redis에 저장하여
+     * 이후 해당 토큰을 사용하지 못하도록 처리합니다.
+     *
+     * @param requestAccessTokenInHeader "Bearer {AccessToken}" 형식의 액세스 토큰이 포함된 요청 헤더
+     */
+    @Transactional
+    public void logout(String requestAccessTokenInHeader) {
+        String accessToken = resolveToken(requestAccessTokenInHeader);
+        String principal = getPrincipal(accessToken);
+
+        // Refresh Token 삭제
+        deleteRefreshToken(principal);
+
+        // Access Token 로그아웃 처리
+        setAccessTokenAsLoggedOut(accessToken);
+    }
+
+    /**
+     * Redis에 저장된 리프레시 토큰을 삭제합니다.
+     *
+     * @param principal 사용자 식별자 (이메일 등)
+     */
+    private void deleteRefreshToken(String principal) {
+        String redisKey = getRefreshTokenKey(principal);
+        Optional.ofNullable(redisService.getValues(redisKey))
+                .ifPresent(rt -> redisService.deleteValues(redisKey));
+    }
+
+    /**
+     * Redis에 로그아웃 처리된 Access Token을 저장합니다.
+     * 로그아웃 처리된 Access Token은 Redis에 만료 시간과 함께 저장되어 이후 사용이 제한됩니다.
+     *
+     * @param accessToken 로그아웃할 Access Token
+     */
+    private void setAccessTokenAsLoggedOut(String accessToken) {
+        long expiration = jwtProvider.getTokenExpirationTime(accessToken) - System.currentTimeMillis();
+        redisService.setValuesWithTimeout(accessToken, "logout", expiration);
+    }
+
+    /**
+     * Access Token에서 사용자 식별자(principal)를 추출합니다.
+     *
+     * @param accessToken 액세스 토큰
+     * @return 사용자 식별자
+     */
+    public String getPrincipal(String accessToken) {
+        return jwtProvider.getAuthentication(accessToken).getName();
+    }
+
+    /**
+     * 요청 헤더에서 "Bearer" 접두사를 제외한 순수 액세스 토큰 값을 추출합니다.
+     *
+     * @param tokenHeader 요청 헤더의 토큰
+     * @return 순수 액세스 토큰 값 또는 null (유효하지 않은 경우)
+     */
+    public String resolveToken(String tokenHeader) {
+        return Optional.ofNullable(tokenHeader)
+                .filter(header -> header.startsWith("Bearer "))
+                .map(header -> header.substring(7))
+                .orElse(null);
+    }
+
+    /**
+     * Redis에 저장된 Refresh Token의 키 형식을 반환합니다.
+     * 주어진 사용자 식별자(principal)를 통해 Redis에 저장된 리프레시 토큰 키를 형식화합니다.
+     *
+     * @param principal 사용자 식별자
+     * @return Redis에서 리프레시 토큰에 접근하기 위한 키
+     */
+    private String getRefreshTokenKey(String principal) {
+        return String.format("RT(%s):%s", SERVER, principal);
+    }
+    /* ----------------------------------------------------- 로그아웃 관련 메서드 ----------------------------------------------------- */
+
+    /* ----------------------------------------------------- 토큰 재발급 관련 메서드 ----------------------------------------------------- */
+    /**
+     * 사용자의 리프레시 토큰을 활용해 액세스 토큰을 재발급합니다.
+     * 기존 리프레시 토큰이 Redis에 저장되어 있는지 확인하고,
+     * 유효한 경우 새 액세스 및 리프레시 토큰을 생성하여 반환합니다.
+     *
+     * @param requestAccessTokenInHeader 요청 헤더에 포함된 액세스 토큰 (Bearer 포함)
+     * @param requestRefreshToken 클라이언트가 제공한 리프레시 토큰
+     * @return 새로 발급된 JWT 정보 (액세스 토큰 및 리프레시 토큰 포함) 또는 null (유효하지 않은 경우 재로그인 필요)
+     */
+    @Transactional
+    public JwtResponseDTO reissue(String requestAccessTokenInHeader, String requestRefreshToken) {
+        String accessToken = resolveToken(requestAccessTokenInHeader);
+        String principal = getPrincipal(accessToken);
+
+        // Redis에서 리프레시 토큰 유효성 확인
+        if (!isRefreshTokenValid(principal, requestRefreshToken)) {
+            return null; // 재로그인 요청
+        }
+
+        // 인증 정보 설정 및 권한 가져오기
+        Authentication authentication = jwtProvider.getAuthentication(accessToken);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        String authorities = extractAuthorities(authentication);
+
+        // 새 토큰 발급 및 Redis 업데이트
+        JwtResponseDTO tokenDto = generateAndStoreToken(SERVER, principal, authorities);
+        return tokenDto;
+    }
+
+    /**
+     * Redis에 저장된 리프레시 토큰을 유효성 검사하고,
+     * 저장된 리프레시 토큰과 요청된 리프레시 토큰이 일치하는지 확인합니다.
+     *
+     * @param principal 사용자 식별자
+     * @param requestRefreshToken 요청된 리프레시 토큰
+     * @return 리프레시 토큰이 유효하고 일치하면 true, 아니면 false
+     */
+    private boolean isRefreshTokenValid(String principal, String requestRefreshToken) {
+        String redisKey = getRefreshTokenKey(principal);
+        String refreshTokenInRedis = redisService.getValues(redisKey);
+
+        if (refreshTokenInRedis == null || !jwtProvider.validateRefreshToken(requestRefreshToken) ||
+                !refreshTokenInRedis.equals(requestRefreshToken)) {
+            redisService.deleteValues(redisKey); // 탈취 가능성으로 인해 삭제
+            return false;
+        }
+        return true;
+    }
+    /* ----------------------------------------------------- 토큰 재발급 관련 메서드 ----------------------------------------------------- */
 }

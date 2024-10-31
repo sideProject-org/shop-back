@@ -1,11 +1,11 @@
-package toy.shop.jwt;
+package toy.shop.dto.jwt;
 
 import lombok.Builder;
 import lombok.Data;
 
 @Data
 @Builder
-public class JwtDTO {
+public class JwtResponseDTO {
 
     private String accessToken;
     private String refreshToken;

@@ -6,14 +6,15 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.RequestHeader;
 import toy.shop.dto.Response;
 import toy.shop.dto.member.LoginRequestDTO;
 import toy.shop.dto.member.SignupRequestDTO;
 
 @Tag(name = "공통 기능 API", description = "공통 기능 로직에 관한 API")
-public interface CmmnDocs {
+public interface CmmnControllerDocs {
 
     @Operation(summary = "회원가입", description = "Request 정보를 통해 회원가입")
 //    @ApiResponses({
@@ -98,4 +99,26 @@ public interface CmmnDocs {
                     """))),
     })
     ResponseEntity<Response<?>> signIn(LoginRequestDTO parameter);
+
+    @Operation(summary = "토큰 재발급", description = "Request 정보를 통해 토큰 재발급 혹은 재로그인")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "토큰 재발급 성공", content = @Content(mediaType = "application/json", schema = @Schema(example = """
+                    {
+                        "status": 200,
+                        "message": "토큰 재발급 성공",
+                        "data": {
+                            "accessToken": "토큰ID",
+                            "refreshToken": "토큰ID"
+                        }
+                    }
+                    """))),
+            @ApiResponse(responseCode = "401", description = "토큰 재발급 실패 - 재로그인", content = @Content(mediaType = "application/json", schema = @Schema(example = """
+                    {
+                        "status": 401,
+                        "message": "재로그인 하세요",
+                        "data": null
+                    }
+                    """))),
+    })
+    ResponseEntity<?> reissue(@CookieValue(name = "refresh-token") String requestRefreshToken, @RequestHeader("Authorization") String requestAccessToken);
 }
