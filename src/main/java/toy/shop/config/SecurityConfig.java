@@ -9,9 +9,14 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import toy.shop.jwt.JwtAccessDeniedHandler;
+import toy.shop.jwt.JwtAuthenticationFilter;
+import toy.shop.jwt.JwtExceptionFilter;
+import toy.shop.jwt.JwtProvider;
 
 import java.util.Arrays;
 
@@ -20,7 +25,10 @@ import java.util.Arrays;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final String[] allowedUrls = {"/swagger-ui/**", "/v3/**", "/h2-console/**"};
+    private final String[] allowedUrls = {"/swagger-ui/**", "/v3/**", "/h2-console/**", "/api/cmmn/joinMember", "api/cmmn/signIn"};
+    private final JwtProvider jwtProvider;
+    private final JwtExceptionFilter jwtExceptionFilter;
+    private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -36,13 +44,16 @@ public class SecurityConfig {
                 .httpBasic(auth -> auth.disable())                                                                                      // http basic 인증 방식 비활성화
                 .headers(headers -> headers.frameOptions(frameOptions -> frameOptions.sameOrigin()))                                    // X-Frame-Options 설정
                 // 경로 작업
-                .authorizeHttpRequests(request ->
-                        request.anyRequest().permitAll()
-//                        request.requestMatchers(allowedUrls).permitAll()
-//                                .requestMatchers("/api/admin/**").hasRole("ADMIN")
-//                                .requestMatchers("/api/**").hasAnyRole("USER", "COMPANY")
-//                                .anyRequest().authenticated()
+                .authorizeHttpRequests(request -> request
+                        .requestMatchers(allowedUrls).permitAll()
+                                .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                                .requestMatchers("/api/**").hasAnyRole("USER", "COMPANY")
+                                .anyRequest().authenticated()
                 )
+                .addFilterBefore(jwtExceptionFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new JwtAuthenticationFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class)
+                .exceptionHandling(handling -> handling.accessDeniedHandler(jwtAccessDeniedHandler))
+
                 .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS));       // Session 사용하지 않음
 
         return http.build();
