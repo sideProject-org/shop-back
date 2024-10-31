@@ -89,23 +89,13 @@ public interface CmmnDocs {
                         }
                     }
                     """))),
-            @ApiResponse(responseCode = "400", description = "회원가입 실패 - 유효성 검증 오류", content = @Content(mediaType = "application/json", schema = @Schema(example = """
+            @ApiResponse(responseCode = "401", description = "로그인 실패 - 사용자 정보 오류", content = @Content(mediaType = "application/json", schema = @Schema(example = """
                     {
-                        "status": 400,
-                        "message": "유효성 검증 오류",
-                        "data": {
-                            "fieldName": "필드이름",
-                            "message": "필드 에러 메시지"
-                        }
-                    }
-                    """))),
-            @ApiResponse(responseCode = "409", description = "회원가입 실패 - 존재하는 이메일", content = @Content(mediaType = "application/json", schema = @Schema(example = """
-                    {
-                        "status": 409,
-                        "message": "이미 존재하는 이메일입니다: {이메일}",
+                        "status": 401,
+                        "message": "사용자 정보가 잘못 되었습니다.",
                         "data": null
                     }
-                    """)))
+                    """))),
     })
     ResponseEntity<Response<?>> signIn(LoginRequestDTO parameter);
 }
