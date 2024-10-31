@@ -4,6 +4,8 @@ import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
+import io.swagger.v3.oas.models.security.SecurityScheme;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -12,7 +14,7 @@ import org.springframework.context.annotation.Configuration;
         info = @Info(
                 title = "쇼핑몰 프로젝트 API 명세서",
                 description = "열심히 만들어 보는 쇼핑몰🖐️",
-                version = "v1"
+                version = "v1.0.1"
         )
 )
 public class SwaggerConfig {
@@ -24,13 +26,13 @@ public class SwaggerConfig {
         return new OpenAPI()
                 .components(
                         new Components()
-//                                .addSecuritySchemes(SECURITY_SCHEME_NAME, new SecurityScheme()
-//                                        .name(SECURITY_SCHEME_NAME)
-//                                        .type(SecurityScheme.Type.HTTP)
-//                                        .scheme("bearer")
-//                                        .bearerFormat("JWT")
-//                                )
-                );
-//                .addSecurityItem(new SecurityRequirement().addList(SECURITY_SCHEME_NAME));
+                                .addSecuritySchemes(SECURITY_SCHEME_NAME, new SecurityScheme()
+                                        .name(SECURITY_SCHEME_NAME)
+                                        .type(SecurityScheme.Type.HTTP)
+                                        .scheme("bearer")
+                                        .bearerFormat("JWT")
+                                )
+                )
+                .addSecurityItem(new SecurityRequirement().addList(SECURITY_SCHEME_NAME));
     }
 }

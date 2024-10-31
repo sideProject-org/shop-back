@@ -7,8 +7,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.RequestHeader;
 import toy.shop.dto.Response;
 import toy.shop.dto.member.LoginRequestDTO;
 import toy.shop.dto.member.SignupRequestDTO;
@@ -120,5 +118,5 @@ public interface CmmnControllerDocs {
                     }
                     """))),
     })
-    ResponseEntity<?> reissue(@CookieValue(name = "refresh-token") String requestRefreshToken, @RequestHeader("Authorization") String requestAccessToken);
+    ResponseEntity<?> reissue(String requestRefreshToken, String requestAccessToken);
 }

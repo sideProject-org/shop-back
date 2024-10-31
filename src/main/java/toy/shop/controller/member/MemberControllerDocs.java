@@ -7,7 +7,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestHeader;
 
 @Tag(name = "회원 기능 API", description = "회원 기능 로직에 관한 API")
 public interface MemberControllerDocs {
@@ -22,5 +21,5 @@ public interface MemberControllerDocs {
                     }
                     """)))
     })
-    ResponseEntity<?> logout(@RequestHeader("Authorization") String requestAccessToken);
+    ResponseEntity<?> logout(String requestAccessToken);
 }
