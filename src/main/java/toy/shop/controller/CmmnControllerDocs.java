@@ -111,7 +111,7 @@ public interface CmmnControllerDocs {
                         }
                     }
                     """))),
-            @ApiResponse(responseCode = "40", description = "토큰 재발급 실패 - 만료되지 않은 토큰", content = @Content(mediaType = "application/json", schema = @Schema(example = """
+            @ApiResponse(responseCode = "400", description = "토큰 재발급 실패 - 만료되지 않은 토큰", content = @Content(mediaType = "application/json", schema = @Schema(example = """
                     {
                         "status": 400,
                         "message": "토큰이 아직 만료되지 않았습니다.",
