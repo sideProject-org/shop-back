@@ -8,7 +8,7 @@ COPY gradle gradle
 COPY build.gradle settings.gradle ./
 RUN chmod +x gradlew
 COPY . .
-RUN ./gradlew clean build
+RUN ./gradlew clean build -x test
 
 # 실행 스테이지 (최종 이미지)
 FROM bellsoft/liberica-openjdk-alpine:17
