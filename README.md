@@ -18,8 +18,8 @@
       - [x] 프로필 사진 구현
       - [x] 일반 사용자, 기업 사용자, 관리자로 권한 구분
   - [ ] 로그인
-      - [ ] Spring Security / JWT 방식 구현
-      - [ ] Redis 적용해서 RefreshToken 구현
+      - [x] Spring Security / JWT 방식 구현
+      - [x] Redis 적용해서 RefreshToken 구현
       - [ ] 소셜 로그인 적용 (구글, 카카오 등...) [기업, 관리자 제외]
   - [ ] 회원 관리
     - [ ] 아이디 찾기
