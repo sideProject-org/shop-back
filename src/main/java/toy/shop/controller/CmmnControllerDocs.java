@@ -111,13 +111,20 @@ public interface CmmnControllerDocs {
                         }
                     }
                     """))),
+            @ApiResponse(responseCode = "40", description = "토큰 재발급 실패 - 만료되지 않은 토큰", content = @Content(mediaType = "application/json", schema = @Schema(example = """
+                    {
+                        "status": 400,
+                        "message": "토큰이 아직 만료되지 않았습니다.",
+                        "data": null
+                    }
+                    """))),
             @ApiResponse(responseCode = "401", description = "토큰 재발급 실패 - 재로그인", content = @Content(mediaType = "application/json", schema = @Schema(example = """
                     {
                         "status": 401,
                         "message": "재로그인 하세요",
                         "data": null
                     }
-                    """))),
+                    """)))
     })
     ResponseEntity<?> reissue(String requestAccessToken, JwtReissueDTO parameter);
 }

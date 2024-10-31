@@ -165,16 +165,12 @@ public class JwtProvider implements InitializingBean {
         }
     }
 
-    // 재발급 검증 API에서 사용
-    public boolean validateAccessTokenOnlyExpired(String accessToken) {
+    public boolean isTokenExpired(String token) {
         try {
-            return getClaims(accessToken)
-                    .getExpiration()
-                    .before(new Date());
-        } catch(ExpiredJwtException e) {
-            return true;
+            Date expiration = getClaims(token).getExpiration();
+            return expiration.before(new Date());
         } catch (Exception e) {
-            return false;
+            return true; // 만료된 것으로 간주
         }
     }
 }

@@ -11,6 +11,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import toy.shop.cmmn.exception.AccessTokenNotExpiredException;
 import toy.shop.cmmn.exception.ConflictException;
 import toy.shop.domain.member.Member;
 import toy.shop.dto.member.LoginRequestDTO;
@@ -228,6 +229,11 @@ public class MemberService {
         String accessToken = resolveToken(requestAccessTokenInHeader);
         String principal = getPrincipal(accessToken);
 
+        // Access Token 만료 여부 확인
+        if (!validateAccessTokenExpiry(accessToken)) {
+            throw new AccessTokenNotExpiredException("토큰이 아직 만료되지 않았습니다.");
+        }
+
         // Redis에서 리프레시 토큰 유효성 확인
         if (!isRefreshTokenValid(principal, requestRefreshToken)) {
             return null; // 재로그인 요청
@@ -261,6 +267,22 @@ public class MemberService {
             return false;
         }
         return true;
+    }
+
+    /**
+     * Access Token의 만료 여부를 확인합니다.
+     * 유효한 토큰의 경우 만료 시간을 기준으로 만료 여부를 반환하며,
+     * 만료된 경우와 유효하지 않은 경우 모두 만료된 것으로 간주합니다.
+     *
+     * @param accessToken 만료 여부를 확인할 Access Token
+     * @return true - 만료된 토큰 또는 유효하지 않은 토큰, false - 만료되지 않은 토큰
+     */
+    private boolean validateAccessTokenExpiry(String accessToken) {
+        try {
+            return jwtProvider.isTokenExpired(accessToken);
+        } catch (Exception e) {
+            return true; // 토큰 만료 혹은 유효하지 않은 토큰으로 간주
+        }
     }
     /* ----------------------------------------------------- 토큰 재발급 관련 메서드 ----------------------------------------------------- */
 }
