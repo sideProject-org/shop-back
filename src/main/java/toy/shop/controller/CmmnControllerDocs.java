@@ -8,10 +8,12 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import toy.shop.dto.Response;
+import toy.shop.dto.jwt.JwtReissueDTO;
+import toy.shop.dto.member.LoginRequestDTO;
 import toy.shop.dto.member.SignupRequestDTO;
 
 @Tag(name = "공통 기능 API", description = "공통 기능 로직에 관한 API")
-public interface CmmnDocs {
+public interface CmmnControllerDocs {
 
     @Operation(summary = "회원가입", description = "Request 정보를 통해 회원가입")
 //    @ApiResponses({
@@ -73,4 +75,56 @@ public interface CmmnDocs {
                     """)))
     })
     ResponseEntity<Response<?>> joinMember(SignupRequestDTO parameter);
+
+
+    @Operation(summary = "로그인", description = "Request 정보를 통해 로그인")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "로그인 성공", content = @Content(mediaType = "application/json", schema = @Schema(example = """
+                    {
+                        "status": 200,
+                        "message": "로그인 성공",
+                        "data": {
+                            "accessToken": "토큰ID",
+                            "refreshToken": "토큰ID"
+                        }
+                    }
+                    """))),
+            @ApiResponse(responseCode = "401", description = "로그인 실패 - 사용자 정보 오류", content = @Content(mediaType = "application/json", schema = @Schema(example = """
+                    {
+                        "status": 401,
+                        "message": "사용자 정보가 잘못 되었습니다.",
+                        "data": null
+                    }
+                    """))),
+    })
+    ResponseEntity<Response<?>> signIn(LoginRequestDTO parameter);
+
+    @Operation(summary = "토큰 재발급", description = "Request 정보를 통해 토큰 재발급 혹은 재로그인")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "토큰 재발급 성공", content = @Content(mediaType = "application/json", schema = @Schema(example = """
+                    {
+                        "status": 200,
+                        "message": "토큰 재발급 성공",
+                        "data": {
+                            "accessToken": "토큰ID",
+                            "refreshToken": "토큰ID"
+                        }
+                    }
+                    """))),
+            @ApiResponse(responseCode = "400", description = "토큰 재발급 실패 - 만료되지 않은 토큰", content = @Content(mediaType = "application/json", schema = @Schema(example = """
+                    {
+                        "status": 400,
+                        "message": "토큰이 아직 만료되지 않았습니다.",
+                        "data": null
+                    }
+                    """))),
+            @ApiResponse(responseCode = "401", description = "토큰 재발급 실패 - 재로그인", content = @Content(mediaType = "application/json", schema = @Schema(example = """
+                    {
+                        "status": 401,
+                        "message": "재로그인 하세요",
+                        "data": null
+                    }
+                    """)))
+    })
+    ResponseEntity<?> reissue(String requestAccessToken, JwtReissueDTO parameter);
 }

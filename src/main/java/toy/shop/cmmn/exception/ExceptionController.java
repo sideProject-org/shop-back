@@ -123,4 +123,20 @@ public class ExceptionController {
 
         return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
     }
+
+    /**
+     * 토큰이 만료되지 않았을 경우
+     * @param ex
+     * @return
+     */
+    @ExceptionHandler(AccessTokenNotExpiredException.class)
+    public ResponseEntity<Response<?>> handleAccessTokenNotExpiredException(AccessTokenNotExpiredException ex) {
+        Response<?> response = Response.builder()
+                .status(HttpStatus.BAD_REQUEST.value())
+                .message(ex.getMessage())
+                .data(null)
+                .build();
+
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
 }
