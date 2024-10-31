@@ -27,7 +27,6 @@ public class JwtProvider implements InitializingBean {
 
     private static final String AUTHORITIES_KEY = "role";
     private static final String EMAIL_KEY = "email";
-    private static final String url = "https://localhost:8080";
 
     private final String secretKey;
     private static Key signingKey;
@@ -45,8 +44,8 @@ public class JwtProvider implements InitializingBean {
         this.redisService = redisService;
         this.secretKey = secretKey;
         // seconds -> milliseconds
-        this.accessTokenValidityInMilliseconds = accessTokenValidityInMilliseconds * 1000;
-        this.refreshTokenValidityInMilliseconds = refreshTokenValidityInMilliseconds * 1000;
+        this.accessTokenValidityInMilliseconds = accessTokenValidityInMilliseconds;
+        this.refreshTokenValidityInMilliseconds = refreshTokenValidityInMilliseconds;
     }
 
     // 시크릿 키 설정
@@ -65,7 +64,6 @@ public class JwtProvider implements InitializingBean {
                 .setHeaderParam("alg", "HS512")
                 .setExpiration(new Date(now + accessTokenValidityInMilliseconds))
                 .setSubject("access-token")
-                .claim(url, true)
                 .claim(EMAIL_KEY, email)
                 .claim(AUTHORITIES_KEY, authorities)
                 .signWith(signingKey, SignatureAlgorithm.HS512)
