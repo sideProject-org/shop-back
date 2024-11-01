@@ -18,9 +18,11 @@ spring:
       port: 6379
 
 jwt:
-  secret: ${JWT_KEY}
-  access_expire_time: ${A_EX_TIME}
-  refresh_expire_time: ${R_EX_TIME}
+  secret: 0xA3B2C4D5E6F7890A1B2C3D4E5F67890A1B2C3D4E5F67890A3B2C4D5E6F7890A
+  access_expire_time: 100000
+  refresh_expire_time: 1000000
 
 path:
-  profileImage: C://shopImages/profileImages
+  profileImage: /home/ubuntu/shopImages/profileImages
+  noticeImage: /home/ubuntu/shopImages/noticeImages
+  boardImage: /home/ubuntu/shopImages/boardImages
