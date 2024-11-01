@@ -3,12 +3,13 @@
 ## 개요
 🕐 프로젝트 기간: 2024-10-25 ~ 진행중  
 🪄 프로젝트 동기: 제대로 된 서비스를 직접 만들어 보고 싶어서  
-🚕 퇴근 후 짬짬히 달려 가면서 요구사항 정의서나 ERD 등이 변경될 예정~
+🚕 퇴근 후 짬짬히 달려 가면서 요구사항 정의서나 ERD 등이 변경될 예정~   
+📖 여기에 자세한 내용들을 기재할 예정 https://magicmk.tistory.com/category/Java/%EC%87%BC%ED%95%91%EB%AA%B0
 
 ## 요구사항 정의서
 - 공통
   - [X] 서버 배포
-    - [x] WAS 배포 - http://ec2-13-124-28-200.ap-northeast-2.compute.amazonaws.com:8080/swagger-ui/index.html
+    - [x] WAS 배포 - WAS
     - [x] DB 배포 - AWS
     - [x] Redis 배포 - AWS
     - [x] EC2 docker-compose 적용
