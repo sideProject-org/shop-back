@@ -9,7 +9,7 @@
 ## 요구사항 정의서
 - 공통
   - [X] 서버 배포
-    - [x] WAS 배포 - WAS
+    - [x] WAS 배포 - AWS
     - [x] DB 배포 - AWS
     - [x] Redis 배포 - AWS
     - [x] EC2 docker-compose 적용
