@@ -14,6 +14,10 @@ import toy.shop.domain.Role;
 @Schema(description = "회원가입에 필요한 요청 정보", requiredProperties = {"email", "password", "nickname", "gender", "role", "phone"})
 public class SignupRequestDTO {
 
+    @Schema(description = "회원 아이디")
+    @NotBlank(message = "해당 값은 필수값 입니다.")
+    private String userId;
+
     @Schema(description = "회원 이메일")
     @NotBlank(message = "해당 값은 필수값 입니다.")
     private String email;
@@ -40,7 +44,8 @@ public class SignupRequestDTO {
     private String phone;
 
     @Builder
-    public SignupRequestDTO(String email, String password, String nickname, String gender, Role role, String phone) {
+    public SignupRequestDTO(String userId, String email, String password, String nickname, String gender, Role role, String phone) {
+        this.userId = userId;
         this.email = email;
         this.password = password;
         this.nickname = nickname;

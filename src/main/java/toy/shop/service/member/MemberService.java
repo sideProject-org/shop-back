@@ -14,9 +14,9 @@ import org.springframework.transaction.annotation.Transactional;
 import toy.shop.cmmn.exception.AccessTokenNotExpiredException;
 import toy.shop.cmmn.exception.ConflictException;
 import toy.shop.domain.member.Member;
+import toy.shop.dto.jwt.JwtResponseDTO;
 import toy.shop.dto.member.LoginRequestDTO;
 import toy.shop.dto.member.SignupRequestDTO;
-import toy.shop.dto.jwt.JwtResponseDTO;
 import toy.shop.jwt.JwtProvider;
 import toy.shop.repository.member.MemberRepository;
 import toy.shop.service.RedisService;
@@ -38,7 +38,6 @@ public class MemberService {
     @Value("${path.profileImage}")
     private String profileImagePath;
 
-
     /**
      * 회원가입
      * @param parameter SignupRequestDTO
@@ -52,6 +51,7 @@ public class MemberService {
                 });
 
         Member member = Member.builder()
+                .userId(parameter.getUserId())
                 .email(parameter.getEmail())
                 .password(passwordEncoder.encode(parameter.getPassword()))
                 .nickName(parameter.getNickname())

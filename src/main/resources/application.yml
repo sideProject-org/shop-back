@@ -8,19 +8,9 @@ spring:
     username: ${DB_USER_NAME}
     password: ${DB_USER_PASSWORD}
 
-#    driver-class-name: org.h2.Driver
-#    url: jdbc:h2:mem://localhost/~/testdb;
-#    username: sa
-#    password:
-
-#  h2:
-#    console:
-#      enabled: true
-#      path: /h2-console
-
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: validate
 
   data:
     redis:
