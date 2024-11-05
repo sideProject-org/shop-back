@@ -24,7 +24,12 @@ import java.util.Arrays;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final String[] allowedUrls = {"/swagger-ui/**", "/v3/**", "/h2-console/**", "/api/cmmn/joinMember", "api/cmmn/signIn", "/api/cmmn/reissue"};
+    private final String[] allowedUrls = {
+            "/swagger-ui/**",
+            "/v3/**",
+            "/api/cmmn/**",
+            "/api/sms/**"
+    };
     private final JwtProvider jwtProvider;
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
 
