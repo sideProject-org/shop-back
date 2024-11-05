@@ -28,12 +28,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtProvider jwtProvider;
     private static final AntPathMatcher pathMatcher = new AntPathMatcher();
     private static final List<String> EXCLUDED_URLS = Arrays.asList(
-            "/api/cmmn/signIn",
-            "/api/cmmn/joinMember",
-            "/api/cmmn/reissue",
             "/swagger-ui/**",
             "/v3/**",
-            "/h2-console/**"
+            "/api/cmmn/**",
+            "/api/sms/**"
     );
 
     @Override
