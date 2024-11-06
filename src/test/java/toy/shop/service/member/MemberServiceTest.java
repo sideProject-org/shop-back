@@ -28,7 +28,6 @@ class MemberServiceTest {
     @DisplayName("정상 가입 테스트")
     public void signup() {
         SignupRequestDTO dto = SignupRequestDTO.builder()
-                .userId("test")
                 .email("test@test.com")
                 .password("1234")
                 .gender("M")
@@ -46,7 +45,6 @@ class MemberServiceTest {
     @DisplayName("중복 가입 테스트")
     public void signupConflictEmail() {
         SignupRequestDTO dto = SignupRequestDTO.builder()
-                .userId("test")
                 .email("test@test.com")
                 .password("1234")
                 .gender("M")

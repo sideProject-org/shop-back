@@ -22,7 +22,7 @@ import java.util.Random;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/verify")
+@RequestMapping("/api/sms")
 public class SmsController implements SmsControllerDocs {
 
     private DefaultMessageService defaultMessageService;
@@ -42,7 +42,7 @@ public class SmsController implements SmsControllerDocs {
         this.defaultMessageService = NurigoApp.INSTANCE.initialize(key, secret, "https://api.coolsms.co.kr");
     }
 
-    @PostMapping("/sms-send-one")
+    @PostMapping("/send-one")
     public SingleMessageSentResponse smsSendOne(@RequestBody @Valid SMSRequestDTO parameter) {
         String phoneNumber = parameter.getPhoneNumber();
         String verificationCode = generateVerificationCode();
@@ -58,7 +58,7 @@ public class SmsController implements SmsControllerDocs {
         return response;
     }
 
-    @PostMapping("/sms-verify-code")
+    @PostMapping("/verify-code")
     public boolean smsVerifyCode(@RequestBody @Valid VerificationRequestDTO parameter) {
         String sentCode = verificationCodes.get(parameter.getPhoneNumber());
         return parameter.getVerificationCode().equals(sentCode);

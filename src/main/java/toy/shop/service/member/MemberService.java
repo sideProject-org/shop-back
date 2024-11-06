@@ -1,6 +1,7 @@
 package toy.shop.service.member;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -8,6 +9,7 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,15 +17,19 @@ import toy.shop.cmmn.exception.AccessTokenNotExpiredException;
 import toy.shop.cmmn.exception.ConflictException;
 import toy.shop.domain.member.Member;
 import toy.shop.dto.jwt.JwtResponseDTO;
+import toy.shop.dto.member.PasswordResetRequestDTO;
+import toy.shop.dto.member.PasswordRestResponseDTO;
 import toy.shop.dto.member.LoginRequestDTO;
 import toy.shop.dto.member.SignupRequestDTO;
 import toy.shop.jwt.JwtProvider;
 import toy.shop.repository.member.MemberRepository;
+import toy.shop.service.MailService;
 import toy.shop.service.RedisService;
 
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class MemberService {
@@ -32,6 +38,7 @@ public class MemberService {
     private final PasswordEncoder passwordEncoder;
     private final JwtProvider jwtProvider;
     private final RedisService redisService;
+    private final MailService mailService;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final String SERVER = "Server";
 
@@ -51,7 +58,6 @@ public class MemberService {
                 });
 
         Member member = Member.builder()
-                .userId(parameter.getUserId())
                 .email(parameter.getEmail())
                 .password(passwordEncoder.encode(parameter.getPassword()))
                 .nickName(parameter.getNickname())
@@ -285,4 +291,61 @@ public class MemberService {
         }
     }
     /* ----------------------------------------------------- 토큰 재발급 관련 메서드 ----------------------------------------------------- */
+
+    /**
+     * 비밀번호 재설정 이메일을 발송하는 메서드입니다.
+     * 전달받은 JWT 토큰에서 이메일 정보를 추출하여, 해당 이메일이 존재하는지 확인합니다.
+     * 존재하는 경우 비밀번호 재설정 이메일을 발송하고, 발송된 이메일과 고유 토큰 정보를 포함하는 DTO를 반환합니다.
+     *
+     * @param token 사용자 인증에 사용된 JWT 토큰, 이메일 정보가 포함되어 있어야 합니다.
+     * @return 비밀번호 재설정 이메일 발송에 대한 정보를 담은 {@link PasswordRestResponseDTO} 객체.
+     *         이 DTO는 사용자 이메일과 재설정에 사용되는 UUID 토큰을 포함합니다.
+     * @throws UsernameNotFoundException 이메일이 존재하지 않는 경우 발생합니다.
+     */
+    @Transactional
+    public PasswordRestResponseDTO sendResetEmail(String token) {
+        String userEmail = jwtProvider.getClaims(token).get("email", String.class);
+
+        if (memberRepository.existsByEmail(userEmail)) {
+            String uuid = mailService.generateResetEmail(userEmail);
+
+            return PasswordRestResponseDTO.builder()
+                    .userEmail(userEmail)
+                    .token(uuid)
+                    .build();
+        } else {
+            throw new UsernameNotFoundException("존재하지 않는 이메일입니다.");
+        }
+    }
+
+    /**
+     * 비밀번호 재설정을 수행하는 메서드입니다.
+     * 요청된 토큰의 유효성을 검증하고, 유효한 경우 해당 사용자의 비밀번호를 재설정합니다.
+     * 이후 사용된 토큰은 무효화됩니다.
+     *
+     * @param parameter 비밀번호 재설정을 위한 요청 정보가 담긴 {@link PasswordResetRequestDTO} 객체.
+     *                  이 객체는 사용자의 이메일, 재설정할 비밀번호, 그리고 재설정 토큰을 포함합니다.
+     * @return 비밀번호 재설정 성공 여부. 유효한 토큰을 사용하여 비밀번호가 성공적으로 변경되면 true를 반환합니다.
+     * @throws BadCredentialsException 유효하지 않은 토큰이 제공될 경우 발생합니다.
+     */
+    @Transactional
+    public boolean resetPassword(PasswordResetRequestDTO parameter) {
+        String token = parameter.getToken();
+
+        if (!redisService.isValidPwResetToken(token)) {
+            throw new BadCredentialsException("유효하지 않은 토큰입니다.");
+        }
+
+        // 비밀번호 재설정
+        Optional<Member> memberOptional = memberRepository.findByEmail(parameter.getUserEmail());
+        memberOptional.ifPresent(member -> {
+            member.setPassword(passwordEncoder.encode(parameter.getPassword()));
+            memberRepository.save(member);
+        });
+
+        // 토큰 무효화
+        redisService.invalidatePwResetToken(token);
+
+        return true;
+    }
 }

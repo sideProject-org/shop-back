@@ -21,9 +21,6 @@ public class Member extends BaseEntity {
     private Long id;
 
     @Column(nullable = false, unique = true)
-    private String userId;
-
-    @Column(nullable = false, unique = true)
     private String email;
 
     @Column(nullable = false)
@@ -54,8 +51,7 @@ public class Member extends BaseEntity {
     private char deleteType = 'N';
 
     @Builder
-    public Member(String userId, String email, String password, String nickName, String gender, Role role, String imagePath, String phoneNumber) {
-        this.userId = userId;
+    public Member(String email, String password, String nickName, String gender, Role role, String imagePath, String phoneNumber) {
         this.email = email;
         this.password = password;
         this.nickName = nickName;
@@ -65,7 +61,7 @@ public class Member extends BaseEntity {
         this.phoneNumber = phoneNumber;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
+    public void setPassword(String password) {
+        this.password = password;
     }
 }
