@@ -13,7 +13,7 @@ import static toy.shop.controller.ResponseBuilder.buildResponse;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/member")
+@RequestMapping("/api/members")
 public class MemberController implements MemberControllerDocs {
 
     private final MemberService memberService;

@@ -1,4 +1,4 @@
-package toy.shop.coolsms;
+package toy.shop.controller.verify;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.validation.Valid;
@@ -22,8 +22,8 @@ import java.util.Random;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/sms")
-public class SMSController implements SMSControllerDocs {
+@RequestMapping("/api/verify")
+public class VerificationController implements VerificationControllerDocs {
 
     private DefaultMessageService defaultMessageService;
     private Map<String, String> verificationCodes = new HashMap<>();
@@ -42,8 +42,8 @@ public class SMSController implements SMSControllerDocs {
         this.defaultMessageService = NurigoApp.INSTANCE.initialize(key, secret, "https://api.coolsms.co.kr");
     }
 
-    @PostMapping("/send-one")
-    public SingleMessageSentResponse sendOne(@RequestBody @Valid SMSRequestDTO parameter) {
+    @PostMapping("/sms-send-one")
+    public SingleMessageSentResponse smsSendOne(@RequestBody @Valid SMSRequestDTO parameter) {
         String phoneNumber = parameter.getPhoneNumber();
         String verificationCode = generateVerificationCode();
         verificationCodes.put(phoneNumber, verificationCode); // 전화번호와 인증번호 매핑
@@ -58,8 +58,8 @@ public class SMSController implements SMSControllerDocs {
         return response;
     }
 
-    @PostMapping("/verify-code")
-    public boolean verifyCode(@RequestBody @Valid VerificationRequestDTO parameter) {
+    @PostMapping("/sms-verify-code")
+    public boolean smsVerifyCode(@RequestBody @Valid VerificationRequestDTO parameter) {
         String sentCode = verificationCodes.get(parameter.getPhoneNumber());
         return parameter.getVerificationCode().equals(sentCode);
     }
