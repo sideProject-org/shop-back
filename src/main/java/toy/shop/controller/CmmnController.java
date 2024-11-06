@@ -21,14 +21,14 @@ public class CmmnController implements CmmnControllerDocs {
 
     private final MemberService memberService;
 
-    @PostMapping("/joinMember")
+    @PostMapping("/sign-up")
     public ResponseEntity<Response<?>> joinMember(@RequestBody @Valid SignupRequestDTO parameter) {
         Long result = memberService.signup(parameter);
 
         return buildResponse(HttpStatus.OK, "회원가입 성공", result);
     }
 
-    @PostMapping("/signIn")
+    @PostMapping("/sign-in")
     public  ResponseEntity<Response<?>> signIn(@RequestBody @Valid LoginRequestDTO parameter) {
         JwtResponseDTO result = memberService.login(parameter);
 

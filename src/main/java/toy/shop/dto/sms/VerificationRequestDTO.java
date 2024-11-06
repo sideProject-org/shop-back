@@ -1,4 +1,4 @@
-package toy.shop.dto.coolsms;
+package toy.shop.dto.sms;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
