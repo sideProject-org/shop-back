@@ -3,8 +3,8 @@ package toy.shop.controller.sms;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import net.nurigo.sdk.message.response.SingleMessageSentResponse;
-import toy.shop.dto.coolsms.SMSRequestDTO;
-import toy.shop.dto.coolsms.VerificationRequestDTO;
+import toy.shop.dto.sms.SMSRequestDTO;
+import toy.shop.dto.sms.VerificationRequestDTO;
 
 @Tag(name = "휴대폰 인증 API", description = "휴대폰 인증 로직에 관한 API")
 public interface SmsControllerDocs {

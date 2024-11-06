@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import toy.shop.dto.coolsms.SMSRequestDTO;
-import toy.shop.dto.coolsms.VerificationRequestDTO;
+import toy.shop.dto.sms.SMSRequestDTO;
+import toy.shop.dto.sms.VerificationRequestDTO;
 
 import java.util.HashMap;
 import java.util.Map;
