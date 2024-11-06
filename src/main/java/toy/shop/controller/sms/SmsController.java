@@ -1,4 +1,4 @@
-package toy.shop.controller.verify;
+package toy.shop.controller.sms;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.validation.Valid;
@@ -23,7 +23,7 @@ import java.util.Random;
 @Slf4j
 @RestController
 @RequestMapping("/api/verify")
-public class VerificationController implements VerificationControllerDocs {
+public class SmsController implements SmsControllerDocs {
 
     private DefaultMessageService defaultMessageService;
     private Map<String, String> verificationCodes = new HashMap<>();
