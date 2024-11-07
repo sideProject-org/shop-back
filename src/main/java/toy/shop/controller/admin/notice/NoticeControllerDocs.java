@@ -11,9 +11,36 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 import toy.shop.dto.Response;
 import toy.shop.dto.admin.notice.NoticeTmpImageDeleteRequestDTO;
+import toy.shop.dto.admin.notice.SaveNoticeRequestDTO;
 
 @Tag(name = "관리자 - 공지사항 이미지 기능 API", description = "공지사항 이미지 기능 로직에 관한 API")
-public interface NoticeImageControllerDocs {
+public interface NoticeControllerDocs {
+
+    @Operation(summary = "공지사항 등록", description = "request 정보를 통해 공지사항 등록")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "공지사항 등록 성공", content = @Content(mediaType = "application/json", schema = @Schema(example = """
+                    {
+                        "status": 200,
+                        "message": "공지사항 등록 성공",
+                        "data": "공지사항 ID"
+                    }
+                    """))),
+            @ApiResponse(responseCode = "400", description = "공지사항 등록 실패 - 이미지 오류", content = @Content(mediaType = "application/json", schema = @Schema(example = """
+                    {
+                        "status": 400,
+                        "message": "유효하지 않은 이미지 경로입니다.",
+                        "data": null
+                    }
+                    """))),
+            @ApiResponse(responseCode = "404", description = "공지사항 등록 실패 - 사용자 오류", content = @Content(mediaType = "application/json", schema = @Schema(example = """
+                    {
+                        "status": 404,
+                        "message": "존재하지 않는 사용자 아이디입니다.",
+                        "data": null
+                    }
+                    """)))
+    })
+    ResponseEntity<Response<?>> saveNotice(SaveNoticeRequestDTO parameter);
 
     @Operation(summary = "임시 이미지 등록", description = "file 정보를 통해 임시 이미지 등록")
     @ApiResponses({

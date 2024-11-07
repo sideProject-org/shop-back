@@ -50,4 +50,24 @@ public class FileService {
 
         deleteFile.delete();
     }
+
+    /**
+     * 파일을 임시 저장소에서 메인 저장소로 이동하는 메서드입니다.
+     *
+     * @param fromPath 원본 파일 경로 (임시 저장소)
+     * @param toPath 대상 파일 경로 (메인 저장소)
+     * @param fileName 이동할 파일의 이름
+     */
+    public void moveFile(String fromPath, String toPath, String fileName) {
+        File fromFile = new File(fromPath + fileName);
+        File toFile = new File(toPath + fileName);
+
+        if (!fromFile.exists()) {
+            throw new RuntimeException("이동할 파일이 존재하지 않습니다.");
+        }
+
+        if (!fromFile.renameTo(toFile)) {
+            throw new RuntimeException("파일을 이동할 수 없습니다.");
+        }
+    }
 }

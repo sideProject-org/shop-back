@@ -34,8 +34,8 @@ public class Notice extends BaseEntity {
     private String content;
 
     @Column(nullable = false)
-    @ColumnDefault("0L")
-    private long viewCnt = 1L;
+    @ColumnDefault("1")
+    private long viewCnt = 1;
 
     @OneToMany(mappedBy = "notice")
     private List<NoticeImage> imagePaths = new ArrayList<>();
