@@ -9,7 +9,6 @@ import toy.shop.dto.admin.notice.NoticeTmpImageResponseDTO;
 import toy.shop.repository.admin.notice.NoticeImageRepository;
 import toy.shop.service.FileService;
 
-import java.io.File;
 import java.io.IOException;
 
 @Service
@@ -22,6 +21,9 @@ public class NoticeImageService {
 
     @Value("${path.noticeTmpImage}")
     private String tmpLocation;
+
+    @Value("${path.noticeImage}")
+    private String location;
 
     private final String resourceHandlerNoticeTmpURL = "/images/noticeTmpImage/";
     private final String resourceHandlerNoticeURL = "/images/noticeImage/";
@@ -49,14 +51,23 @@ public class NoticeImageService {
                 .build();
     }
 
-    public void deleteTemporaryNoticeImage(String filePath) {
+    public void deleteNoticeImage(String filePath) {
         String fileName = extractFileNameFromUrl(filePath);
 
         if (fileName == null || fileName.isEmpty()) {
             throw new IllegalArgumentException("유효하지 않은 이미지 경로입니다.");
         }
 
-        fileService.deleteFile(tmpLocation, fileName);
+        // 파일 경로가 임시 경로인지 메인 경로인지 확인
+        if (filePath.startsWith(resourceHandlerNoticeTmpURL)) {
+            // 임시 파일 경로
+            fileService.deleteFile(tmpLocation, fileName);
+        } else if (filePath.startsWith(resourceHandlerNoticeURL)) {
+            // 메인 파일 경로
+            fileService.deleteFile(location, fileName);
+        } else {
+            throw new IllegalArgumentException("알 수 없는 이미지 경로입니다.");
+        }
     }
 
     private String extractFileNameFromUrl(String imageUrl) {

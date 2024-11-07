@@ -7,9 +7,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.multipart.MultipartFile;
 import toy.shop.dto.Response;
 import toy.shop.dto.admin.notice.NoticeTmpImageDeleteRequestDTO;
@@ -46,23 +44,23 @@ public interface NoticeImageControllerDocs {
     })
     ResponseEntity<Response<?>> saveTmpImage(MultipartFile file);
 
-    @Operation(summary = "임시 이미지 삭제", description = "file 정보를 통해 임시 이미지 삭제")
+    @Operation(summary = "이미지 삭제", description = "file 정보를 통해 이미지 삭제")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "임시 파일 삭제 성공", content = @Content(mediaType = "application/json", schema = @Schema(example = """
+            @ApiResponse(responseCode = "200", description = "파일 삭제 성공", content = @Content(mediaType = "application/json", schema = @Schema(example = """
                     {
                         "status": 200,
-                        "message": "임시 파일 삭제 성공",
+                        "message": "파일 삭제 성공",
                         "data": null
                     }
                     """))),
-            @ApiResponse(responseCode = "400", description = "임시 파일 삭제 실패 - 이미지 경로 오류", content = @Content(mediaType = "application/json", schema = @Schema(example = """
+            @ApiResponse(responseCode = "400", description = "파일 삭제 실패 - 이미지 경로 오류", content = @Content(mediaType = "application/json", schema = @Schema(example = """
                     {
                         "status": 400,
                         "message": "유효하지 않은 이미지 경로입니다.",
                         "data": null
                     }
                     """))),
-            @ApiResponse(responseCode = "500", description = "임시 파일 삭제 실패 - 이미지 오류", content = @Content(mediaType = "application/json", schema = @Schema(example = """
+            @ApiResponse(responseCode = "500", description = "파일 삭제 실패 - 이미지 오류", content = @Content(mediaType = "application/json", schema = @Schema(example = """
                     {
                         "status": 500,
                         "message": "이미지를 찾을 수 없거나 삭제할 수 없습니다.",
@@ -70,5 +68,5 @@ public interface NoticeImageControllerDocs {
                     }
                     """)))
     })
-    ResponseEntity<Response<?>> deleteTmpImage(NoticeTmpImageDeleteRequestDTO parameter);
+    ResponseEntity<Response<?>> deleteImage(NoticeTmpImageDeleteRequestDTO parameter);
 }

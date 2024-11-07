@@ -31,10 +31,10 @@ public class NoticeImageController implements NoticeImageControllerDocs {
         return buildResponse(HttpStatus.OK, "임시 파일 업로드 성공", result);
     }
 
-    @PostMapping("/tmp-delete")
-    public ResponseEntity<Response<?>> deleteTmpImage(@RequestBody @Valid NoticeTmpImageDeleteRequestDTO parameter) {
-        noticeImageService.deleteTemporaryNoticeImage(parameter.getImagePath());
+    @PostMapping("/delete")
+    public ResponseEntity<Response<?>> deleteImage(@RequestBody @Valid NoticeTmpImageDeleteRequestDTO parameter) {
+        noticeImageService.deleteNoticeImage(parameter.getImagePath());
 
-        return buildResponse(HttpStatus.OK, "임시 파일 삭제 성공", null);
+        return buildResponse(HttpStatus.OK, "이미지 삭제 성공", null);
     }
 }
