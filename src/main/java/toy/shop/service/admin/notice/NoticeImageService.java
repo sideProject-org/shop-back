@@ -28,6 +28,15 @@ public class NoticeImageService {
     private final String resourceHandlerNoticeTmpURL = "/images/noticeTmpImage/";
     private final String resourceHandlerNoticeURL = "/images/noticeImage/";
 
+    /**
+     * 공지사항에 임시 이미지 파일을 저장하는 메서드입니다.
+     * 업로드된 파일을 지정된 임시 저장 위치에 저장하고, 저장된 이미지의 경로 정보를 반환합니다.
+     *
+     * @param file 업로드할 이미지 파일 (MultipartFile 형식)
+     * @return {@link NoticeTmpImageResponseDTO} 객체로, 원본 파일 이름과 저장된 이미지 경로를 포함합니다.
+     * @throws IllegalArgumentException 파일 이름이 비어 있거나 유효하지 않은 경우 발생합니다.
+     * @throws RuntimeException 이미지 업로드 중 예외가 발생한 경우 발생합니다.
+     */
     public NoticeTmpImageResponseDTO saveTemporaryNoticeImage(MultipartFile file) {
         String oriImgName = file.getOriginalFilename();
         String imgName = "";
@@ -40,7 +49,7 @@ public class NoticeImageService {
         try {
             imgName = fileService.uploadFile(tmpLocation, oriImgName, file.getBytes());
         } catch (IOException e) {
-            throw new RuntimeException("파일 업로드에 실패하였습니다.");
+            throw new RuntimeException("이미지 업로드에 실패하였습니다.");
         }
 
         imgUrl = resourceHandlerNoticeTmpURL + imgName;
@@ -51,6 +60,13 @@ public class NoticeImageService {
                 .build();
     }
 
+    /**
+     * 공지사항 이미지 파일을 삭제하는 메서드입니다.
+     * 주어진 파일 경로에 따라 이미지가 임시 저장소에 있는지 또는 메인 저장소에 있는지를 판단하여 해당 파일을 삭제합니다.
+     *
+     * @param filePath 삭제할 이미지의 경로 URL
+     * @throws IllegalArgumentException 유효하지 않거나 알 수 없는 이미지 경로인 경우 발생합니다.
+     */
     public void deleteNoticeImage(String filePath) {
         String fileName = extractFileNameFromUrl(filePath);
 
@@ -70,10 +86,17 @@ public class NoticeImageService {
         }
     }
 
+    /**
+     * 이미지 URL에서 파일 이름을 추출하는 메서드입니다.
+     *
+     * @param imageUrl 파일 이름을 추출할 이미지 URL
+     * @return 추출된 파일 이름 또는 유효하지 않은 URL인 경우 null을 반환합니다.
+     */
     private String extractFileNameFromUrl(String imageUrl) {
         if (imageUrl == null || !imageUrl.contains("/")) {
             return null;
         }
         return imageUrl.substring(imageUrl.lastIndexOf("/") + 1);
     }
+
 }

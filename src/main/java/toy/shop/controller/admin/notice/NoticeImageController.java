@@ -28,7 +28,7 @@ public class NoticeImageController implements NoticeImageControllerDocs {
 
         NoticeTmpImageResponseDTO result = noticeImageService.saveTemporaryNoticeImage(file);
 
-        return buildResponse(HttpStatus.OK, "임시 파일 업로드 성공", result);
+        return buildResponse(HttpStatus.OK, "임시 이미지 업로드 성공", result);
     }
 
     @PostMapping("/delete")
