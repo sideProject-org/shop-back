@@ -39,11 +39,6 @@ jwt:
   access_expire_time: ${A_EX_TIME}
   refresh_expire_time: ${R_EX_TIME}
 
-coolsms:
-  key: ${COOLSMS_KEY}
-  secret: ${COOLSMS_SECRET}
-  number: ${COOLSMS_NUMBER}
-
 props:
   reset-password-url: 127.0.0.1:8080/pw
 

@@ -40,11 +40,6 @@ jwt:
   access_expire_time: 100000
   refresh_expire_time: 1000000
 
-coolsms:
-  key: lkaehtoihaoet098
-  secret: 0125lkaekjlkjadfoiyaet07019238
-  number: 01012345678
-
 props:
   reset-password-url: 127.0.0.1:8080/pw
 
