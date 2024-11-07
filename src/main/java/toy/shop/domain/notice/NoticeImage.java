@@ -2,6 +2,7 @@ package toy.shop.domain.notice;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -22,4 +23,10 @@ public class NoticeImage {
 
     @Column(nullable = false)
     private String imagePath;
+
+    @Builder
+    public NoticeImage(Notice notice, String imagePath) {
+        this.notice = notice;
+        this.imagePath = imagePath;
+    }
 }

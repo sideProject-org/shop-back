@@ -53,11 +53,11 @@ dependencies {
 	// redis
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
-	// coolsms
-	implementation 'net.nurigo:sdk:4.3.0'
-
 	// mail
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
+
+	// jsoup
+	implementation 'org.jsoup:jsoup:1.7.2'
 }
 
 configurations {

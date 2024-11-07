@@ -39,15 +39,12 @@ jwt:
   access_expire_time: ${A_EX_TIME}
   refresh_expire_time: ${R_EX_TIME}
 
-coolsms:
-  key: ${COOLSMS_KEY}
-  secret: ${COOLSMS_SECRET}
-  number: ${COOLSMS_NUMBER}
-
 props:
   reset-password-url: 127.0.0.1:8080/pw
 
 path:
-  profileImage: C://shopImages/profileImages
-  noticeImage: C://shopImages/noticeImages
-  boardImage: C://shopImages/boardImages
+  profileImage: C://shopImages/profileImages/
+  noticeImage: C://shopImages/noticeImages/
+  noticeTmpImage: C://shopImages/noticeImages/tmp/
+  boardImage: C://shopImages/boardImages/
+  boardTmpImage: C://shopImages/boardImages/tmp/

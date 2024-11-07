@@ -2,6 +2,7 @@ package toy.shop.domain.notice;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
@@ -33,12 +34,20 @@ public class Notice extends BaseEntity {
     private String content;
 
     @Column(nullable = false)
-    private int viewCnt;
+    @ColumnDefault("1")
+    private long viewCnt = 1;
 
     @OneToMany(mappedBy = "notice")
     private List<NoticeImage> imagePaths = new ArrayList<>();
 
     @Column(nullable = false)
     @ColumnDefault("'N'")
-    private char deleteType;
+    private char deleteType = 'N';
+
+    @Builder
+    public Notice(Member member, String title, String content) {
+        this.member = member;
+        this.title = title;
+        this.content = content;
+    }
 }
