@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import toy.shop.dto.Response;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -131,6 +132,38 @@ public class ExceptionController {
      */
     @ExceptionHandler(AccessTokenNotExpiredException.class)
     public ResponseEntity<Response<?>> handleAccessTokenNotExpiredException(AccessTokenNotExpiredException ex) {
+        Response<?> response = Response.builder()
+                .status(HttpStatus.BAD_REQUEST.value())
+                .message(ex.getMessage())
+                .data(null)
+                .build();
+
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    /**
+     * 기타 RuntimeException 처리
+     * @param ex
+     * @return
+     */
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<Response<?>> handleRuntimeException(RuntimeException ex) {
+        Response<?> response = Response.builder()
+                .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                .message(ex.getMessage())
+                .data(null)
+                .build();
+
+        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    /**
+     * IllegalArgumentException 처리
+     * @param ex
+     * @return
+     */
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<Response<?>> handleIllegalArgumentException(IllegalArgumentException ex) {
         Response<?> response = Response.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
                 .message(ex.getMessage())

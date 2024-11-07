@@ -48,6 +48,8 @@ props:
   reset-password-url: 127.0.0.1:8080/pw
 
 path:
-  profileImage: /home/ubuntu/shopImages/profileImages
-  noticeImage: /home/ubuntu/shopImages/noticeImages
-  boardImage: /home/ubuntu/shopImages/boardImages
+  profileImage: /home/ubuntu/shopImages/profileImages/
+  noticeImage: /home/ubuntu/shopImages/noticeImages/
+  noticeTmpImage: /home/ubuntu/shopImages/noticeImages/tmp/
+  boardImage: /home/ubuntu/shopImages/boardImages/
+  boardTmpImage: /home/ubuntu/shopImages/boardImages/tmp/

@@ -28,7 +28,7 @@ public class SecurityConfig {
             "/swagger-ui/**",
             "/v3/**",
             "/api/cmmn/**",
-            "/api/sms/**"
+            "/images/**"
     };
     private final JwtProvider jwtProvider;
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
