@@ -11,7 +11,7 @@ import org.springframework.security.core.Authentication;
 import toy.shop.dto.Response;
 import toy.shop.dto.member.PasswordResetRequestDTO;
 
-@Tag(name = "회원 기능 API", description = "회원 기능 로직에 관한 API")
+@Tag(name = "회원 API", description = "회원 기능들에 대한 API")
 public interface MemberControllerDocs {
 
     @Operation(summary = "로그아웃", description = "Request 정보를 통해 로그아웃")

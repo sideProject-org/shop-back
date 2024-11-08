@@ -14,7 +14,7 @@ import toy.shop.dto.Response;
 import toy.shop.dto.admin.notice.NoticeTmpImageDeleteRequestDTO;
 import toy.shop.dto.admin.notice.SaveNoticeRequestDTO;
 
-@Tag(name = "관리자 - 공지사항 이미지 기능 API", description = "공지사항 이미지 기능 로직에 관한 API")
+@Tag(name = "관리자 - 공지사항 API", description = "공지사항 기능들에 대한 API")
 public interface NoticeControllerDocs {
 
     @Operation(summary = "공지사항 등록", description = "request 정보를 통해 공지사항 등록")
