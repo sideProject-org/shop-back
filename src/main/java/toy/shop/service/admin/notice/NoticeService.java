@@ -1,6 +1,7 @@
 package toy.shop.service.admin.notice;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -9,6 +10,7 @@ import toy.shop.cmmn.exception.NotFoundException;
 import toy.shop.domain.member.Member;
 import toy.shop.domain.notice.Notice;
 import toy.shop.dto.admin.notice.SaveNoticeRequestDTO;
+import toy.shop.dto.admin.notice.UpdateNoticeRequestDTO;
 import toy.shop.jwt.UserDetailsImpl;
 import toy.shop.repository.admin.notice.NoticeRepository;
 import toy.shop.repository.member.MemberRepository;
@@ -38,8 +40,6 @@ public class NoticeService {
                 .orElseThrow(() -> new UsernameNotFoundException("존재하지 않는 사용자 아이디입니다."));
 
         String updatedContent = noticeImageService.convertTemporaryUrlsToMainUrls(parameter.getContent());
-
-        // Notice 저장
         Notice notice = Notice.builder()
                 .member(member)
                 .title(parameter.getTitle())
@@ -53,7 +53,58 @@ public class NoticeService {
         return savedNotice.getId();
     }
 
+    /**
+     * 공지사항을 수정하는 메서드입니다.
+     *
+     * @param parameter  공지사항 수정을 위한 요청 데이터(DTO)입니다. 수정할 제목, 내용, 임시 이미지 URL 등이 포함됩니다.
+     * @param userDetails 현재 인증된 사용자의 정보를 포함하는 객체입니다.
+     * @throws UsernameNotFoundException 사용자가 존재하지 않을 경우 발생합니다.
+     * @throws NotFoundException 공지사항이 존재하지 않을 경우 발생합니다.
+     * @throws AccessDeniedException 공지사항 작성자가 아닌 사용자가 수정을 시도할 경우 발생합니다.
+     *
+     * <p>이 메서드는 다음과 같은 작업을 수행합니다:
+     * <ul>
+     *   <li>사용자 ID를 기반으로 사용자를 조회하고, 존재하지 않으면 예외를 발생시킵니다.</li>
+     *   <li>공지사항 ID를 기반으로 공지사항을 조회하고, 존재하지 않으면 예외를 발생시킵니다.</li>
+     *   <li>조회된 공지사항의 작성자와 현재 사용자가 일치하는지 검증합니다. 일치하지 않으면 접근 거부 예외를 발생시킵니다.</li>
+     *   <li>공지사항의 내용을 업데이트하기 위해 임시 URL을 정식 URL로 변환합니다.</li>
+     *   <li>공지사항의 제목과 내용을 업데이트합니다.</li>
+     *   <li>임시 이미지를 정식 이미지로 이동합니다.</li>
+     * </ul>
+     * <p>
+     * 메서드는 트랜잭션이 활성화된 상태에서 실행되며, 트랜잭션이 종료될 때 변경 사항이 커밋됩니다.
+     */
+    @Transactional
+    public void updateNotice(UpdateNoticeRequestDTO parameter, UserDetailsImpl userDetails) {
+        Member member = memberRepository.findById(userDetails.getUserId())
+                .orElseThrow(() -> new UsernameNotFoundException("존재하지 않는 사용자 아이디입니다."));
 
+        Notice notice = noticeRepository.findById(parameter.getNoticeId())
+                .orElseThrow(() -> new NotFoundException("존재하지 않는 공지사항 아이디입니다."));
+
+        if (!notice.getMember().getId().equals(member.getId())) {
+            throw new AccessDeniedException("공지사항을 작성자가 아닙니다.");
+        }
+
+        String updatedContent = noticeImageService.convertTemporaryUrlsToMainUrls(parameter.getContent());
+
+        notice.updateNotice(parameter.getTitle(), updatedContent);
+
+        noticeImageService.moveTemporaryImagesToMain(notice, parameter.getTempImageUrls());
+    }
+
+
+    /**
+     * 공지사항을 삭제하는 메서드입니다. 공지사항 ID를 기반으로 공지사항을 조회하고,
+     * 해당 공지사항이 요청한 사용자의 작성인지 확인합니다. 작성자가 아닌 경우 예외를 발생시킵니다.
+     * 공지사항에 연결된 이미지 정보를 삭제한 후, 공지사항을 데이터베이스에서 삭제합니다.
+     *
+     * @param noticeId 삭제할 공지사항의 ID
+     * @param member 요청을 수행하는 사용자 정보가 담긴 {@link UserDetailsImpl} 객체.
+     *               사용자의 ID를 통해 작성자 여부를 확인합니다.
+     * @throws NotFoundException 주어진 ID에 해당하는 공지사항이 존재하지 않는 경우 발생합니다.
+     * @throws BadCredentialsException 요청한 사용자가 공지사항의 작성자가 아닌 경우 발생합니다.
+     */
     @Transactional
     public void deleteNotice(Long noticeId, UserDetailsImpl member) {
         Notice notice = noticeRepository.findById(noticeId)
@@ -66,4 +117,5 @@ public class NoticeService {
         noticeImageService.deleteNoticeImageDB(noticeId);
         noticeRepository.delete(notice);
     }
+
 }

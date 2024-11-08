@@ -82,19 +82,21 @@ public class NoticeImageService {
                 throw new IllegalArgumentException("유효하지 않은 이미지 경로입니다.");
             }
 
-            // 파일을 임시 저장소에서 메인 저장소로 이동
-            fileService.moveFile(tmpLocation, location, fileName);
+            if (tempImageUrl.startsWith(resourceHandlerNoticeTmpURL)) {
+                // 파일을 임시 저장소에서 메인 저장소로 이동
+                fileService.moveFile(tmpLocation, location, fileName);
 
-            // 메인 URL 생성
-            String mainImageUrl = resourceHandlerNoticeURL + fileName;
+                // 메인 URL 생성
+                String mainImageUrl = resourceHandlerNoticeURL + fileName;
 
-            // 이미지 정보를 Notice와 연결하여 DB에 저장
-            NoticeImage noticeImage = NoticeImage.builder()
-                    .notice(notice)
-                    .imagePath(mainImageUrl)
-                    .build();
+                // 이미지 정보를 Notice와 연결하여 DB에 저장
+                NoticeImage noticeImage = NoticeImage.builder()
+                        .notice(notice)
+                        .imagePath(mainImageUrl)
+                        .build();
 
-            noticeImageRepository.save(noticeImage);
+                noticeImageRepository.save(noticeImage);
+            }
         }
     }
 
