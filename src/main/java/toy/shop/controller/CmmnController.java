@@ -7,9 +7,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import toy.shop.dto.Response;
 import toy.shop.dto.jwt.JwtReissueDTO;
+import toy.shop.dto.jwt.JwtResponseDTO;
 import toy.shop.dto.member.LoginRequestDTO;
 import toy.shop.dto.member.SignupRequestDTO;
-import toy.shop.dto.jwt.JwtResponseDTO;
 import toy.shop.service.member.MemberService;
 
 import static toy.shop.controller.ResponseBuilder.buildResponse;

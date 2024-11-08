@@ -27,7 +27,7 @@ public class NoticeController implements NoticeControllerDocs {
     private final NoticeService noticeService;
     private final NoticeImageService noticeImageService;
 
-    @PostMapping("")
+    @PostMapping
     public ResponseEntity<Response<?>> saveNotice(@RequestBody @Valid SaveNoticeRequestDTO parameter, Authentication authentication) {
         UserDetailsImpl memberDetails = (UserDetailsImpl) authentication.getPrincipal();
         Long result = noticeService.saveNotice(parameter, memberDetails);
