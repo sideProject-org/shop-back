@@ -27,7 +27,7 @@ public class MemberController implements MemberControllerDocs {
         return buildResponse(HttpStatus.OK, "로그아웃 성공", null);
     }
 
-    @GetMapping("/send-reset-password")
+    @GetMapping("/password-reset-email")
     public ResponseEntity<Response<?>> sendResetPasswordEmail(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader) {
         String token = authorizationHeader.replace("Bearer ", "");
         PasswordRestResponseDTO result = memberService.sendResetEmail(token);
@@ -35,7 +35,7 @@ public class MemberController implements MemberControllerDocs {
         return buildResponse(HttpStatus.OK, "이메일 전송 성공", result);
     }
 
-    @PutMapping("/reset-password")
+    @PutMapping("/password")
     public ResponseEntity<Response<?>> resetPassword(@RequestBody @Valid PasswordResetRequestDTO parameter) {
         boolean result = memberService.resetPassword(parameter);
 

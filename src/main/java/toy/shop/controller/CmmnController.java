@@ -25,7 +25,7 @@ public class CmmnController implements CmmnControllerDocs {
     public ResponseEntity<Response<?>> joinMember(@RequestBody @Valid SignupRequestDTO parameter) {
         Long result = memberService.signup(parameter);
 
-        return buildResponse(HttpStatus.OK, "회원가입 성공", result);
+        return buildResponse(HttpStatus.CREATED, "회원가입 성공", result);
     }
 
     @PostMapping("/sign-in")
