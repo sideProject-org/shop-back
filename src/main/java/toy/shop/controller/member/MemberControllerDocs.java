@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import toy.shop.dto.Response;
@@ -29,7 +30,7 @@ public interface MemberControllerDocs {
     })
     ResponseEntity<?> logout(String requestAccessToken);
 
-    @Operation(summary = "비밀번호 변경 이메일 전송", description = "token 정보를 통해 비밀번호 변경 URL 이메일로 전송")
+    @Operation(summary = "비밀번호 변경 이메일 전송", description = "비밀번호 변경 URL 이메일로 전송")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "이메일 전송 성공", content = @Content(mediaType = "application/json", schema = @Schema(example = """
                     {
@@ -49,7 +50,7 @@ public interface MemberControllerDocs {
                     }
                     """)))
     })
-    ResponseEntity<Response<?>> sendResetPasswordEmail(String authorizationHeader);
+    ResponseEntity<Response<?>> sendResetPasswordEmail(Authentication authentication);
 
     @Operation(summary = "비밀번호 변경", description = "request 정보를 통해 비밀번호 변경")
     @ApiResponses({
