@@ -12,6 +12,7 @@ import toy.shop.dto.Response;
 import toy.shop.dto.admin.notice.NoticeTmpImageDeleteRequestDTO;
 import toy.shop.dto.admin.notice.NoticeTmpImageResponseDTO;
 import toy.shop.dto.admin.notice.SaveNoticeRequestDTO;
+import toy.shop.dto.admin.notice.UpdateNoticeRequestDTO;
 import toy.shop.jwt.UserDetailsImpl;
 import toy.shop.service.admin.notice.NoticeImageService;
 import toy.shop.service.admin.notice.NoticeService;
@@ -29,10 +30,18 @@ public class NoticeController implements NoticeControllerDocs {
 
     @PostMapping
     public ResponseEntity<Response<?>> saveNotice(@RequestBody @Valid SaveNoticeRequestDTO parameter, Authentication authentication) {
-        UserDetailsImpl memberDetails = (UserDetailsImpl) authentication.getPrincipal();
-        Long result = noticeService.saveNotice(parameter, memberDetails);
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+        Long result = noticeService.saveNotice(parameter, userDetails);
 
         return buildResponse(HttpStatus.OK, "공지사항 등록 성공", result);
+    }
+
+    @PutMapping
+    public ResponseEntity<Response<?>> updateNotice(@RequestBody @Valid UpdateNoticeRequestDTO parameter, Authentication authentication) {
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+        noticeService.updateNotice(parameter, userDetails);
+
+        return buildResponse(HttpStatus.NO_CONTENT, "공지사항 수정 성공", null);
     }
 
     @DeleteMapping("/{noticeId}")
@@ -42,7 +51,7 @@ public class NoticeController implements NoticeControllerDocs {
 
         noticeService.deleteNotice(noticeId, memberDetails);
 
-        return buildResponse(HttpStatus.OK, "공지사항 삭제 성공", null);
+        return buildResponse(HttpStatus.NO_CONTENT, "공지사항 삭제 성공", null);
     }
 
     @PostMapping("/images/tmp")
@@ -60,6 +69,6 @@ public class NoticeController implements NoticeControllerDocs {
     public ResponseEntity<Response<?>> deleteImage(@RequestBody @Valid NoticeTmpImageDeleteRequestDTO parameter) {
         noticeImageService.deleteNoticeImage(parameter.getImagePath());
 
-        return buildResponse(HttpStatus.OK, "이미지 삭제 성공", null);
+        return buildResponse(HttpStatus.NO_CONTENT, "이미지 삭제 성공", null);
     }
 }
