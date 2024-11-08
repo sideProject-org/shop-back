@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.multipart.MultipartFile;
 import toy.shop.dto.Response;
 import toy.shop.dto.admin.notice.NoticeTmpImageDeleteRequestDTO;
@@ -40,7 +41,33 @@ public interface NoticeControllerDocs {
                     }
                     """)))
     })
-    ResponseEntity<Response<?>> saveNotice(SaveNoticeRequestDTO parameter);
+    ResponseEntity<Response<?>> saveNotice(SaveNoticeRequestDTO parameter, Authentication authentication);
+
+    @Operation(summary = "공지사항 삭제", description = "request 정보를 통해 공지사항 삭제")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "공지사항 삭제 성공", content = @Content(mediaType = "application/json", schema = @Schema(example = """
+                    {
+                        "status": 200,
+                        "message": "공지사항 삭제 성공",
+                        "data": "공지사항 ID"
+                    }
+                    """))),
+            @ApiResponse(responseCode = "401", description = "공지사항 등록 실패 - 사용자 오류", content = @Content(mediaType = "application/json", schema = @Schema(example = """
+                    {
+                        "status": 401,
+                        "message": "해당 공지사항 작성자가 아닙니다.",
+                        "data": null
+                    }
+                    """))),
+            @ApiResponse(responseCode = "404", description = "공지사항 등록 실패 - 공지사항 오류", content = @Content(mediaType = "application/json", schema = @Schema(example = """
+                    {
+                        "status": 404,
+                        "message": "공지사항이 존재하지 않습니다.",
+                        "data": null
+                    }
+                    """)))
+    })
+    ResponseEntity<Response<?>> deleteNotice(Long noticeId, Authentication authentication);
 
     @Operation(summary = "임시 이미지 등록", description = "file 정보를 통해 임시 이미지 등록")
     @ApiResponses({

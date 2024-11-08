@@ -49,9 +49,9 @@ public interface CmmnControllerDocs {
 //            }))
 //    })
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "회원가입 성공", content = @Content(mediaType = "application/json", schema = @Schema(example = """
+            @ApiResponse(responseCode = "201", description = "회원가입 성공", content = @Content(mediaType = "application/json", schema = @Schema(example = """
                     {
-                        "status": 200,
+                        "status": 201,
                         "message": "회원가입 성공",
                         "data": "{회원ID}"
                     }

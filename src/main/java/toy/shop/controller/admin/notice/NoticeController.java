@@ -12,6 +12,7 @@ import toy.shop.dto.Response;
 import toy.shop.dto.admin.notice.NoticeTmpImageDeleteRequestDTO;
 import toy.shop.dto.admin.notice.NoticeTmpImageResponseDTO;
 import toy.shop.dto.admin.notice.SaveNoticeRequestDTO;
+import toy.shop.jwt.UserDetailsImpl;
 import toy.shop.service.admin.notice.NoticeImageService;
 import toy.shop.service.admin.notice.NoticeService;
 
@@ -27,16 +28,19 @@ public class NoticeController implements NoticeControllerDocs {
     private final NoticeImageService noticeImageService;
 
     @PostMapping("")
-    public ResponseEntity<Response<?>> saveNotice(@RequestBody @Valid SaveNoticeRequestDTO parameter) {
-        Long result = noticeService.saveNotice(parameter);
+    public ResponseEntity<Response<?>> saveNotice(@RequestBody @Valid SaveNoticeRequestDTO parameter, Authentication authentication) {
+        UserDetailsImpl memberDetails = (UserDetailsImpl) authentication.getPrincipal();
+        Long result = noticeService.saveNotice(parameter, memberDetails);
 
         return buildResponse(HttpStatus.OK, "공지사항 등록 성공", result);
     }
 
     @DeleteMapping("/{noticeId}")
-    public ResponseEntity<Response<?>> deleteNotice(@PathVariable("noticeId") Long id, Authentication authentication) {
+    public ResponseEntity<Response<?>> deleteNotice(@PathVariable("noticeId") Long noticeId, Authentication authentication) {
+        UserDetailsImpl memberDetails = (UserDetailsImpl) authentication.getPrincipal();
         String email = authentication.getName();
-        noticeService.deleteNotice(id, email);
+
+        noticeService.deleteNotice(noticeId, memberDetails);
 
         return buildResponse(HttpStatus.OK, "공지사항 삭제 성공", null);
     }

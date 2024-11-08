@@ -9,6 +9,7 @@ import toy.shop.cmmn.exception.NotFoundException;
 import toy.shop.domain.member.Member;
 import toy.shop.domain.notice.Notice;
 import toy.shop.dto.admin.notice.SaveNoticeRequestDTO;
+import toy.shop.jwt.UserDetailsImpl;
 import toy.shop.repository.admin.notice.NoticeRepository;
 import toy.shop.repository.member.MemberRepository;
 
@@ -32,8 +33,8 @@ public class NoticeService {
      * @throws UsernameNotFoundException 제공된 사용자 ID가 존재하지 않는 경우 발생합니다.
      */
     @Transactional
-    public Long saveNotice(SaveNoticeRequestDTO parameter) {
-        Member member = memberRepository.findById(parameter.getMemberId())
+    public Long saveNotice(SaveNoticeRequestDTO parameter, UserDetailsImpl userDetails) {
+        Member member = memberRepository.findById(userDetails.getUserId())
                 .orElseThrow(() -> new UsernameNotFoundException("존재하지 않는 사용자 아이디입니다."));
 
         String updatedContent = noticeImageService.convertTemporaryUrlsToMainUrls(parameter.getContent());
@@ -52,27 +53,13 @@ public class NoticeService {
         return savedNotice.getId();
     }
 
-    /**
-     * 공지사항 ID와 회원 이메일을 기반으로 공지사항 및 연관된 이미지 데이터를 삭제하는 메서드입니다.
-     *
-     * 이 메서드는 먼저 회원 이메일을 사용하여 회원 정보를 조회하고, 공지사항 ID로 공지사항을 조회합니다.
-     * 요청한 회원이 해당 공지사항의 작성자인지 확인하며, 작성자가 아닌 경우 인증 예외가 발생합니다.
-     * 검증이 완료되면 공지사항을 삭제하고, 관련된 이미지 데이터를 데이터베이스와 파일 시스템에서 삭제합니다.
-     *
-     * @param noticeId 삭제할 공지사항의 ID (null이 아니어야 함)
-     * @param memberEmail 요청한 회원의 이메일 (null이 아니어야 함)
-     * @throws UsernameNotFoundException 주어진 이메일에 해당하는 회원이 존재하지 않을 경우 발생합니다.
-     * @throws NotFoundException 공지사항이 존재하지 않을 경우 발생합니다.
-     * @throws BadCredentialsException 공지사항 작성자가 아닌 경우 발생합니다.
-     */
+
     @Transactional
-    public void deleteNotice(Long noticeId, String memberEmail) {
-        Member member = memberRepository.findByEmail(memberEmail)
-                .orElseThrow(() -> new UsernameNotFoundException("존재하지 않는 이메일입니다."));
+    public void deleteNotice(Long noticeId, UserDetailsImpl member) {
         Notice notice = noticeRepository.findById(noticeId)
                 .orElseThrow(() -> new NotFoundException("공지사항이 존재하지 않습니다."));
 
-        if (!notice.getMember().getId().equals(member.getId())) {
+        if (!notice.getMember().getId().equals(member.getUserId())) {
             throw new BadCredentialsException("해당 공지사항 작성자가 아닙니다.");
         }
 
