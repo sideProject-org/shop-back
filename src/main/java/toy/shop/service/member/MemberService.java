@@ -17,11 +17,12 @@ import toy.shop.cmmn.exception.AccessTokenNotExpiredException;
 import toy.shop.cmmn.exception.ConflictException;
 import toy.shop.domain.member.Member;
 import toy.shop.dto.jwt.JwtResponseDTO;
+import toy.shop.dto.member.LoginRequestDTO;
 import toy.shop.dto.member.PasswordResetRequestDTO;
 import toy.shop.dto.member.PasswordRestResponseDTO;
-import toy.shop.dto.member.LoginRequestDTO;
 import toy.shop.dto.member.SignupRequestDTO;
 import toy.shop.jwt.JwtProvider;
+import toy.shop.jwt.UserDetailsImpl;
 import toy.shop.repository.member.MemberRepository;
 import toy.shop.service.MailService;
 import toy.shop.service.RedisService;
@@ -294,29 +295,29 @@ public class MemberService {
 
     /**
      * 비밀번호 재설정 이메일을 발송하는 메서드입니다.
-     * 전달받은 JWT 토큰에서 이메일 정보를 추출하여, 해당 이메일이 존재하는지 확인합니다.
-     * 존재하는 경우 비밀번호 재설정 이메일을 발송하고, 발송된 이메일과 고유 토큰 정보를 포함하는 DTO를 반환합니다.
+     * 주어진 사용자 세부 정보를 기반으로 사용자의 이메일을 확인한 후, 비밀번호 재설정 이메일을 생성하여 발송합니다.
+     * 생성된 고유 토큰과 사용자 이메일을 포함한 응답 DTO를 반환합니다.
      *
-     * @param token 사용자 인증에 사용된 JWT 토큰, 이메일 정보가 포함되어 있어야 합니다.
+     * @param userDetails 사용자 정보를 담고 있는 {@link UserDetailsImpl} 객체.
+     *                    이 객체는 사용자의 이메일(사용자 이름) 정보를 포함합니다.
      * @return 비밀번호 재설정 이메일 발송에 대한 정보를 담은 {@link PasswordRestResponseDTO} 객체.
      *         이 DTO는 사용자 이메일과 재설정에 사용되는 UUID 토큰을 포함합니다.
-     * @throws UsernameNotFoundException 이메일이 존재하지 않는 경우 발생합니다.
+     * @throws UsernameNotFoundException 사용자의 이메일이 존재하지 않을 경우 발생합니다.
      */
     @Transactional
-    public PasswordRestResponseDTO sendResetEmail(String token) {
-        String userEmail = jwtProvider.getClaims(token).get("email", String.class);
-
-        if (memberRepository.existsByEmail(userEmail)) {
-            String uuid = mailService.generateResetEmail(userEmail);
+    public PasswordRestResponseDTO sendResetEmail(UserDetailsImpl userDetails) {
+        if (memberRepository.existsByEmail(userDetails.getUsername())) {
+            String uuid = mailService.generateResetEmail(userDetails.getUsername());
 
             return PasswordRestResponseDTO.builder()
-                    .userEmail(userEmail)
+                    .userEmail(userDetails.getUsername())
                     .token(uuid)
                     .build();
         } else {
             throw new UsernameNotFoundException("존재하지 않는 이메일입니다.");
         }
     }
+
 
     /**
      * 비밀번호 재설정을 수행하는 메서드입니다.

@@ -6,15 +6,12 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.security.core.Authentication;
 import toy.shop.dto.Response;
 import toy.shop.dto.member.PasswordResetRequestDTO;
 
-@Tag(name = "회원 기능 API", description = "회원 기능 로직에 관한 API")
+@Tag(name = "회원 API", description = "회원 기능들에 대한 API")
 public interface MemberControllerDocs {
 
     @Operation(summary = "로그아웃", description = "Request 정보를 통해 로그아웃")
@@ -29,7 +26,7 @@ public interface MemberControllerDocs {
     })
     ResponseEntity<?> logout(String requestAccessToken);
 
-    @Operation(summary = "비밀번호 변경 이메일 전송", description = "token 정보를 통해 비밀번호 변경 URL 이메일로 전송")
+    @Operation(summary = "비밀번호 변경 이메일 전송", description = "비밀번호 변경 URL 이메일로 전송")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "이메일 전송 성공", content = @Content(mediaType = "application/json", schema = @Schema(example = """
                     {
@@ -49,7 +46,7 @@ public interface MemberControllerDocs {
                     }
                     """)))
     })
-    ResponseEntity<Response<?>> sendResetPasswordEmail(String authorizationHeader);
+    ResponseEntity<Response<?>> sendResetPasswordEmail(Authentication authentication);
 
     @Operation(summary = "비밀번호 변경", description = "request 정보를 통해 비밀번호 변경")
     @ApiResponses({

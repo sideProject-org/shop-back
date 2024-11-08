@@ -12,7 +12,7 @@ import toy.shop.dto.jwt.JwtReissueDTO;
 import toy.shop.dto.member.LoginRequestDTO;
 import toy.shop.dto.member.SignupRequestDTO;
 
-@Tag(name = "공통 기능 API", description = "공통 기능 로직에 관한 API")
+@Tag(name = "공통 API", description = "공통 기능들에 대한 API")
 public interface CmmnControllerDocs {
 
     @Operation(summary = "회원가입", description = "Request 정보를 통해 회원가입")
@@ -49,9 +49,9 @@ public interface CmmnControllerDocs {
 //            }))
 //    })
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "회원가입 성공", content = @Content(mediaType = "application/json", schema = @Schema(example = """
+            @ApiResponse(responseCode = "201", description = "회원가입 성공", content = @Content(mediaType = "application/json", schema = @Schema(example = """
                     {
-                        "status": 200,
+                        "status": 201,
                         "message": "회원가입 성공",
                         "data": "{회원ID}"
                     }

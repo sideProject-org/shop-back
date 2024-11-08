@@ -7,9 +7,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import toy.shop.dto.Response;
 import toy.shop.dto.jwt.JwtReissueDTO;
+import toy.shop.dto.jwt.JwtResponseDTO;
 import toy.shop.dto.member.LoginRequestDTO;
 import toy.shop.dto.member.SignupRequestDTO;
-import toy.shop.dto.jwt.JwtResponseDTO;
 import toy.shop.service.member.MemberService;
 
 import static toy.shop.controller.ResponseBuilder.buildResponse;
@@ -25,7 +25,7 @@ public class CmmnController implements CmmnControllerDocs {
     public ResponseEntity<Response<?>> joinMember(@RequestBody @Valid SignupRequestDTO parameter) {
         Long result = memberService.signup(parameter);
 
-        return buildResponse(HttpStatus.OK, "회원가입 성공", result);
+        return buildResponse(HttpStatus.CREATED, "회원가입 성공", result);
     }
 
     @PostMapping("/sign-in")

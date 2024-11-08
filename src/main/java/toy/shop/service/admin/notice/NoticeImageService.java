@@ -157,6 +157,30 @@ public class NoticeImageService {
     }
 
     /**
+     * 공지사항 ID를 기반으로 데이터베이스에 저장된 모든 NoticeImage 엔티티를 삭제하고,
+     * 해당 이미지 파일을 파일 시스템에서 삭제하는 메서드입니다.
+     *
+     * 이 메서드는 주어진 공지사항 ID에 연관된 모든 공지사항 이미지 레코드를 조회한 후,
+     * 각 이미지의 파일 경로를 기반으로 실제 파일을 삭제합니다. 모든 파일 삭제가 완료된 후,
+     * 데이터베이스에서 해당 이미지 레코드를 삭제합니다.
+     *
+     * @param noticeId 공지사항 ID (null이 아니어야 함)
+     * @throws IllegalArgumentException 공지사항 ID가 null일 경우 발생합니다.
+     */
+    public void deleteNoticeImageDB(Long noticeId) {
+        if (noticeId == null) {
+            throw new IllegalArgumentException("공지사항 ID를 기입해주세요.");
+        }
+        List<NoticeImage> images = noticeImageRepository.findByNoticeId(noticeId);
+
+        for (NoticeImage image : images) {
+            deleteNoticeImage(image.getImagePath());
+        }
+
+        noticeImageRepository.deleteByNoticeId(noticeId);
+    }
+
+    /**
      * 이미지 URL에서 파일 이름을 추출하는 메서드입니다.
      *
      * @param imageUrl 파일 이름을 추출할 이미지 URL

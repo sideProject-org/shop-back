@@ -1,12 +1,15 @@
 package toy.shop.service.admin.notice;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import toy.shop.cmmn.exception.NotFoundException;
 import toy.shop.domain.member.Member;
 import toy.shop.domain.notice.Notice;
 import toy.shop.dto.admin.notice.SaveNoticeRequestDTO;
+import toy.shop.jwt.UserDetailsImpl;
 import toy.shop.repository.admin.notice.NoticeRepository;
 import toy.shop.repository.member.MemberRepository;
 
@@ -30,8 +33,8 @@ public class NoticeService {
      * @throws UsernameNotFoundException 제공된 사용자 ID가 존재하지 않는 경우 발생합니다.
      */
     @Transactional
-    public Long saveNotice(SaveNoticeRequestDTO parameter) {
-        Member member = memberRepository.findById(parameter.getMemberId())
+    public Long saveNotice(SaveNoticeRequestDTO parameter, UserDetailsImpl userDetails) {
+        Member member = memberRepository.findById(userDetails.getUserId())
                 .orElseThrow(() -> new UsernameNotFoundException("존재하지 않는 사용자 아이디입니다."));
 
         String updatedContent = noticeImageService.convertTemporaryUrlsToMainUrls(parameter.getContent());
@@ -50,4 +53,17 @@ public class NoticeService {
         return savedNotice.getId();
     }
 
+
+    @Transactional
+    public void deleteNotice(Long noticeId, UserDetailsImpl member) {
+        Notice notice = noticeRepository.findById(noticeId)
+                .orElseThrow(() -> new NotFoundException("공지사항이 존재하지 않습니다."));
+
+        if (!notice.getMember().getId().equals(member.getUserId())) {
+            throw new BadCredentialsException("해당 공지사항 작성자가 아닙니다.");
+        }
+
+        noticeImageService.deleteNoticeImageDB(noticeId);
+        noticeRepository.delete(notice);
+    }
 }
