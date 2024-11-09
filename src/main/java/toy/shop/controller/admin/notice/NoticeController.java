@@ -41,7 +41,7 @@ public class NoticeController implements NoticeControllerDocs {
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
         noticeService.updateNotice(parameter, userDetails);
 
-        return buildResponse(HttpStatus.NO_CONTENT, "공지사항 수정 성공", null);
+        return buildResponse(HttpStatus.OK, "공지사항 수정 성공", null);
     }
 
     @DeleteMapping("/{noticeId}")
@@ -51,7 +51,7 @@ public class NoticeController implements NoticeControllerDocs {
 
         noticeService.deleteNotice(noticeId, memberDetails);
 
-        return buildResponse(HttpStatus.NO_CONTENT, "공지사항 삭제 성공", null);
+        return buildResponse(HttpStatus.OK, "공지사항 삭제 성공", null);
     }
 
     @PostMapping("/images/tmp")
@@ -69,6 +69,6 @@ public class NoticeController implements NoticeControllerDocs {
     public ResponseEntity<Response<?>> deleteImage(@RequestBody @Valid NoticeTmpImageDeleteRequestDTO parameter) {
         noticeImageService.deleteNoticeImage(parameter.getImagePath());
 
-        return buildResponse(HttpStatus.NO_CONTENT, "이미지 삭제 성공", null);
+        return buildResponse(HttpStatus.OK, "이미지 삭제 성공", null);
     }
 }

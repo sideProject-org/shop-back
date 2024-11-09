@@ -118,4 +118,23 @@ public class NoticeService {
         noticeRepository.delete(notice);
     }
 
+    /**
+     * 공지사항의 조회 수를 증가시키는 메서드입니다.
+     * 주어진 공지사항 ID를 기반으로 공지사항을 조회하고, 조회 수를 1 증가시킵니다.
+     * 변경된 조회 수를 반환합니다.
+     *
+     * @param noticeId 조회 수를 증가시킬 공지사항의 ID
+     * @return 증가된 조회 수
+     * @throws NotFoundException 주어진 ID에 해당하는 공지사항이 존재하지 않는 경우 발생합니다.
+     */
+    @Transactional
+    public long addNoticeViewCnt(Long noticeId) {
+        Notice notice = noticeRepository.findById(noticeId)
+                .orElseThrow(() -> new NotFoundException("공지사항이 존재하지 않습니다."));
+
+        notice.addViewCnt(notice.getViewCnt() + 1);
+
+        return notice.getViewCnt();
+    }
+
 }

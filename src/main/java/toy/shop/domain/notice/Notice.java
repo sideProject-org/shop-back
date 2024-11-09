@@ -55,4 +55,8 @@ public class Notice extends BaseEntity {
         this.title = title;
         this.content = content;
     }
+
+    public void addViewCnt(long viewCnt) {
+        this.viewCnt = viewCnt;
+    }
 }

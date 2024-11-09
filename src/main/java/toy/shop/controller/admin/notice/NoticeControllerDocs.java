@@ -48,9 +48,9 @@ public interface NoticeControllerDocs {
 
     @Operation(summary = "공지사항 수정", description = "request 정보를 통해 공지사항 수정")
     @ApiResponses({
-            @ApiResponse(responseCode = "204", description = "공지사항 수정 성공", content = @Content(mediaType = "application/json", schema = @Schema(example = """
+            @ApiResponse(responseCode = "200", description = "공지사항 수정 성공", content = @Content(mediaType = "application/json", schema = @Schema(example = """
                     {
-                        "status": 204,
+                        "status": 200,
                         "message": "공지사항 수정 성공",
                         "data": null
                     }
@@ -81,9 +81,9 @@ public interface NoticeControllerDocs {
 
     @Operation(summary = "공지사항 삭제", description = "request 정보를 통해 공지사항 삭제")
     @ApiResponses({
-            @ApiResponse(responseCode = "204", description = "공지사항 삭제 성공", content = @Content(mediaType = "application/json", schema = @Schema(example = """
+            @ApiResponse(responseCode = "200", description = "공지사항 삭제 성공", content = @Content(mediaType = "application/json", schema = @Schema(example = """
                     {
-                        "status": 204,
+                        "status": 200,
                         "message": "공지사항 삭제 성공",
                         "data": "공지사항 ID"
                     }
@@ -136,9 +136,9 @@ public interface NoticeControllerDocs {
 
     @Operation(summary = "이미지 삭제", description = "file 정보를 통해 이미지 삭제")
     @ApiResponses({
-            @ApiResponse(responseCode = "204", description = "파일 삭제 성공", content = @Content(mediaType = "application/json", schema = @Schema(example = """
+            @ApiResponse(responseCode = "200", description = "파일 삭제 성공", content = @Content(mediaType = "application/json", schema = @Schema(example = """
                     {
-                        "status": 204,
+                        "status": 200,
                         "message": "파일 삭제 성공",
                         "data": null
                     }
