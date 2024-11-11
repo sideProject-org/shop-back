@@ -1,4 +1,4 @@
-package toy.shop.controller;
+package toy.shop.controller.global;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -12,8 +12,8 @@ import toy.shop.dto.jwt.JwtReissueDTO;
 import toy.shop.dto.member.LoginRequestDTO;
 import toy.shop.dto.member.SignupRequestDTO;
 
-@Tag(name = "공통 API", description = "공통 기능들에 대한 API")
-public interface CmmnControllerDocs {
+@Tag(name = "공통 인증 API", description = "공통 인증에 대한 API")
+public interface AuthControllerDocs {
 
     @Operation(summary = "회원가입", description = "Request 정보를 통해 회원가입")
     @ApiResponses({
@@ -95,23 +95,4 @@ public interface CmmnControllerDocs {
                     """)))
     })
     ResponseEntity<?> reissue(String requestAccessToken, JwtReissueDTO parameter);
-
-    @Operation(summary = "공지사항 조회수 증가", description = "공지사항 ID를 통해 조회수 증가")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "조회수 증가 성공", content = @Content(mediaType = "application/json", schema = @Schema(example = """
-                    {
-                        "status": 200,
-                        "message": "조회수 증가 성공",
-                        "data": "조회수"
-                    }
-                    """))),
-            @ApiResponse(responseCode = "401", description = "조회수 증가 실패 - 유효하지 않은 공지사항 ID", content = @Content(mediaType = "application/json", schema = @Schema(example = """
-                    {
-                        "status": 401,
-                        "message": "공지사항이 존재하지 않습니다.",
-                        "data": null
-                    }
-                    """)))
-    })
-    ResponseEntity<Response<?>> addViewCnt(Long noticeId);
 }

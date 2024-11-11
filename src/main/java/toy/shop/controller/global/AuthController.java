@@ -1,4 +1,4 @@
-package toy.shop.controller;
+package toy.shop.controller.global;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -10,18 +10,16 @@ import toy.shop.dto.jwt.JwtReissueDTO;
 import toy.shop.dto.jwt.JwtResponseDTO;
 import toy.shop.dto.member.LoginRequestDTO;
 import toy.shop.dto.member.SignupRequestDTO;
-import toy.shop.service.admin.notice.NoticeService;
 import toy.shop.service.member.MemberService;
 
 import static toy.shop.controller.ResponseBuilder.buildResponse;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/cmmn")
-public class CmmnController implements CmmnControllerDocs {
+@RequestMapping("/api/auth")
+public class AuthController implements AuthControllerDocs {
 
     private final MemberService memberService;
-    private final NoticeService noticeService;
 
     @PostMapping("/sign-up")
     public ResponseEntity<Response<?>> joinMember(@RequestBody @Valid SignupRequestDTO parameter) {
@@ -46,12 +44,5 @@ public class CmmnController implements CmmnControllerDocs {
         } else {
             return buildResponse(HttpStatus.UNAUTHORIZED, "재로그인 하세요", null);
         }
-    }
-
-    @GetMapping("/notices/{noticeId}/view-cnt")
-    public ResponseEntity<Response<?>> addViewCnt(@PathVariable Long noticeId) {
-        long viewCnt = noticeService.addNoticeViewCnt(noticeId);
-
-        return buildResponse(HttpStatus.OK, "조회수 증가 성공", viewCnt);
     }
 }

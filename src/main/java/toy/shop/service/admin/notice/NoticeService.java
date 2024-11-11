@@ -1,6 +1,8 @@
 package toy.shop.service.admin.notice;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -9,11 +11,16 @@ import org.springframework.transaction.annotation.Transactional;
 import toy.shop.cmmn.exception.NotFoundException;
 import toy.shop.domain.member.Member;
 import toy.shop.domain.notice.Notice;
+import toy.shop.dto.admin.notice.NoticeDetailResponseDTO;
+import toy.shop.dto.admin.notice.NoticeListResponseDTO;
 import toy.shop.dto.admin.notice.SaveNoticeRequestDTO;
 import toy.shop.dto.admin.notice.UpdateNoticeRequestDTO;
+import toy.shop.dto.member.MemberDetailResponseDTO;
 import toy.shop.jwt.UserDetailsImpl;
 import toy.shop.repository.admin.notice.NoticeRepository;
 import toy.shop.repository.member.MemberRepository;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -23,6 +30,55 @@ public class NoticeService {
     private final NoticeRepository noticeRepository;
 
     private final NoticeImageService noticeImageService;
+
+    /**
+     * 공지사항 목록을 페이징 처리하여 조회합니다.
+     *
+     * @param pageable 페이징 정보를 포함하는 {@link Pageable} 객체
+     * @return 공지사항 목록을 포함하는 {@link Page} 객체, 각 공지사항은 {@link NoticeListResponseDTO}로 변환됨
+     * @throws NotFoundException 공지사항 목록이 비어 있는 경우 예외 발생
+     */
+    public Page<NoticeListResponseDTO> noticeList(Pageable pageable) {
+        Page<Notice> list = noticeRepository.findAllWithMember(pageable);
+
+        if (list.getContent().isEmpty()) {
+            throw new NotFoundException("공지사항이 존재하지 않습니다.");
+        }
+
+        Page<NoticeListResponseDTO> result = list.map(notice -> NoticeListResponseDTO.builder()
+                .id(notice.getId())
+                .title(notice.getTitle())
+                .viewCnt(notice.getViewCnt())
+                .member(
+                        MemberDetailResponseDTO.builder()
+                                .id(notice.getMember().getId())
+                                .email(notice.getMember().getEmail())
+                                .nickName(notice.getMember().getNickName())
+                                .role(notice.getMember().getRole())
+                                .build()
+                )
+                .build());
+
+        return result;
+    }
+
+    public NoticeDetailResponseDTO noticeDetail(Long noticeId) {
+        Notice notice = noticeRepository.findById(noticeId).orElseThrow(() -> new NotFoundException("공지사항이 존재하지 않습니다."));
+        return NoticeDetailResponseDTO.builder()
+                .id(notice.getId())
+                .title(notice.getTitle())
+                .content(notice.getContent())
+                .viewCnt(notice.getViewCnt())
+                .member(
+                        MemberDetailResponseDTO.builder()
+                                .id(notice.getMember().getId())
+                                .email(notice.getMember().getEmail())
+                                .nickName(notice.getMember().getNickName())
+                                .role(notice.getMember().getRole())
+                                .build()
+                )
+                .build();
+    }
 
     /**
      * 공지사항을 저장하는 메서드입니다. 주어진 요청 정보를 기반으로 공지사항을 생성하고, 관련된 임시 이미지 URL을 메인 URL로 변환합니다.
