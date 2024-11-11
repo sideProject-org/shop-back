@@ -27,7 +27,8 @@ public class SecurityConfig {
     private final String[] allowedUrls = {
             "/swagger-ui/**",
             "/v3/**",
-            "/api/cmmn/**",
+            "/api/global/**",
+            "/api/auth/**",
             "/images/**"
     };
     private final JwtProvider jwtProvider;
@@ -50,7 +51,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(request -> request
                         .requestMatchers(allowedUrls).permitAll()
                                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                                .requestMatchers("/api/**").hasAnyRole("USER", "COMPANY")
+                                .requestMatchers("/api/**").hasAnyRole("USER", "COMPANY", "ADMIN")
                                 .anyRequest().authenticated()
                 )
                 .addFilterBefore(new JwtAuthenticationFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class)
