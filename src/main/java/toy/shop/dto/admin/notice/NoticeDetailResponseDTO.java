@@ -6,10 +6,11 @@ import toy.shop.dto.member.MemberDetailResponseDTO;
 
 @Data
 @Builder
-public class NoticeListResponseDTO {
+public class NoticeDetailResponseDTO {
 
     private Long id;
     private String title;
+    private String content;
     private Long viewCnt;
     private MemberDetailResponseDTO member;
 }

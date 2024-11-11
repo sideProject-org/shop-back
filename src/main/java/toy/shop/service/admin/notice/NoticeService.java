@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import toy.shop.cmmn.exception.NotFoundException;
 import toy.shop.domain.member.Member;
 import toy.shop.domain.notice.Notice;
+import toy.shop.dto.admin.notice.NoticeDetailResponseDTO;
 import toy.shop.dto.admin.notice.NoticeListResponseDTO;
 import toy.shop.dto.admin.notice.SaveNoticeRequestDTO;
 import toy.shop.dto.admin.notice.UpdateNoticeRequestDTO;
@@ -47,7 +48,6 @@ public class NoticeService {
         Page<NoticeListResponseDTO> result = list.map(notice -> NoticeListResponseDTO.builder()
                 .id(notice.getId())
                 .title(notice.getTitle())
-                .content(notice.getContent())
                 .viewCnt(notice.getViewCnt())
                 .member(
                         MemberDetailResponseDTO.builder()
@@ -60,6 +60,24 @@ public class NoticeService {
                 .build());
 
         return result;
+    }
+
+    public NoticeDetailResponseDTO noticeDetail(Long noticeId) {
+        Notice notice = noticeRepository.findById(noticeId).orElseThrow(() -> new NotFoundException("공지사항이 존재하지 않습니다."));
+        return NoticeDetailResponseDTO.builder()
+                .id(notice.getId())
+                .title(notice.getTitle())
+                .content(notice.getContent())
+                .viewCnt(notice.getViewCnt())
+                .member(
+                        MemberDetailResponseDTO.builder()
+                                .id(notice.getMember().getId())
+                                .email(notice.getMember().getEmail())
+                                .nickName(notice.getMember().getNickName())
+                                .role(notice.getMember().getRole())
+                                .build()
+                )
+                .build();
     }
 
     /**

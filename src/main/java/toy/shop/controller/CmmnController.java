@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import toy.shop.dto.Response;
+import toy.shop.dto.admin.notice.NoticeDetailResponseDTO;
 import toy.shop.dto.admin.notice.NoticeListResponseDTO;
 import toy.shop.dto.jwt.JwtReissueDTO;
 import toy.shop.dto.jwt.JwtResponseDTO;
@@ -27,6 +28,7 @@ public class CmmnController implements CmmnControllerDocs {
     private final MemberService memberService;
     private final NoticeService noticeService;
 
+    /* ============================================= auth 부문 ============================================= */
     @PostMapping("/sign-up")
     public ResponseEntity<Response<?>> joinMember(@RequestBody @Valid SignupRequestDTO parameter) {
         Long result = memberService.signup(parameter);
@@ -51,12 +53,22 @@ public class CmmnController implements CmmnControllerDocs {
             return buildResponse(HttpStatus.UNAUTHORIZED, "재로그인 하세요", null);
         }
     }
+    /* ============================================= auth 부문 ============================================= */
 
+
+    /* ============================================= 공지사항 부문 ============================================= */
     @GetMapping("/notices")
     public ResponseEntity<Response<?>> noticeList(@PageableDefault(size = 10) Pageable pageable) {
         Page<NoticeListResponseDTO> result = noticeService.noticeList(pageable);
 
         return buildResponse(HttpStatus.OK, "공지사항 목록 조회 성공", result);
+    }
+
+    @GetMapping("/notices/{noticeId}")
+    public ResponseEntity<Response<?>> noticeDetail(@PathVariable("noticeId") Long noticeId) {
+        NoticeDetailResponseDTO result = noticeService.noticeDetail(noticeId);
+
+        return buildResponse(HttpStatus.OK, "공지사항 상세정보 조회 성공", result);
     }
 
     @GetMapping("/notices/{noticeId}/view-cnt")
@@ -65,4 +77,5 @@ public class CmmnController implements CmmnControllerDocs {
 
         return buildResponse(HttpStatus.OK, "조회수 증가 성공", viewCnt);
     }
+    /* ============================================= 공지사항 부문 ============================================= */
 }
