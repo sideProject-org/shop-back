@@ -25,7 +25,7 @@ public class MemberController implements MemberControllerDocs {
     public ResponseEntity<?> logout(@RequestHeader("Authorization") String requestAccessToken) {
         memberService.logout(requestAccessToken);
 
-        return buildResponse(HttpStatus.NO_CONTENT, "로그아웃 성공", null);
+        return buildResponse(HttpStatus.OK, "로그아웃 성공", null);
     }
 
     @GetMapping("/password-reset-email")

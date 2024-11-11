@@ -16,9 +16,9 @@ public interface MemberControllerDocs {
 
     @Operation(summary = "로그아웃", description = "Request 정보를 통해 로그아웃")
     @ApiResponses({
-            @ApiResponse(responseCode = "204", description = "로그아웃 성공", content = @Content(mediaType = "application/json", schema = @Schema(example = """
+            @ApiResponse(responseCode = "200", description = "로그아웃 성공", content = @Content(mediaType = "application/json", schema = @Schema(example = """
                     {
-                        "status": 204,
+                        "status": 200,
                         "message": "로그아웃 성공",
                         "data": null
                     }

@@ -16,38 +16,6 @@ import toy.shop.dto.member.SignupRequestDTO;
 public interface CmmnControllerDocs {
 
     @Operation(summary = "회원가입", description = "Request 정보를 통해 회원가입")
-//    @ApiResponses({
-//            @ApiResponse(responseCode = "200", content = @Content(mediaType = "application/json", examples = {
-//                    @ExampleObject(name = "회원가입 성공", value = """
-//                    {
-//                        "status": 200,
-//                        "message": "회원가입 성공",
-//                        "data": {회원ID}
-//                    }
-//                    """)
-//            })),
-//            @ApiResponse(responseCode = "400", content = @Content(mediaType = "application/json", examples = {
-//                    @ExampleObject(name = "회원가입 실패 - 유효성 검증 오류", value = """
-//                    {
-//                        "status": 400,
-//                        "message": "유효성 검증 오류",
-//                        "data": {
-//                            "fieldName": "필드이름",
-//                            "message": "필드 에러 메시지"
-//                        }
-//                    }
-//                    """)
-//            })),
-//            @ApiResponse(responseCode = "409", content = @Content(mediaType = "application/json", examples = {
-//                    @ExampleObject(name = "회원가입 실패 - 존재하는 이메일", value = """
-//                    {
-//                        "status": 409,
-//                        "message": "이미 존재하는 이메일입니다: {이메일}",
-//                        "data": null
-//                    }
-//                    """)
-//            }))
-//    })
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "회원가입 성공", content = @Content(mediaType = "application/json", schema = @Schema(example = """
                     {
@@ -127,4 +95,23 @@ public interface CmmnControllerDocs {
                     """)))
     })
     ResponseEntity<?> reissue(String requestAccessToken, JwtReissueDTO parameter);
+
+    @Operation(summary = "공지사항 조회수 증가", description = "공지사항 ID를 통해 조회수 증가")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "조회수 증가 성공", content = @Content(mediaType = "application/json", schema = @Schema(example = """
+                    {
+                        "status": 200,
+                        "message": "조회수 증가 성공",
+                        "data": "조회수"
+                    }
+                    """))),
+            @ApiResponse(responseCode = "401", description = "조회수 증가 실패 - 유효하지 않은 공지사항 ID", content = @Content(mediaType = "application/json", schema = @Schema(example = """
+                    {
+                        "status": 401,
+                        "message": "공지사항이 존재하지 않습니다.",
+                        "data": null
+                    }
+                    """)))
+    })
+    ResponseEntity<Response<?>> addViewCnt(Long noticeId);
 }

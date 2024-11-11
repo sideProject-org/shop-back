@@ -10,6 +10,7 @@ import toy.shop.dto.jwt.JwtReissueDTO;
 import toy.shop.dto.jwt.JwtResponseDTO;
 import toy.shop.dto.member.LoginRequestDTO;
 import toy.shop.dto.member.SignupRequestDTO;
+import toy.shop.service.admin.notice.NoticeService;
 import toy.shop.service.member.MemberService;
 
 import static toy.shop.controller.ResponseBuilder.buildResponse;
@@ -20,6 +21,7 @@ import static toy.shop.controller.ResponseBuilder.buildResponse;
 public class CmmnController implements CmmnControllerDocs {
 
     private final MemberService memberService;
+    private final NoticeService noticeService;
 
     @PostMapping("/sign-up")
     public ResponseEntity<Response<?>> joinMember(@RequestBody @Valid SignupRequestDTO parameter) {
@@ -44,5 +46,12 @@ public class CmmnController implements CmmnControllerDocs {
         } else {
             return buildResponse(HttpStatus.UNAUTHORIZED, "재로그인 하세요", null);
         }
+    }
+
+    @GetMapping("/notices/{noticeId}/view-cnt")
+    public ResponseEntity<Response<?>> addViewCnt(@PathVariable Long noticeId) {
+        long viewCnt = noticeService.addNoticeViewCnt(noticeId);
+
+        return buildResponse(HttpStatus.OK, "조회수 증가 성공", viewCnt);
     }
 }
