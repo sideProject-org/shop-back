@@ -2,10 +2,14 @@ package toy.shop.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import toy.shop.dto.Response;
+import toy.shop.dto.admin.notice.NoticeListResponseDTO;
 import toy.shop.dto.jwt.JwtReissueDTO;
 import toy.shop.dto.jwt.JwtResponseDTO;
 import toy.shop.dto.member.LoginRequestDTO;
@@ -46,6 +50,13 @@ public class CmmnController implements CmmnControllerDocs {
         } else {
             return buildResponse(HttpStatus.UNAUTHORIZED, "재로그인 하세요", null);
         }
+    }
+
+    @GetMapping("/notices")
+    public ResponseEntity<Response<?>> noticeList(@PageableDefault(size = 10) Pageable pageable) {
+        Page<NoticeListResponseDTO> result = noticeService.noticeList(pageable);
+
+        return buildResponse(HttpStatus.OK, "공지사항 목록 조회 성공", result);
     }
 
     @GetMapping("/notices/{noticeId}/view-cnt")
