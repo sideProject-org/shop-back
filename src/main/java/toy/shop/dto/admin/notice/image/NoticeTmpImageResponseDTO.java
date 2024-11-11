@@ -1,4 +1,4 @@
-package toy.shop.dto.admin.notice;
+package toy.shop.dto.admin.notice.image;
 
 import lombok.Builder;
 import lombok.Data;

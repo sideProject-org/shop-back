@@ -62,6 +62,13 @@ public class NoticeService {
         return result;
     }
 
+    /**
+     * 주어진 공지사항 ID를 기반으로 공지사항의 상세 정보를 조회합니다.
+     *
+     * @param noticeId 조회할 공지사항의 ID
+     * @return 공지사항의 상세 정보를 포함하는 {@link NoticeDetailResponseDTO} 객체
+     * @throws NotFoundException 공지사항이 존재하지 않을 경우 발생하는 예외
+     */
     public NoticeDetailResponseDTO noticeDetail(Long noticeId) {
         Notice notice = noticeRepository.findById(noticeId).orElseThrow(() -> new NotFoundException("공지사항이 존재하지 않습니다."));
         return NoticeDetailResponseDTO.builder()

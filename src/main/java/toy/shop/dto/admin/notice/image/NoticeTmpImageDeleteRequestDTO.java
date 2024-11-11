@@ -1,4 +1,4 @@
-package toy.shop.dto.admin.notice;
+package toy.shop.dto.admin.notice.image;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;

@@ -97,4 +97,32 @@ public interface GlobalControllerDocs {
                     """)))
     })
     ResponseEntity<Response<?>> addViewCnt(Long noticeId);
+
+    @Operation(summary = "공지사항 댓글 목록 조회", description = "공지사항 ID를 통해 댓글 목록 조회")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "공지사항 댓글 목록 조회 성공", content = @Content(mediaType = "application/json", schema = @Schema(example = """
+                    {
+                        "status": 200,
+                        "message": "공지사항 댓글 목록 조회 성공",
+                        "data": {
+                            "id": "댓글 ID",
+                            "member": {
+                                "id": "회원 ID",
+                                "email": "회원 이메일",
+                                "nickName": "회원 닉네임",
+                                "role": "회원 권한"
+                            },
+                            "comment": "댓글 내용"
+                        }
+                    }
+                    """))),
+            @ApiResponse(responseCode = "401", description = "댓글 목록 조회 실패 - 유효하지 않은 공지사항 ID 또는 댓글이 존재하지 않음", content = @Content(mediaType = "application/json", schema = @Schema(example = """
+                    {
+                        "status": 401,
+                        "message": "공지사항이 존재하지 않습니다. / 댓글이 존재하지 않습니다.",
+                        "data": null
+                    }
+                    """))),
+    })
+    ResponseEntity<Response<?>> noticeCommentList(Long noticeId);
 }

@@ -13,7 +13,11 @@ import org.springframework.web.bind.annotation.RestController;
 import toy.shop.dto.Response;
 import toy.shop.dto.admin.notice.NoticeDetailResponseDTO;
 import toy.shop.dto.admin.notice.NoticeListResponseDTO;
+import toy.shop.dto.admin.notice.comment.NoticeCommentResponseDTO;
+import toy.shop.service.admin.notice.NoticeCommentService;
 import toy.shop.service.admin.notice.NoticeService;
+
+import java.util.List;
 
 import static toy.shop.controller.ResponseBuilder.buildResponse;
 
@@ -22,8 +26,8 @@ import static toy.shop.controller.ResponseBuilder.buildResponse;
 @RequestMapping("/api/global")
 public class GlobalController implements GlobalControllerDocs {
 
-
     private final NoticeService noticeService;
+    private final NoticeCommentService noticeCommentService;
 
     @GetMapping("/notices")
     public ResponseEntity<Response<?>> noticeList(@PageableDefault(size = 10) Pageable pageable) {
@@ -44,5 +48,12 @@ public class GlobalController implements GlobalControllerDocs {
         long viewCnt = noticeService.addNoticeViewCnt(noticeId);
 
         return buildResponse(HttpStatus.OK, "조회수 증가 성공", viewCnt);
+    }
+
+    @GetMapping("/notices/{noticeId}/notice_comments")
+    public ResponseEntity<Response<?>> noticeCommentList(@PathVariable Long noticeId) {
+        List<NoticeCommentResponseDTO> result = noticeCommentService.noticeCommentList(noticeId);
+
+        return buildResponse(HttpStatus.OK, "공지사항 댓글 목록 조회 성공", result);
     }
 }

@@ -11,7 +11,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import toy.shop.domain.notice.Notice;
 import toy.shop.domain.notice.NoticeImage;
-import toy.shop.dto.admin.notice.NoticeTmpImageResponseDTO;
+import toy.shop.dto.admin.notice.image.NoticeTmpImageResponseDTO;
 import toy.shop.repository.admin.notice.NoticeImageRepository;
 import toy.shop.service.FileService;
 
