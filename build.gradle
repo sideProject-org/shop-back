@@ -58,6 +58,9 @@ dependencies {
 
 	// jsoup
 	implementation 'org.jsoup:jsoup:1.7.2'
+
+	// google oauth
+	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 }
 
 configurations {

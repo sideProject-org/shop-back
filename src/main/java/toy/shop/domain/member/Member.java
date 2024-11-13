@@ -21,13 +21,13 @@ public class Member extends BaseEntity {
     private String email;
 
     @Setter
-    @Column(nullable = false)
+    @Column
     private String password;
 
     @Column(nullable = false)
     private String nickName;
 
-    @Column(nullable = false)
+    @Column
     private String gender;
 
     @Column(nullable = false)
@@ -39,6 +39,9 @@ public class Member extends BaseEntity {
 
     @Column
     private String phoneNumber;
+
+    @Column
+    private String socialId;
 
     @Column(nullable = false)
     @ColumnDefault("'N'")
