@@ -120,6 +120,17 @@ public class NoticeCommentService {
         return noticeComment.getId();
     }
 
+    /**
+     * 주어진 댓글 ID와 공지사항 ID에 해당하는 댓글을 삭제합니다.
+     * 관리자가 아닌 경우, 댓글 작성자와 현재 사용자가 일치하지 않으면 예외를 발생시킵니다.
+     *
+     * @param parameter 댓글 삭제 요청 정보를 포함하는 {@link NoticeCommentDeleteRequestDTO} 객체
+     * @param noticeId 댓글이 속한 공지사항의 ID
+     * @param userDetails 현재 인증된 사용자의 정보를 포함하는 {@link UserDetailsImpl} 객체
+     * @return 삭제된 댓글의 ID
+     * @throws NotFoundException 댓글이 존재하지 않을 경우 발생
+     * @throws AccessDeniedException 관리자가 아니면서 댓글 작성자가 현재 사용자가 아닐 경우 발생
+     */
     @Transactional
     public Long deleteNoticeComment(NoticeCommentDeleteRequestDTO parameter, Long noticeId, UserDetailsImpl userDetails) {
         NoticeComments noticeComment = noticeCommentRepository.findByIdAndNoticeId(parameter.getCommentId(), noticeId)
