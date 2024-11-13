@@ -2,7 +2,6 @@ package toy.shop.cmmn.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.BindException;
@@ -142,6 +141,22 @@ public class ExceptionController {
     }
 
     /**
+     * AccessDeniedException 처리
+     * @param ex
+     * @return
+     */
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<Response<?>> handleAccessDeniedException(AccessDeniedException ex) {
+        Response<?> response = Response.builder()
+                .status(HttpStatus.FORBIDDEN.value())
+                .message(ex.getMessage())
+                .data(null)
+                .build();
+
+        return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
+    }
+
+    /**
      * 기타 RuntimeException 처리
      * @param ex
      * @return
@@ -155,37 +170,5 @@ public class ExceptionController {
                 .build();
 
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-
-    /**
-     * IllegalArgumentException 처리
-     * @param ex
-     * @return
-     */
-    @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<Response<?>> handleIllegalArgumentException(IllegalArgumentException ex) {
-        Response<?> response = Response.builder()
-                .status(HttpStatus.BAD_REQUEST.value())
-                .message(ex.getMessage())
-                .data(null)
-                .build();
-
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-    }
-
-    /**
-     * AccessDeniedException 처리
-     * @param ex
-     * @return
-     */
-    @ExceptionHandler(AccessDeniedException.class)
-    public ResponseEntity<Response<?>> handleAccessDeniedExceptionException(AccessDeniedException ex) {
-        Response<?> response = Response.builder()
-                .status(HttpStatus.FORBIDDEN.value())
-                .message(ex.getMessage())
-                .data(null)
-                .build();
-
-        return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
     }
 }

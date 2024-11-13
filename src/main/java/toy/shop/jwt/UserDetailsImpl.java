@@ -2,6 +2,7 @@ package toy.shop.jwt;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import toy.shop.domain.Role;
 import toy.shop.domain.member.Member;
 
 import java.util.ArrayList;
@@ -17,6 +18,10 @@ public class UserDetailsImpl implements UserDetails {
 
     public Long getUserId() {
         return member.getId();
+    }
+
+    public Role getRole() {
+        return member.getRole();
     }
 
     @Override

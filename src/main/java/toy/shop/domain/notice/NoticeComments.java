@@ -36,4 +36,8 @@ public class NoticeComments extends BaseEntity {
         this.member = member;
         this.comment = comment;
     }
+
+    public void updateComment(String comment) {
+        this.comment = comment;
+    }
 }

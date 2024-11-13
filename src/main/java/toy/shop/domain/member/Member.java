@@ -1,10 +1,7 @@
 package toy.shop.domain.member;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import toy.shop.domain.BaseEntity;
 import toy.shop.domain.Role;
@@ -23,6 +20,7 @@ public class Member extends BaseEntity {
     @Column(nullable = false, unique = true)
     private String email;
 
+    @Setter
     @Column(nullable = false)
     private String password;
 
@@ -59,9 +57,5 @@ public class Member extends BaseEntity {
         this.role = role;
         this.imagePath = imagePath;
         this.phoneNumber = phoneNumber;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 }
