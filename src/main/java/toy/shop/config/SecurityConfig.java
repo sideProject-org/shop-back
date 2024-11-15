@@ -50,9 +50,9 @@ public class SecurityConfig {
                 // 경로 작업
                 .authorizeHttpRequests(request -> request
                         .requestMatchers(allowedUrls).permitAll()
-                                .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                                .requestMatchers("/api/**").hasAnyRole("USER", "COMPANY", "ADMIN")
-                                .anyRequest().authenticated()
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/api/**").hasAnyRole("USER", "COMPANY", "ADMIN")
+                        .anyRequest().authenticated()
                 )
                 .addFilterBefore(new JwtAuthenticationFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(handling -> handling.accessDeniedHandler(jwtAccessDeniedHandler))
