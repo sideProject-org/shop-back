@@ -16,11 +16,12 @@ public class CustomFailHandler implements AuthenticationFailureHandler {
 
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, org.springframework.security.core.AuthenticationException exception) throws IOException, ServletException {
-        String errorMessage = "알 수 없는 오류가 발생했습니다.";
+        String errorMessage = null;
 
         // 예외 메시지를 확인하여 적절한 메시지를 설정
         if (exception instanceof OAuth2AuthenticationException) {
             OAuth2AuthenticationException oauthException = (OAuth2AuthenticationException) exception;
+            errorMessage = oauthException.getMessage();
             if ("conflict".equals(oauthException.getError().getErrorCode())) {
                 errorMessage = oauthException.getMessage();
             } else if ("unsupported_social_login".equals(oauthException.getError().getErrorCode())) {
