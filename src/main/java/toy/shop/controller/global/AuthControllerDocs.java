@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.ResponseEntity;
 import toy.shop.dto.Response;
 import toy.shop.dto.jwt.JwtReissueDTO;
@@ -95,4 +96,19 @@ public interface AuthControllerDocs {
                     """)))
     })
     ResponseEntity<?> reissue(String requestAccessToken, JwtReissueDTO parameter);
+
+    @Operation(summary = "토큰 재전송", description = "Cookie의 토큰 정보를 통해 토큰을 JSON 형식으로 재전송")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "토큰 재전송 성공", content = @Content(mediaType = "application/json", schema = @Schema(example = """
+                    {
+                        "status": 200,
+                        "message": "토큰 재전송 성공",
+                        "data": {
+                            "accessToken": "토큰ID",
+                            "refreshToken": "토큰ID"
+                        }
+                    }
+                    """)))
+    })
+    public ResponseEntity<?> resendToken(HttpServletRequest request);
 }

@@ -1,10 +1,13 @@
 package toy.shop.controller.global;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import toy.shop.cmmn.exception.NotFoundException;
 import toy.shop.dto.Response;
 import toy.shop.dto.jwt.JwtReissueDTO;
 import toy.shop.dto.jwt.JwtResponseDTO;
@@ -44,5 +47,34 @@ public class AuthController implements AuthControllerDocs {
         } else {
             return buildResponse(HttpStatus.UNAUTHORIZED, "재로그인 하세요", null);
         }
+    }
+
+    @PostMapping("/resend-token")
+    public ResponseEntity<?> resendToken(HttpServletRequest request) {
+        String accessToken = null;
+        String refreshToken = null;
+
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            // 원하는 쿠키를 검색
+            for (Cookie cookie : cookies) {
+                if ("Authorization".equalsIgnoreCase(cookie.getName())) {
+                    accessToken = cookie.getValue();
+                } else if ("RefreshToken".equalsIgnoreCase(cookie.getName())) {
+                    refreshToken = cookie.getValue();
+                }
+            }
+        }
+
+        if (accessToken == null || refreshToken == null) {
+            throw new NotFoundException("Cookie가 존재하지 않습니다.");
+        }
+
+        JwtResponseDTO result = JwtResponseDTO.builder()
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .build();
+
+        return buildResponse(HttpStatus.OK, "토큰 재전송 성공", result);
     }
 }

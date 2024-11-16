@@ -43,7 +43,6 @@ public class JwtProvider implements InitializingBean {
         this.userDetailsService = userDetailsService;
         this.redisService = redisService;
         this.secretKey = secretKey;
-        // seconds -> milliseconds
         this.accessTokenValidityInMilliseconds = accessTokenValidityInMilliseconds;
         this.refreshTokenValidityInMilliseconds = refreshTokenValidityInMilliseconds;
     }
@@ -106,7 +105,6 @@ public class JwtProvider implements InitializingBean {
     public long getTokenExpirationTime(String token) {
         return getClaims(token).getExpiration().getTime();
     }
-
 
     // == 토큰 검증 == //
     public boolean validateRefreshToken(String refreshToken) {
