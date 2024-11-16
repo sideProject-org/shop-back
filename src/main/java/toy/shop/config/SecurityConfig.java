@@ -18,6 +18,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import toy.shop.jwt.JwtAccessDeniedHandler;
 import toy.shop.jwt.JwtAuthenticationFilter;
 import toy.shop.jwt.JwtProvider;
+import toy.shop.service.oauth.CustomFailHandler;
 import toy.shop.service.oauth.CustomOAuth2UserService;
 import toy.shop.service.oauth.CustomSuccessHandler;
 
@@ -41,6 +42,7 @@ public class SecurityConfig {
 
     private final CustomOAuth2UserService customOAuth2UserService;
     private final CustomSuccessHandler customSuccessHandler;
+    private final CustomFailHandler customFailHandler;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -69,6 +71,7 @@ public class SecurityConfig {
                         .userInfoEndpoint(userInfoEndpointConfig -> userInfoEndpointConfig
                                         .userService(customOAuth2UserService))
                         .successHandler(customSuccessHandler)
+                        .failureHandler(customFailHandler)
                 )
 
                 .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS));       // Session 사용하지 않음
