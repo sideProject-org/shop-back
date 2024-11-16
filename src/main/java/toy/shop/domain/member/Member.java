@@ -21,24 +21,29 @@ public class Member extends BaseEntity {
     private String email;
 
     @Setter
-    @Column(nullable = false)
+    @Column
     private String password;
 
+    @Setter
     @Column(nullable = false)
     private String nickName;
 
-    @Column(nullable = false)
+    @Column
     private String gender;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    @Setter
     @Column(nullable = false)
     private String imagePath;
 
     @Column
     private String phoneNumber;
+
+    @Column
+    private String socialName;
 
     @Column(nullable = false)
     @ColumnDefault("'N'")
@@ -57,5 +62,13 @@ public class Member extends BaseEntity {
         this.role = role;
         this.imagePath = imagePath;
         this.phoneNumber = phoneNumber;
+    }
+
+    public Member(String email, String nickName, Role role, String imagePath, String socialName) {
+        this.email = email;
+        this.nickName = nickName;
+        this.role = role;
+        this.imagePath = imagePath;
+        this.socialName = socialName;
     }
 }

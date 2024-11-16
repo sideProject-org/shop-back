@@ -157,6 +157,22 @@ public class ExceptionController {
     }
 
     /**
+     * UnsupportedSocialLoginException 처리
+     * @param ex
+     * @return
+     */
+    @ExceptionHandler(UnsupportedSocialLoginException.class)
+    public ResponseEntity<Response<?>> handleUnsupportedSocialLoginException(UnsupportedSocialLoginException ex) {
+        Response<?> response = Response.builder()
+                .status(HttpStatus.FORBIDDEN.value())
+                .message(ex.getMessage())
+                .data(null)
+                .build();
+
+        return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
+    }
+
+    /**
      * 기타 RuntimeException 처리
      * @param ex
      * @return

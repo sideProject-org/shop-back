@@ -41,10 +41,10 @@ public class MemberService {
     private final RedisService redisService;
     private final MailService mailService;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
-    private final String SERVER = "Server";
 
     @Value("${path.profileImage}")
     private String profileImagePath;
+    private final String SERVER = "Server";
 
     /**
      * 회원가입
@@ -118,7 +118,7 @@ public class MemberService {
      * @param authorities 사용자의 권한 목록을 콤마로 연결한 문자열
      * @return 생성된 JWT 정보 (액세스 토큰 및 리프레시 토큰 포함)
      */
-    private JwtResponseDTO generateAndStoreToken(String provider, String email, String authorities) {
+    public JwtResponseDTO generateAndStoreToken(String provider, String email, String authorities) {
         String redisKey = "RT(" + provider + "):" + email;
 
         // Redis에 기존 RT가 있으면 삭제
