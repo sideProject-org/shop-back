@@ -48,6 +48,9 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
         if (memberOptional.isPresent()) {
             Member member = memberOptional.get();
+            if (member.getSocialName() == null) {
+                throw new OAuth2AuthenticationException(new OAuth2Error("conflict"), "해당 메일로 가입된 일반 계정이 존재합니다: " + oAuth2Response.getEmail());
+            }
             if (!member.getSocialName().equals(socialName)) {
                 throw new OAuth2AuthenticationException(new OAuth2Error("conflict"), "이미 다른 소셜 계정으로 가입된 이메일입니다: " + oAuth2Response.getEmail());
             }
