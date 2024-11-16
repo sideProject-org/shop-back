@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
+import org.springframework.security.oauth2.core.OAuth2Error;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,7 +40,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         } else if (registrationId.equals("kakao")) {
             oAuth2Response = new KakaoResponse(oAuth2User.getAttributes());
         } else {
-            throw new UnsupportedSocialLoginException("허용되지 않은 소셜 로그인입니다: " + registrationId);
+            throw new OAuth2AuthenticationException(new OAuth2Error("unsupported_social_login"), "허용되지 않은 소셜 로그인입니다: " + registrationId);
         }
 
         String socialName = oAuth2Response.getProvider() + "_" + oAuth2Response.getProviderId();
@@ -48,7 +49,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         if (memberOptional.isPresent()) {
             Member member = memberOptional.get();
             if (!member.getSocialName().equals(socialName)) {
-                throw new ConflictException("이미 다른 소셜 계정으로 가입된 이메일입니다: " + oAuth2Response.getEmail());
+                throw new OAuth2AuthenticationException(new OAuth2Error("conflict"), "이미 다른 소셜 계정으로 가입된 이메일입니다: " + oAuth2Response.getEmail());
             }
             member.setImagePath(oAuth2Response.getProfileUrl());
             member.setNickName(oAuth2Response.getName());
