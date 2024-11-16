@@ -5,9 +5,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
+import org.springframework.security.oauth2.core.OAuth2Error;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import toy.shop.cmmn.exception.ConflictException;
 import toy.shop.cmmn.exception.UnsupportedSocialLoginException;
 import toy.shop.domain.Role;
 import toy.shop.domain.member.Member;
@@ -36,27 +38,30 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         } else if (registrationId.equals("naver")) {
             oAuth2Response = new NaverResponse(oAuth2User.getAttributes());
         } else if (registrationId.equals("kakao")) {
-
+            oAuth2Response = new KakaoResponse(oAuth2User.getAttributes());
         } else {
-            throw new UnsupportedSocialLoginException("허용되지 않은 소셜 로그인입니다: " + registrationId);
+            throw new OAuth2AuthenticationException(new OAuth2Error("unsupported_social_login"), "허용되지 않은 소셜 로그인입니다: " + registrationId);
         }
 
         String socialName = oAuth2Response.getProvider() + "_" + oAuth2Response.getProviderId();
         Optional<Member> memberOptional = memberRepository.findByEmail(oAuth2Response.getEmail());
 
-        if (memberOptional.isEmpty()) {
+        if (memberOptional.isPresent()) {
+            Member member = memberOptional.get();
+            if (!member.getSocialName().equals(socialName)) {
+                throw new OAuth2AuthenticationException(new OAuth2Error("conflict"), "이미 다른 소셜 계정으로 가입된 이메일입니다: " + oAuth2Response.getEmail());
+            }
+            member.setImagePath(oAuth2Response.getProfileUrl());
+            member.setNickName(oAuth2Response.getName());
+        } else {
             Member member = new Member(
                     oAuth2Response.getEmail(),
-                    oAuth2User.getName(),
+                    oAuth2Response.getName(),
                     Role.ROLE_USER,
                     oAuth2Response.getProfileUrl(),
                     socialName
             );
             memberRepository.save(member);
-        } else {
-            Member member = memberOptional.get();
-            member.setImagePath(oAuth2Response.getProfileUrl());
-            member.setNickName(oAuth2Response.getName());
         }
 
         UserDTO userDTO = UserDTO.builder()
