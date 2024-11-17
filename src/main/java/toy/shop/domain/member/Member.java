@@ -49,6 +49,7 @@ public class Member extends BaseEntity {
     @ColumnDefault("'N'")
     private char banType = 'N';
 
+    @Setter
     @Column(nullable = false)
     @ColumnDefault("'N'")
     private char deleteType = 'N';

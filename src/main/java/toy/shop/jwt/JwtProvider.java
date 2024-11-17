@@ -11,9 +11,11 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import toy.shop.cmmn.exception.JwtAuthenticationException;
 import toy.shop.dto.jwt.JwtResponseDTO;
 import toy.shop.service.RedisService;
 
+import javax.naming.AuthenticationException;
 import java.security.Key;
 import java.util.Date;
 
@@ -144,23 +146,40 @@ public class JwtProvider implements InitializingBean {
     }
 
     // Filter에서 사용
-    public boolean validateAccessToken(String accessToken) {
+    public void validateAccessToken(String accessToken) throws JwtAuthenticationException {
         try {
             if (redisService.getValues(accessToken) != null // NPE 방지
                     && redisService.getValues(accessToken).equals("logout")) { // 로그아웃 했을 경우
-                return false;
+                throw new JwtAuthenticationException("로그아웃된 토큰입니다.");
             }
+
             Jwts.parserBuilder()
                     .setSigningKey(signingKey)
                     .build()
                     .parseClaimsJws(accessToken);
-            return true;
-        } catch(ExpiredJwtException e) {
-            return true;
-        } catch (Exception e) {
-            return false;
+
+        } catch (SignatureException e) {
+            log.error("Invalid JWT signature.");
+            throw new JwtAuthenticationException("Invalid JWT signature.");
+        } catch (MalformedJwtException e) {
+            log.error("Invalid JWT token.");
+            throw new JwtAuthenticationException("Invalid JWT token.");
+        } catch (ExpiredJwtException e) {
+            log.error("Expired JWT token.");
+            throw new JwtAuthenticationException("Expired JWT token.");
+        } catch (UnsupportedJwtException e) {
+            log.error("Unsupported JWT token.");
+            throw new JwtAuthenticationException("Unsupported JWT token.");
+        } catch (IllegalArgumentException e) {
+            log.error("JWT claims string is empty.");
+            throw new JwtAuthenticationException("JWT claims string is empty.");
+        } catch (NullPointerException e) {
+            log.error("JWT Token is empty.");
+            throw new JwtAuthenticationException("JWT Token is empty.");
         }
     }
+
+
 
     public boolean isTokenExpired(String token) {
         try {
