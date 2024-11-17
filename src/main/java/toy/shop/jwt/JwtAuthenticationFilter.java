@@ -1,7 +1,6 @@
 package toy.shop.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.jsonwebtoken.IncorrectClaimException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -12,9 +11,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
+import toy.shop.cmmn.exception.JwtAuthenticationException;
 import toy.shop.dto.Response;
 
 import java.io.IOException;
@@ -26,6 +25,7 @@ import java.util.List;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtProvider jwtProvider;
+    private final JwtExceptionHandler jwtExceptionHandler;
     private static final AntPathMatcher pathMatcher = new AntPathMatcher();
     private static final List<String> EXCLUDED_URLS = Arrays.asList(
             "/swagger-ui/**",
@@ -53,24 +53,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         try {
             if (accessToken == null) {
-                sendErrorResponse(response, HttpStatus.UNAUTHORIZED, "토큰이 존재하지 않습니다.");
-                return; // 필터 체인 진행 차단
+                throw new JwtAuthenticationException("토큰이 존재하지 않습니다.");
             }
 
             // 정상 토큰인지 검사
-            if (jwtProvider.validateAccessToken(accessToken)) {
-                Authentication authentication = jwtProvider.getAuthentication(accessToken);
-                SecurityContextHolder.getContext().setAuthentication(authentication);
-            }
-        } catch (IncorrectClaimException e) {
-            // 잘못된 토큰일 경우
+            jwtProvider.validateAccessToken(accessToken);
+            Authentication authentication = jwtProvider.getAuthentication(accessToken);
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+        } catch (JwtAuthenticationException e) {
             SecurityContextHolder.clearContext();
-            sendErrorResponse(response, HttpStatus.FORBIDDEN, "잘못된 토큰입니다: " + e.getMessage());
-            return;
-        } catch (UsernameNotFoundException e) {
-            // 회원을 찾을 수 없을 경우
-            SecurityContextHolder.clearContext();
-            sendErrorResponse(response, HttpStatus.NOT_FOUND, "회원을 찾을 수 없습니다: " + e.getMessage());
+            // 예외를 핸들러로 전달하기 위해 필터 체인 진행 차단
+            jwtExceptionHandler.commence(request, response, e);
             return;
         }
 

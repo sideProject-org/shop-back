@@ -17,6 +17,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import toy.shop.jwt.JwtAccessDeniedHandler;
 import toy.shop.jwt.JwtAuthenticationFilter;
+import toy.shop.jwt.JwtExceptionHandler;
 import toy.shop.jwt.JwtProvider;
 import toy.shop.service.oauth.CustomFailHandler;
 import toy.shop.service.oauth.CustomOAuth2UserService;
@@ -39,6 +40,7 @@ public class SecurityConfig {
     };
     private final JwtProvider jwtProvider;
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
+    private final JwtExceptionHandler jwtExceptionHandler;
 
     private final CustomOAuth2UserService customOAuth2UserService;
     private final CustomSuccessHandler customSuccessHandler;
@@ -64,8 +66,9 @@ public class SecurityConfig {
                         .requestMatchers("/api/**").hasAnyRole("USER", "COMPANY", "ADMIN")
                         .anyRequest().authenticated()
                 )
-                .addFilterBefore(new JwtAuthenticationFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class)
-                .exceptionHandling(handling -> handling.accessDeniedHandler(jwtAccessDeniedHandler))
+                .addFilterBefore(new JwtAuthenticationFilter(jwtProvider, jwtExceptionHandler), UsernamePasswordAuthenticationFilter.class)
+                .exceptionHandling(handling -> handling
+                        .accessDeniedHandler(jwtAccessDeniedHandler))
 
                 .oauth2Login(oauth2 -> oauth2
                         .userInfoEndpoint(userInfoEndpointConfig -> userInfoEndpointConfig
