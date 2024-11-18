@@ -9,10 +9,10 @@
 
     <Appenders>
         <Console name="ConsoleAppender" target="SYSTEM_OUT" follow="true">
-            <PatternLayout pattern="${COLOR_PATTERN}" />
+            <PatternLayout pattern="%highlight{${COLOR_PATTERN}}" />
         </Console>
 
-        <RollingFile name="RollingFileAppender" fileName="${LOG_PATH}/shop.log" filePattern="${LOG_PATH}/shop.%d{yyyy-MM-dd}.%i.log"> -->
+        <RollingFile name="RollingFileAppender" fileName="${LOG_PATH}/shop.log" filePattern="${LOG_PATH}/shop.%d{yyyy-MM-dd}.%i.log">
             <PatternLayout>
                 <Pattern>${DEFAULT_PATTERN}</Pattern>
             </PatternLayout>
@@ -23,20 +23,21 @@
             <DefaultRolloverStrategy max="10" fileIndex="min"/>
         </RollingFile>
     </Appenders>
+
     <Loggers>
-        <!-- Root : 일반적인 로그 정책, 반드시 하나 정의해야함 -->
+        <!-- Root logger -->
         <Root level="INFO" additivity="false">
             <AppenderRef ref="ConsoleAppender" />
             <AppenderRef ref="RollingFileAppender" />
         </Root>
 
-        <!-- springframework logger -->
+        <!-- Spring framework logger -->
         <Logger name="org.springframework" level="INFO" additivity="false">
             <AppenderRef ref="ConsoleAppender" />
             <AppenderRef ref="RollingFileAppender" />
         </Logger>
 
-        <!-- jdbc logger -->
+        <!-- JDBC loggers -->
         <Logger name="jdbc.sqlonly" level="OFF" additivity="false">
             <AppenderRef ref="ConsoleAppender" />
             <AppenderRef ref="RollingFileAppender" />
@@ -63,6 +64,17 @@
         </Logger>
 
         <Logger name="jdbc.connection" level="OFF" additivity="false">
+            <AppenderRef ref="ConsoleAppender" />
+            <AppenderRef ref="RollingFileAppender" />
+        </Logger>
+
+        <!-- Hibernate SQL logger with formatting and highlight -->
+        <Logger name="org.hibernate.SQL" level="DEBUG" additivity="false">
+            <AppenderRef ref="ConsoleAppender" />
+            <AppenderRef ref="RollingFileAppender" />
+        </Logger>
+
+        <Logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="TRACE" additivity="false">
             <AppenderRef ref="ConsoleAppender" />
             <AppenderRef ref="RollingFileAppender" />
         </Logger>

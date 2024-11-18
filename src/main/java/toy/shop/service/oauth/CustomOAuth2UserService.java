@@ -9,8 +9,6 @@ import org.springframework.security.oauth2.core.OAuth2Error;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import toy.shop.cmmn.exception.ConflictException;
-import toy.shop.cmmn.exception.UnsupportedSocialLoginException;
 import toy.shop.domain.Role;
 import toy.shop.domain.member.Member;
 import toy.shop.dto.oauth.*;
