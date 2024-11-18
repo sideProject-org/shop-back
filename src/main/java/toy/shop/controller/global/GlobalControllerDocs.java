@@ -36,7 +36,7 @@ public interface GlobalControllerDocs {
                         "page": {
                             "size": "페이징 사이즈",
                             "number": "페이지 넘버",
-                            "totalElements": "총 개수".
+                            "totalElements": "총 개수",
                             "totalPages": "총 페이지수"
                         }
                     }
