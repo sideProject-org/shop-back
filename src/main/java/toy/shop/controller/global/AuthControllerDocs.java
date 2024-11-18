@@ -110,5 +110,5 @@ public interface AuthControllerDocs {
                     }
                     """)))
     })
-    public ResponseEntity<?> resendToken(HttpServletRequest request);
+    ResponseEntity<?> resendToken(HttpServletRequest request);
 }
