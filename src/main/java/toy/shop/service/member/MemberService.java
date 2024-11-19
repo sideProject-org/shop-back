@@ -17,10 +17,7 @@ import toy.shop.cmmn.exception.AccessTokenNotExpiredException;
 import toy.shop.cmmn.exception.ConflictException;
 import toy.shop.domain.member.Member;
 import toy.shop.dto.jwt.JwtResponseDTO;
-import toy.shop.dto.member.LoginRequestDTO;
-import toy.shop.dto.member.PasswordResetRequestDTO;
-import toy.shop.dto.member.PasswordRestResponseDTO;
-import toy.shop.dto.member.SignupRequestDTO;
+import toy.shop.dto.member.*;
 import toy.shop.jwt.JwtProvider;
 import toy.shop.jwt.UserDetailsImpl;
 import toy.shop.repository.member.MemberRepository;
@@ -348,5 +345,33 @@ public class MemberService {
         redisService.invalidatePwResetToken(token);
 
         return true;
+    }
+
+    /**
+     * 제공된 파라미터를 기반으로 회원 정보를 업데이트합니다.
+     *
+     * <p>이 메서드는 현재 사용자의 ID에 해당하는 회원 엔티티를 조회합니다.
+     * 회원이 존재할 경우, {@code UpdateMemberRequestDTO}를 사용하여 회원 정보를
+     * 업데이트하고, 회원의 ID를 반환합니다. 회원을 찾을 수 없는 경우,
+     * {@code UsernameNotFoundException}이 발생합니다.</p>
+     *
+     * <p>메서드는 {@code @Transactional}로 어노테이션되어 있으며, 이로 인해
+     * 전체 업데이트 작업이 트랜잭션 컨텍스트 내에서 수행됩니다. 실행 중 예외가
+     * 발생하면 트랜잭션은 롤백됩니다.</p>
+     *
+     * @param parameter 업데이트할 회원 정보가 포함된 데이터 전송 객체
+     * @param userDetails 현재 사용자의 세부 정보를 포함하는 객체
+     * @return 업데이트된 회원의 ID
+     * @throws UsernameNotFoundException 회원을 찾을 수 없는 경우 발생
+     */
+
+    @Transactional
+    public long updateMember(UpdateMemberRequestDTO parameter, UserDetailsImpl userDetails) {
+        Member member = memberRepository.findById(userDetails.getUserId())
+                .orElseThrow(() -> new UsernameNotFoundException("존재하지 않는 사용자입니다."));
+
+        member.updateMember(parameter);
+
+        return member.getId();
     }
 }

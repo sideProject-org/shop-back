@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import toy.shop.dto.Response;
 import toy.shop.dto.member.PasswordResetRequestDTO;
 import toy.shop.dto.member.PasswordRestResponseDTO;
+import toy.shop.dto.member.UpdateMemberRequestDTO;
 import toy.shop.jwt.UserDetailsImpl;
 import toy.shop.service.member.MemberService;
 
@@ -20,6 +21,14 @@ import static toy.shop.controller.ResponseBuilder.buildResponse;
 public class MemberController implements MemberControllerDocs {
 
     private final MemberService memberService;
+
+    @PutMapping
+    public ResponseEntity<Response<?>> updateMember(@RequestBody @Valid UpdateMemberRequestDTO parameter, Authentication authentication) {
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+        long result = memberService.updateMember(parameter, userDetails);
+
+        return buildResponse(HttpStatus.OK, "회원 정보 변경 성공", result);
+    }
 
     @PostMapping("/logout")
     public ResponseEntity<?> logout(@RequestHeader("Authorization") String requestAccessToken) {

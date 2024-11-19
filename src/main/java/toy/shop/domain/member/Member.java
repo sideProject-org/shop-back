@@ -5,6 +5,7 @@ import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import toy.shop.domain.BaseEntity;
 import toy.shop.domain.Role;
+import toy.shop.dto.member.UpdateMemberRequestDTO;
 
 @Entity
 @Getter
@@ -71,5 +72,10 @@ public class Member extends BaseEntity {
         this.role = role;
         this.imagePath = imagePath;
         this.socialName = socialName;
+    }
+
+    public void updateMember(UpdateMemberRequestDTO parameter) {
+        this.nickName = parameter.getNickName();
+        this.phoneNumber = parameter.getPhoneNumber();
     }
 }
