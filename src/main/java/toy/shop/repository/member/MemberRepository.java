@@ -22,5 +22,4 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
      * @return 해당 이메일 주소를 가진 회원이 존재하면 true, 존재하지 않으면 false를 반환합니다.
      */
     boolean existsByEmail(String email);
-
 }

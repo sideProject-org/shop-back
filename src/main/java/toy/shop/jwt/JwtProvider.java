@@ -15,7 +15,6 @@ import toy.shop.cmmn.exception.JwtAuthenticationException;
 import toy.shop.dto.jwt.JwtResponseDTO;
 import toy.shop.service.RedisService;
 
-import javax.naming.AuthenticationException;
 import java.security.Key;
 import java.util.Date;
 
@@ -56,6 +55,13 @@ public class JwtProvider implements InitializingBean {
         signingKey = Keys.hmacShaKeyFor(secretKeyBytes);
     }
 
+    /**
+     * 액세스 토큰과 리프레시 토큰을 생성합니다.
+     *
+     * @param email       사용자 이메일
+     * @param authorities 사용자 권한
+     * @return JwtResponseDTO 액세스 토큰과 리프레시 토큰이 포함된 DTO
+     */
     @Transactional
     public JwtResponseDTO createToken(String email, String authorities){
         Long now = System.currentTimeMillis();
@@ -84,8 +90,12 @@ public class JwtProvider implements InitializingBean {
                 .build();
     }
 
-
-    // == 토큰으로부터 정보 추출 == //
+    /**
+     * 토큰으로부터 Claims 객체를 추출합니다.
+     *
+     * @param token JWT 토큰
+     * @return Claims 토큰에서 추출된 클레임 정보
+     */
     public Claims getClaims(String token) {
         try {
             return Jwts.parserBuilder()
@@ -98,17 +108,34 @@ public class JwtProvider implements InitializingBean {
         }
     }
 
+    /**
+     * 토큰으로부터 인증 정보를 추출합니다.
+     *
+     * @param token JWT 토큰
+     * @return Authentication 인증 정보
+     */
     public Authentication getAuthentication(String token) {
         String email = getClaims(token).get(EMAIL_KEY).toString();
         UserDetailsImpl userDetailsImpl = userDetailsService.loadUserByUsername(email);
         return new UsernamePasswordAuthenticationToken(userDetailsImpl, "", userDetailsImpl.getAuthorities());
     }
 
+    /**
+     * 토큰의 만료 시간을 반환합니다.
+     *
+     * @param token JWT 토큰
+     * @return long 토큰 만료 시간 (밀리초 단위)
+     */
     public long getTokenExpirationTime(String token) {
         return getClaims(token).getExpiration().getTime();
     }
 
-    // == 토큰 검증 == //
+    /**
+     * 리프레시 토큰의 유효성을 검증합니다.
+     *
+     * @param refreshToken 리프레시 토큰
+     * @return boolean 유효한 경우 true, 그렇지 않으면 false
+     */
     public boolean validateRefreshToken(String refreshToken) {
         try {
             String redisValue = redisService.getValues(refreshToken);
@@ -136,7 +163,12 @@ public class JwtProvider implements InitializingBean {
         return false;
     }
 
-    // HTTP Request 헤더로부터 토큰 추출
+    /**
+     * HTTP 요청의 Authorization 헤더에서 JWT 토큰을 추출합니다.
+     *
+     * @param httpServletRequest HttpServletRequest 객체
+     * @return String 추출된 토큰 또는 null
+     */
     public String resolveToken(HttpServletRequest httpServletRequest) {
         String bearerToken = httpServletRequest.getHeader("Authorization");
         if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
@@ -145,7 +177,12 @@ public class JwtProvider implements InitializingBean {
         return null;
     }
 
-    // Filter에서 사용
+    /**
+     * 액세스 토큰의 유효성을 검증합니다.
+     *
+     * @param accessToken 액세스 토큰
+     * @throws JwtAuthenticationException 토큰이 유효하지 않은 경우 예외 발생
+     */
     public void validateAccessToken(String accessToken) throws JwtAuthenticationException {
         try {
             if (redisService.getValues(accessToken) != null // NPE 방지
@@ -179,8 +216,12 @@ public class JwtProvider implements InitializingBean {
         }
     }
 
-
-
+    /**
+     * 토큰이 만료되었는지 확인합니다.
+     *
+     * @param token JWT 토큰
+     * @return boolean 만료된 경우 true, 그렇지 않으면 false
+     */
     public boolean isTokenExpired(String token) {
         try {
             Date expiration = getClaims(token).getExpiration();
