@@ -6,7 +6,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import toy.shop.dto.Response;
+import toy.shop.dto.member.MemberImageResponseDTO;
 import toy.shop.dto.member.PasswordResetRequestDTO;
 import toy.shop.dto.member.PasswordRestResponseDTO;
 import toy.shop.dto.member.UpdateMemberRequestDTO;
@@ -28,6 +30,18 @@ public class MemberController implements MemberControllerDocs {
         long result = memberService.updateMember(parameter, userDetails);
 
         return buildResponse(HttpStatus.OK, "회원 정보 변경 성공", result);
+    }
+
+    @PutMapping("/images")
+    public ResponseEntity<Response<?>> updateProfileImage(@RequestParam("file") MultipartFile file, Authentication authentication) {
+        if (file.isEmpty() || file == null) {
+            return buildResponse(HttpStatus.BAD_REQUEST, "파일이 존재하지 않습니다.", null);
+        }
+
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+        MemberImageResponseDTO result = memberService.updateMemberImage(file, userDetails);
+
+        return buildResponse(HttpStatus.OK, "프로필 사진 수정 성공", result);
     }
 
     @PostMapping("/logout")
