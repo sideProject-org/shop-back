@@ -30,8 +30,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         // 클라이언트 IP 가져오기
-        String clientIp = getClientIp(request);
-        String redirectUrl = "http://" + clientIp + ":3000/";
+        String clientIp = "http://localhost:3000";
 
         try {
             CustomOAuthUser customUserDetails = (CustomOAuthUser) authentication.getPrincipal();
@@ -51,16 +50,8 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
             response.sendRedirect(clientIp);
         } catch (ConflictException ex) {
             // 예외 발생 시 클라이언트에 에러 메시지를 전달하기 위해 리디렉트
-            response.sendRedirect(clientIp + "error?message=" + URLEncoder.encode(ex.getMessage(), "UTF-8"));
+            response.sendRedirect(clientIp + "/error?message=" + URLEncoder.encode(ex.getMessage(), "UTF-8"));
         }
-    }
-
-    private String getClientIp(HttpServletRequest request) {
-        String ip = request.getHeader("X-Forwarded-For");
-        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
-            ip = request.getRemoteAddr();
-        }
-        return ip;
     }
 
     private Cookie createCookie(String key, String value) {
