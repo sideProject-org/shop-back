@@ -44,7 +44,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
             // 토근 발급 및 Redis에 RefreshToken 저장
             JwtResponseDTO token = memberTokenHelper.generateAndStoreToken(SERVER, customUserDetails.getEmail(), role);
 
-            log.info("client ip is {}", clientIp);
+            log.info("소셜 로그인 성공: {}", customUserDetails.getEmail());
 
             response.addCookie(createCookie("Authorization", token.getAccessToken()));
             response.addCookie(createCookie("RefreshToken", token.getRefreshToken()));

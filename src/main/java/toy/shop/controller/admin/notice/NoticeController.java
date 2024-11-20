@@ -57,7 +57,7 @@ public class NoticeController implements NoticeControllerDocs {
     @PostMapping("/images/tmp")
     public ResponseEntity<Response<?>> saveTmpImage(@RequestParam("file") MultipartFile file) {
         if(file == null || file.isEmpty()) {
-            buildResponse(HttpStatus.BAD_REQUEST, "파일이 존재하지 않습니다.", null);
+            return buildResponse(HttpStatus.BAD_REQUEST, "파일이 존재하지 않습니다.", null);
         }
 
         NoticeTmpImageResponseDTO result = noticeImageService.saveTemporaryNoticeImage(file);

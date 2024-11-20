@@ -13,20 +13,21 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 import toy.shop.cmmn.exception.AccessTokenNotExpiredException;
 import toy.shop.cmmn.exception.ConflictException;
 import toy.shop.domain.member.Member;
 import toy.shop.dto.jwt.JwtResponseDTO;
-import toy.shop.dto.member.LoginRequestDTO;
-import toy.shop.dto.member.PasswordResetRequestDTO;
-import toy.shop.dto.member.PasswordRestResponseDTO;
-import toy.shop.dto.member.SignupRequestDTO;
+import toy.shop.dto.member.*;
 import toy.shop.jwt.JwtProvider;
 import toy.shop.jwt.UserDetailsImpl;
 import toy.shop.repository.member.MemberRepository;
+import toy.shop.service.FileService;
 import toy.shop.service.MailService;
 import toy.shop.service.RedisService;
 
+import java.io.IOException;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -36,15 +37,19 @@ import java.util.stream.Collectors;
 public class MemberService {
 
     private final MemberRepository memberRepository;
+
+    private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final PasswordEncoder passwordEncoder;
     private final JwtProvider jwtProvider;
+
     private final RedisService redisService;
     private final MailService mailService;
-    private final AuthenticationManagerBuilder authenticationManagerBuilder;
+    private final FileService fileService;
 
     @Value("${path.profileImage}")
     private String profileImagePath;
     private final String SERVER = "Server";
+    private final String resourceHandlerMemberURL = "/images/profileImage/";
 
     /**
      * 회원가입
@@ -348,5 +353,70 @@ public class MemberService {
         redisService.invalidatePwResetToken(token);
 
         return true;
+    }
+
+    /**
+     * 회원 정보를 업데이트하고 회원의 ID를 반환합니다.
+     *
+     * <p>현재 사용자의 ID로 회원을 조회한 후, 제공된 {@code UpdateMemberRequestDTO}를
+     * 사용하여 정보를 업데이트합니다. 회원이 없을 경우 {@code UsernameNotFoundException}이
+     * 발생합니다.</p>
+     *
+     * @param parameter 업데이트할 회원 정보 객체
+     * @param userDetails 현재 사용자 정보 객체
+     * @return 업데이트된 회원의 ID
+     * @throws UsernameNotFoundException 회원을 찾을 수 없을 때 발생
+     */
+    @Transactional
+    public long updateMember(UpdateMemberRequestDTO parameter, UserDetailsImpl userDetails) {
+        Member member = memberRepository.findById(userDetails.getUserId())
+                .orElseThrow(() -> new UsernameNotFoundException("존재하지 않는 사용자입니다."));
+
+        member.updateMember(parameter);
+
+        return member.getId();
+    }
+
+    /**
+     * 사용자의 프로필 이미지를 업데이트하고 이미지 정보를 반환합니다.
+     *
+     * <p>현재 사용자의 회원 정보를 조회하고, 제공된 이미지 파일을 업로드한 후
+     * 이미지 경로를 회원 정보에 설정합니다. 업로드된 이미지의 원래 이름과
+     * 저장 경로를 포함하는 {@code MemberImageResponseDTO}를 반환합니다.</p>
+     *
+     * @param file 업데이트할 이미지 파일
+     * @param userDetails 현재 사용자의 정보
+     * @return 원래 이미지 이름과 저장된 경로를 포함하는 {@code MemberImageResponseDTO}
+     * @throws UsernameNotFoundException 회원을 찾을 수 없을 때 발생
+     * @throws IllegalArgumentException 이미지 파일이 비어 있을 때 발생
+     * @throws RuntimeException 이미지 업로드 실패 시 발생
+     */
+    @Transactional
+    public MemberImageResponseDTO updateMemberImage(MultipartFile file, UserDetailsImpl userDetails) {
+        Member member = memberRepository.findById(userDetails.getUserId())
+                .orElseThrow(() -> new UsernameNotFoundException("존재하지 않는 사용자입니다."));
+
+        String oriImgName = file.getOriginalFilename();
+        String imgName = "";
+        String imgUrl = "";
+
+        if (StringUtils.isEmpty(oriImgName)) {
+            throw new IllegalArgumentException();
+        }
+
+        try {
+            imgName = fileService.uploadFile(profileImagePath, oriImgName, file.getBytes());
+        } catch (IOException e) {
+            throw new RuntimeException("이미지 업로드에 실패하였습니다.");
+        }
+
+        imgUrl = resourceHandlerMemberURL + imgName;
+
+        member.setImagePath(imgUrl);
+
+        return MemberImageResponseDTO.builder()
+                .originalName(oriImgName)
+                .savedPath(imgUrl)
+                .build();
     }
 }
