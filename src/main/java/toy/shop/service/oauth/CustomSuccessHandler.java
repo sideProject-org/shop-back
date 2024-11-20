@@ -45,8 +45,8 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
             log.info("소셜 로그인 성공: {}", customUserDetails.getEmail());
 
-            response.addCookie(createCookie("Authorization", token.getAccessToken()));
-            response.addCookie(createCookie("RefreshToken", token.getRefreshToken()));
+            response.addHeader("Set-Cookie", "Authorization=" + token.getAccessToken() + "; Path=/; HttpOnly; SameSite=Lax;");
+            response.addHeader("Set-Cookie", "RefreshToken=" + token.getRefreshToken() + "; Path=/; HttpOnly; SameSite=Lax;");
             response.sendRedirect(clientIp);
         } catch (ConflictException ex) {
             // 예외 발생 시 클라이언트에 에러 메시지를 전달하기 위해 리디렉트
@@ -57,7 +57,6 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     private Cookie createCookie(String key, String value) {
         Cookie cookie = new Cookie(key, value);
         cookie.setMaxAge(60*60*60);
-        //cookie.setSecure(ture);
         cookie.setPath("/");
         cookie.setHttpOnly(true);
 
