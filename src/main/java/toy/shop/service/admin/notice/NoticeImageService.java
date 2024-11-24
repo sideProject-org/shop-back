@@ -75,7 +75,7 @@ public class NoticeImageService {
      */
     public void moveTemporaryImagesToMain(Notice notice, List<String> tempImageUrls) {
         for (String tempImageUrl : tempImageUrls) {
-            String fileName = extractFileNameFromUrl(tempImageUrl);
+            String fileName = fileService.extractFileNameFromUrl(tempImageUrl);
 
             if (fileName == null || fileName.isEmpty()) {
                 throw new IllegalArgumentException("유효하지 않은 이미지 경로입니다.");
@@ -134,7 +134,7 @@ public class NoticeImageService {
      * @throws IllegalArgumentException 유효하지 않거나 알 수 없는 이미지 경로인 경우 발생합니다.
      */
     public void deleteNoticeImage(String filePath) {
-        String fileName = extractFileNameFromUrl(filePath);
+        String fileName = fileService.extractFileNameFromUrl(filePath);
 
         if (fileName == null || fileName.isEmpty()) {
             throw new IllegalArgumentException("유효하지 않은 이미지 경로입니다.");
@@ -174,18 +174,5 @@ public class NoticeImageService {
         }
 
         noticeImageRepository.deleteByNoticeId(noticeId);
-    }
-
-    /**
-     * 이미지 URL에서 파일 이름을 추출하는 메서드입니다.
-     *
-     * @param imageUrl 파일 이름을 추출할 이미지 URL
-     * @return 추출된 파일 이름 또는 유효하지 않은 URL인 경우 null을 반환합니다.
-     */
-    private String extractFileNameFromUrl(String imageUrl) {
-        if (imageUrl == null || !imageUrl.contains("/")) {
-            return null;
-        }
-        return imageUrl.substring(imageUrl.lastIndexOf("/") + 1);
     }
 }

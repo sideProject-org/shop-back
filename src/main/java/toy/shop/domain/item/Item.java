@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 import toy.shop.domain.BaseEntity;
+import toy.shop.domain.member.Member;
 
 @Entity
 @Getter
@@ -35,15 +36,33 @@ public class Item extends BaseEntity {
     private int quantity;
 
     @Column(nullable = false)
+    private String imagePath;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
+    private Member member;
+
+    @Column(nullable = false)
     @ColumnDefault("'N'")
     private char deleteType = 'N';
 
     @Builder
-    public Item(String name, String content, int price, int sale, int quantity) {
+    public Item(String name, String content, int price, int sale, int quantity, String imagePath, Member member) {
         this.name = name;
         this.content = content;
         this.price = price;
         this.sale = sale;
         this.quantity = quantity;
+        this.imagePath = imagePath;
+        this.member = member;
+    }
+
+    public void updateItem(String name, String content, int price, int sale, int quantity, String imagePath) {
+        this.name = name;
+        this.content = content;
+        this.price = price;
+        this.sale = sale;
+        this.quantity = quantity;
+        this.imagePath = imagePath;
     }
 }

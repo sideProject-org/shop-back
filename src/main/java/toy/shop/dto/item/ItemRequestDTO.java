@@ -7,22 +7,21 @@ import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
 
 @Data
-@Schema(description = "상품 등록에 필요한 요청 정보")
-public class ItemSaveRequestDTO {
+@Schema(description = "상품 등록 및 수정에 필요한 요청 정보", requiredProperties = {"name", "price", "sale", "quantity", "image"})
+public class ItemRequestDTO {
 
     @Schema(description = "상품명")
     @NotBlank(message = "해당 값은 필수값 입니다.")
     private String name;
 
     @Schema(description = "상품 설명")
-    @NotBlank(message = "해당 값은 필수값 입니다.")
     private String content;
 
     @Schema(description = "상품 정가")
     @NotNull(message = "해당 값은 필수값 입니다.")
     private int price;
 
-    @Schema(description = "상품 판매가")
+    @Schema(description = "상품 할인율")
     @NotNull(message = "해당 값은 필수값 입니다.")
     private int sale;
 
