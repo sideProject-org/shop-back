@@ -8,8 +8,12 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-@Schema(description = "공지사항 등록에 필요한 요청 정보", requiredProperties = {"title", "content"})
-public class SaveNoticeRequestDTO {
+@Schema(description = "공지사항 수정에 필요한 요청 정보", requiredProperties = {"noticeId", "title", "content"})
+public class NoticeUpdateRequestDTO {
+
+    @Schema(description = "공지사항 ID")
+    @NotNull(message = "해당 값은 필수값 입니다.")
+    private Long noticeId;
 
     @Schema(description = "공지사항 제목")
     @NotBlank(message = "해당 값은 필수값 입니다.")

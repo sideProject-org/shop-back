@@ -2,6 +2,7 @@ package toy.shop.domain.item;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
@@ -35,5 +36,14 @@ public class Item extends BaseEntity {
 
     @Column(nullable = false)
     @ColumnDefault("'N'")
-    private char deleteType;
+    private char deleteType = 'N';
+
+    @Builder
+    public Item(String name, String content, int price, int sale, int quantity) {
+        this.name = name;
+        this.content = content;
+        this.price = price;
+        this.sale = sale;
+        this.quantity = quantity;
+    }
 }

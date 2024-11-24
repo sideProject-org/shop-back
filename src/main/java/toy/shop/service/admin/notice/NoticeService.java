@@ -13,14 +13,12 @@ import toy.shop.domain.member.Member;
 import toy.shop.domain.notice.Notice;
 import toy.shop.dto.admin.notice.NoticeDetailResponseDTO;
 import toy.shop.dto.admin.notice.NoticeListResponseDTO;
-import toy.shop.dto.admin.notice.SaveNoticeRequestDTO;
-import toy.shop.dto.admin.notice.UpdateNoticeRequestDTO;
+import toy.shop.dto.admin.notice.NoticeSaveRequestDTO;
+import toy.shop.dto.admin.notice.NoticeUpdateRequestDTO;
 import toy.shop.dto.member.MemberDetailResponseDTO;
 import toy.shop.jwt.UserDetailsImpl;
 import toy.shop.repository.admin.notice.NoticeRepository;
 import toy.shop.repository.member.MemberRepository;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -92,13 +90,13 @@ public class NoticeService {
      * 변환된 공지사항 내용과 회원 정보를 사용하여 공지사항을 저장하고, 임시 이미지 파일을 메인 저장소로 이동시킨 후
      * 이미지 정보를 데이터베이스에 저장합니다.
      *
-     * @param parameter 공지사항 저장 요청 정보를 담고 있는 {@link SaveNoticeRequestDTO} 객체.
+     * @param parameter 공지사항 저장 요청 정보를 담고 있는 {@link NoticeSaveRequestDTO} 객체.
      *                  이 객체는 작성자 ID, 제목, 내용, 및 임시 이미지 URL 목록을 포함합니다.
      * @return 저장된 공지사항의 ID
      * @throws UsernameNotFoundException 제공된 사용자 ID가 존재하지 않는 경우 발생합니다.
      */
     @Transactional
-    public Long saveNotice(SaveNoticeRequestDTO parameter, UserDetailsImpl userDetails) {
+    public Long saveNotice(NoticeSaveRequestDTO parameter, UserDetailsImpl userDetails) {
         Member member = memberRepository.findById(userDetails.getUserId())
                 .orElseThrow(() -> new UsernameNotFoundException("존재하지 않는 사용자 아이디입니다."));
 
@@ -138,7 +136,7 @@ public class NoticeService {
      * 메서드는 트랜잭션이 활성화된 상태에서 실행되며, 트랜잭션이 종료될 때 변경 사항이 커밋됩니다.
      */
     @Transactional
-    public void updateNotice(UpdateNoticeRequestDTO parameter, UserDetailsImpl userDetails) {
+    public void updateNotice(NoticeUpdateRequestDTO parameter, UserDetailsImpl userDetails) {
         Member member = memberRepository.findById(userDetails.getUserId())
                 .orElseThrow(() -> new UsernameNotFoundException("존재하지 않는 사용자 아이디입니다."));
 

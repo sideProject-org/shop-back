@@ -12,8 +12,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.multipart.MultipartFile;
 import toy.shop.dto.Response;
 import toy.shop.dto.admin.notice.image.NoticeTmpImageDeleteRequestDTO;
-import toy.shop.dto.admin.notice.SaveNoticeRequestDTO;
-import toy.shop.dto.admin.notice.UpdateNoticeRequestDTO;
+import toy.shop.dto.admin.notice.NoticeSaveRequestDTO;
+import toy.shop.dto.admin.notice.NoticeUpdateRequestDTO;
 
 @Tag(name = "관리자 - 공지사항 API", description = "공지사항 기능들에 대한 API")
 public interface NoticeControllerDocs {
@@ -42,7 +42,7 @@ public interface NoticeControllerDocs {
                     }
                     """)))
     })
-    ResponseEntity<Response<?>> saveNotice(SaveNoticeRequestDTO parameter, Authentication authentication);
+    ResponseEntity<Response<?>> saveNotice(NoticeSaveRequestDTO parameter, Authentication authentication);
 
     @Operation(summary = "공지사항 수정", description = "request 정보를 통해 공지사항 수정")
     @ApiResponses({
@@ -75,7 +75,7 @@ public interface NoticeControllerDocs {
                     }
                     """)))
     })
-    ResponseEntity<Response<?>> updateNotice(UpdateNoticeRequestDTO parameter, Authentication authentication);
+    ResponseEntity<Response<?>> updateNotice(NoticeUpdateRequestDTO parameter, Authentication authentication);
 
     @Operation(summary = "공지사항 삭제", description = "request 정보를 통해 공지사항 삭제")
     @ApiResponses({

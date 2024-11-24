@@ -11,8 +11,8 @@ import org.springframework.web.multipart.MultipartFile;
 import toy.shop.dto.Response;
 import toy.shop.dto.admin.notice.image.NoticeTmpImageDeleteRequestDTO;
 import toy.shop.dto.admin.notice.image.NoticeTmpImageResponseDTO;
-import toy.shop.dto.admin.notice.SaveNoticeRequestDTO;
-import toy.shop.dto.admin.notice.UpdateNoticeRequestDTO;
+import toy.shop.dto.admin.notice.NoticeSaveRequestDTO;
+import toy.shop.dto.admin.notice.NoticeUpdateRequestDTO;
 import toy.shop.jwt.UserDetailsImpl;
 import toy.shop.service.admin.notice.NoticeImageService;
 import toy.shop.service.admin.notice.NoticeService;
@@ -29,7 +29,7 @@ public class NoticeController implements NoticeControllerDocs {
     private final NoticeImageService noticeImageService;
 
     @PostMapping
-    public ResponseEntity<Response<?>> saveNotice(@RequestBody @Valid SaveNoticeRequestDTO parameter, Authentication authentication) {
+    public ResponseEntity<Response<?>> saveNotice(@RequestBody @Valid NoticeSaveRequestDTO parameter, Authentication authentication) {
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
         Long result = noticeService.saveNotice(parameter, userDetails);
 
@@ -37,7 +37,7 @@ public class NoticeController implements NoticeControllerDocs {
     }
 
     @PutMapping
-    public ResponseEntity<Response<?>> updateNotice(@RequestBody @Valid UpdateNoticeRequestDTO parameter, Authentication authentication) {
+    public ResponseEntity<Response<?>> updateNotice(@RequestBody @Valid NoticeUpdateRequestDTO parameter, Authentication authentication) {
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
         noticeService.updateNotice(parameter, userDetails);
 

@@ -7,7 +7,6 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import toy.shop.domain.notice.Notice;
 import toy.shop.domain.notice.NoticeImage;
@@ -106,17 +105,12 @@ public class NoticeImageService {
      *
      * @param file 업로드할 이미지 파일 (MultipartFile 형식)
      * @return {@link NoticeTmpImageResponseDTO} 객체로, 원본 파일 이름과 저장된 이미지 경로를 포함합니다.
-     * @throws IllegalArgumentException 파일 이름이 비어 있거나 유효하지 않은 경우 발생합니다.
      * @throws RuntimeException 이미지 업로드 중 예외가 발생한 경우 발생합니다.
      */
     public NoticeTmpImageResponseDTO saveTemporaryNoticeImage(MultipartFile file) {
         String oriImgName = file.getOriginalFilename();
         String imgName = "";
         String imgUrl = "";
-
-        if (StringUtils.isEmpty(oriImgName)) {
-            throw new IllegalArgumentException();
-        }
 
         try {
             imgName = fileService.uploadFile(tmpLocation, oriImgName, file.getBytes());
