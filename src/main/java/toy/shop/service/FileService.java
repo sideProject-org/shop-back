@@ -70,4 +70,17 @@ public class FileService {
             throw new RuntimeException("파일을 이동할 수 없습니다.");
         }
     }
+
+    /**
+     * 이미지 URL에서 파일 이름을 추출하는 메서드입니다.
+     *
+     * @param imageUrl 파일 이름을 추출할 이미지 URL
+     * @return 추출된 파일 이름 또는 유효하지 않은 URL인 경우 null을 반환합니다.
+     */
+    public String extractFileNameFromUrl(String imageUrl) {
+        if (imageUrl == null || !imageUrl.contains("/")) {
+            return null;
+        }
+        return imageUrl.substring(imageUrl.lastIndexOf("/") + 1);
+    }
 }

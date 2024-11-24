@@ -7,7 +7,6 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import toy.shop.domain.notice.Notice;
 import toy.shop.domain.notice.NoticeImage;
@@ -76,7 +75,7 @@ public class NoticeImageService {
      */
     public void moveTemporaryImagesToMain(Notice notice, List<String> tempImageUrls) {
         for (String tempImageUrl : tempImageUrls) {
-            String fileName = extractFileNameFromUrl(tempImageUrl);
+            String fileName = fileService.extractFileNameFromUrl(tempImageUrl);
 
             if (fileName == null || fileName.isEmpty()) {
                 throw new IllegalArgumentException("유효하지 않은 이미지 경로입니다.");
@@ -106,17 +105,12 @@ public class NoticeImageService {
      *
      * @param file 업로드할 이미지 파일 (MultipartFile 형식)
      * @return {@link NoticeTmpImageResponseDTO} 객체로, 원본 파일 이름과 저장된 이미지 경로를 포함합니다.
-     * @throws IllegalArgumentException 파일 이름이 비어 있거나 유효하지 않은 경우 발생합니다.
      * @throws RuntimeException 이미지 업로드 중 예외가 발생한 경우 발생합니다.
      */
     public NoticeTmpImageResponseDTO saveTemporaryNoticeImage(MultipartFile file) {
         String oriImgName = file.getOriginalFilename();
         String imgName = "";
         String imgUrl = "";
-
-        if (StringUtils.isEmpty(oriImgName)) {
-            throw new IllegalArgumentException();
-        }
 
         try {
             imgName = fileService.uploadFile(tmpLocation, oriImgName, file.getBytes());
@@ -140,7 +134,7 @@ public class NoticeImageService {
      * @throws IllegalArgumentException 유효하지 않거나 알 수 없는 이미지 경로인 경우 발생합니다.
      */
     public void deleteNoticeImage(String filePath) {
-        String fileName = extractFileNameFromUrl(filePath);
+        String fileName = fileService.extractFileNameFromUrl(filePath);
 
         if (fileName == null || fileName.isEmpty()) {
             throw new IllegalArgumentException("유효하지 않은 이미지 경로입니다.");
@@ -180,18 +174,5 @@ public class NoticeImageService {
         }
 
         noticeImageRepository.deleteByNoticeId(noticeId);
-    }
-
-    /**
-     * 이미지 URL에서 파일 이름을 추출하는 메서드입니다.
-     *
-     * @param imageUrl 파일 이름을 추출할 이미지 URL
-     * @return 추출된 파일 이름 또는 유효하지 않은 URL인 경우 null을 반환합니다.
-     */
-    private String extractFileNameFromUrl(String imageUrl) {
-        if (imageUrl == null || !imageUrl.contains("/")) {
-            return null;
-        }
-        return imageUrl.substring(imageUrl.lastIndexOf("/") + 1);
     }
 }

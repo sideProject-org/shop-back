@@ -91,6 +91,7 @@ props:
 
 path:
   profileImage: /home/ubuntu/shopImages/profileImages/
+  itemImage: C://shopImages/itemImages/
   noticeImage: /home/ubuntu/shopImages/noticeImages/
   noticeTmpImage: /home/ubuntu/shopImages/noticeImages/tmp/
   boardImage: /home/ubuntu/shopImages/boardImages/
