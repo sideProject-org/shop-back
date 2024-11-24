@@ -46,7 +46,7 @@ public interface ItemControllerDocs {
                     {
                         "status": 200,
                         "message": "상품 수정 성공",
-                        "data": null
+                        "data": "상품 ID"
                     }
                     """))),
             @ApiResponse(responseCode = "401", description = "상품 수정 실패 - 상품 없음", content = @Content(mediaType = "application/json", schema = @Schema(example = """

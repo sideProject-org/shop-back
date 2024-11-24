@@ -69,6 +69,21 @@ public class ItemService {
         return savedItem.getId();
     }
 
+    /**
+     * 주어진 아이템 ID에 해당하는 상품 정보를 업데이트합니다.
+     * - 상품 등록자와 요청 사용자가 일치하지 않으면 예외를 던집니다.
+     * - 기존 이미지를 삭제하고 새로운 이미지를 업로드합니다.
+     * - 상품 정보를 수정한 뒤, 데이터베이스에 저장합니다.
+     *
+     * @param itemId      업데이트할 상품의 고유 ID
+     * @param parameter   업데이트 요청 데이터(상품명, 내용, 가격, 할인율, 수량, 이미지 파일 등)를 포함한 DTO
+     * @param userDetails 현재 로그인한 사용자의 정보
+     * @return 업데이트된 상품의 고유 ID
+     * @throws UsernameNotFoundException 존재하지 않는 사용자일 경우 발생
+     * @throws NotFoundException         존재하지 않는 상품일 경우 발생
+     * @throws AccessDeniedException     상품 등록자가 아닌 사용자가 요청한 경우 발생
+     * @throws RuntimeException          파일 업로드 또는 삭제 실패 시 발생
+     */
     @Transactional
     public Long updateItem(Long itemId, ItemRequestDTO parameter, UserDetailsImpl userDetails) {
         Member member = memberRepository.findById(userDetails.getUserId())
@@ -104,6 +119,17 @@ public class ItemService {
         return item.getId();
     }
 
+    /**
+     * 주어진 아이템 ID에 해당하는 상품을 삭제합니다.
+     * - 상품 등록자와 요청 사용자가 일치하지 않으면 예외를 던집니다.
+     * - 상품 이미지를 삭제한 뒤, 데이터베이스에서 해당 상품 정보를 삭제합니다.
+     *
+     * @param itemId      삭제할 상품의 고유 ID
+     * @param userDetails 현재 로그인한 사용자의 정보
+     * @throws NotFoundException     존재하지 않는 상품일 경우 발생
+     * @throws AccessDeniedException 상품 등록자가 아닌 사용자가 요청한 경우 발생
+     * @throws RuntimeException      파일 삭제 실패 시 발생
+     */
     @Transactional
     public void deleteItem(Long itemId, UserDetailsImpl userDetails) {
         Item item = itemRepository.findById(itemId)
