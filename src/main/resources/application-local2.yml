@@ -96,3 +96,6 @@ path:
   noticeTmpImage: /home/minki/Documents/shopImages/noticeImages/tmp/
   boardImage: /home/minki/Documents/shopImages/boardImages/
   boardTmpImage: /home/minki/Documents/shopImages/boardImages/tmp/
+  tmpDirectories:
+    - /home/minki/Documents/shopImages/noticeImages/tmp/
+    - /home/minki/Documents/shopImages/boardImages/tmp/
