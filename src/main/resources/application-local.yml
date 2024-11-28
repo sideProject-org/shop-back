@@ -96,3 +96,6 @@ path:
   noticeTmpImage: C://shopImages/noticeImages/tmp/
   boardImage: C://shopImages/boardImages/
   boardTmpImage: C://shopImages/boardImages/tmp/
+  tmpDirectories:
+    - C://shopImages/noticeImages/tmp/
+    - C://shopImages/boardImages/tmp/

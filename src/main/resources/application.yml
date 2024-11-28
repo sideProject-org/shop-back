@@ -96,3 +96,6 @@ path:
   noticeTmpImage: /home/ubuntu/shopImages/noticeImages/tmp/
   boardImage: /home/ubuntu/shopImages/boardImages/
   boardTmpImage: /home/ubuntu/shopImages/boardImages/tmp/
+  tmpDirectories:
+    - /home/ubuntu/shopImages/noticeImages/tmp/
+    - /home/ubuntu/shopImages/boardImages/tmp/
