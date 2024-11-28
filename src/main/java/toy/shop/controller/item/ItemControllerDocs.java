@@ -8,8 +8,11 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.multipart.MultipartFile;
 import toy.shop.dto.Response;
 import toy.shop.dto.item.ItemRequestDTO;
+
+import java.util.List;
 
 @Tag(name = "상품 API", description = "상품 기능들에 대한 API")
 public interface ItemControllerDocs {
@@ -98,4 +101,35 @@ public interface ItemControllerDocs {
                     """)))
     })
     ResponseEntity<Response<?>> deleteItem(Long itemId, Authentication authentication);
+
+    @Operation(summary = "임시 이미지 등록", description = "files 정보를 통해 임시 이미지 등록")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "임시 이미지 업로드 성공", content = @Content(mediaType = "application/json", schema = @Schema(example = """
+                    {
+                        "status": 200,
+                        "message": "임시 파일 업로드 성공",
+                        "data": [
+                            {
+                                "originalName": "원래 파일 이름",
+                                "savedPath": "저장 경로"
+                            }
+                        ]
+                    }
+                    """))),
+            @ApiResponse(responseCode = "400", description = "임시 이미지 업로드 실패 - 파일 없음", content = @Content(mediaType = "application/json", schema = @Schema(example = """
+                    {
+                        "status": 400,
+                        "message": "파일이 존재하지 않습니다.",
+                        "data": null
+                    }
+                    """))),
+            @ApiResponse(responseCode = "500", description = "임시 파일 업로드 실패 - 서버 에러", content = @Content(mediaType = "application/json", schema = @Schema(example = """
+                    {
+                        "status": 500,
+                        "message": "이미지 업로드에 실패하였습니다.",
+                        "data": null
+                    }
+                    """)))
+    })
+    ResponseEntity<Response<?>> saveTmpImage(List<MultipartFile> files);
 }
