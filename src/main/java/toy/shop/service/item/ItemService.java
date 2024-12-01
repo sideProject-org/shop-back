@@ -20,6 +20,7 @@ import toy.shop.repository.member.MemberRepository;
 import toy.shop.service.FileService;
 
 import java.io.IOException;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -148,27 +149,34 @@ public class ItemService {
     }
 
     /**
-     * 주어진 아이템 ID에 해당하는 상품을 삭제합니다.
-     * - 상품 등록자와 요청 사용자가 일치하지 않으면 예외를 던집니다.
-     * - 상품 이미지를 삭제한 뒤, 데이터베이스에서 해당 상품 정보를 삭제합니다.
+     * 특정 상품과 해당 상품에 연결된 이미지를 삭제하는 메서드입니다.
      *
-     * @param itemId      삭제할 상품의 고유 ID
-     * @param userDetails 현재 로그인한 사용자의 정보
-     * @throws NotFoundException     존재하지 않는 상품일 경우 발생
-     * @throws AccessDeniedException 상품 등록자가 아닌 사용자가 요청한 경우 발생
-     * @throws RuntimeException      파일 삭제 실패 시 발생
+     * 이 메서드는 주어진 상품 ID를 기반으로 상품을 검색한 후, 해당 상품과 연관된 이미지를 삭제합니다.
+     * 상품을 삭제하기 전에 요청한 사용자가 상품 등록자인지 확인하여 권한 검사를 수행합니다.
+     *
+     * @param itemId          삭제하려는 상품의 고유 ID.
+     * @param userDetails     현재 인증된 사용자 정보를 포함하는 객체.
+     * @throws NotFoundException       존재하지 않는 상품 ID인 경우 예외를 발생시킵니다.
+     * @throws AccessDeniedException   요청 사용자가 상품 등록자가 아닌 경우 예외를 발생시킵니다.
      */
     @Transactional
     public void deleteItem(Long itemId, UserDetailsImpl userDetails) {
         Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new NotFoundException("존재하지 않는 상품입니다."));
 
+        List<ItemImage> itemImages = itemImageRepository.findByItemId(itemId);
+
         if (!item.getMember().getId().equals(userDetails.getUserId())) {
             throw new AccessDeniedException("상품 등록자가 아닙니다.");
         }
 
-        String imageName = fileService.extractFileNameFromUrl(item.getImagePath());
-        fileService.deleteFile(location, imageName);
+        String detailImageName = fileService.extractFileNameFromUrl(item.getImagePath());
+        fileService.deleteFile(location, detailImageName);
+
+        for (ItemImage itemImage : itemImages) {
+            String imageName = fileService.extractFileNameFromUrl(itemImage.getImagePath());
+            fileService.deleteFile(location, imageName);
+        }
 
         itemRepository.delete(item);
     }
