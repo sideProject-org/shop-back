@@ -6,12 +6,15 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import toy.shop.cmmn.exception.AccessDeniedException;
 import toy.shop.cmmn.exception.NotFoundException;
 import toy.shop.domain.item.Item;
+import toy.shop.domain.item.ItemImage;
 import toy.shop.domain.member.Member;
 import toy.shop.dto.item.ItemRequestDTO;
 import toy.shop.jwt.UserDetailsImpl;
+import toy.shop.repository.item.ItemImageRepository;
 import toy.shop.repository.item.ItemRepository;
 import toy.shop.repository.member.MemberRepository;
 import toy.shop.service.FileService;
@@ -27,6 +30,7 @@ public class ItemService {
     private final ItemRepository itemRepository;
 
     private final FileService fileService;
+    private final ItemImageRepository itemImageRepository;
 
     @Value("${path.itemImage}")
     private String location;
@@ -34,19 +38,27 @@ public class ItemService {
     private final String resourceHandlerItemURL = "/images/itemImage/";
 
     /**
-     * 저장 요청된 상품 데이터를 DB에 저장하고 해당 상품의 설명 이미지를 업로드 후 관련 정보를 저장합니다.
+     * 상품 정보와 이미지를 저장하는 메서드입니다.
      *
-     * @param parameter 아이템 저장 요청 데이터(이름, 내용, 가격, 할인율, 수량, 이미지 파일 등)를 포함한 DTO
-     * @return 저장된 아이템의 고유 ID
-     * @throws RuntimeException 이미지 업로드 실패 시 발생
+     * 이 메서드는 사용자가 업로드한 상품의 세부 정보와 이미지를 데이터베이스에 저장합니다.
+     * 상품 상세 이미지는 개별적으로 저장되며, 추가 이미지(썸네일 등)도 함께 저장됩니다.
+     * 저장된 상품은 인증된 사용자와 연관됩니다.
+     *
+     * @param parameter       상품 정보를 담고 있는 DTO 객체.
+     *                        (상품명, 상세 내용, 가격, 할인율, 수량, 상세 이미지, 추가 이미지 포함)
+     * @param userDetails     현재 인증된 사용자 정보를 담고 있는 객체.
+     * @return                저장된 상품의 고유 ID.
+     * @throws RuntimeException 파일 업로드 실패 시 예외를 발생시킵니다.
+     * @throws UsernameNotFoundException 사용자 정보를 찾을 수 없을 경우 예외를 발생시킵니다.
      */
     @Transactional
     public Long saveItem(ItemRequestDTO parameter, UserDetailsImpl userDetails) {
-        String originalFilename = parameter.getImage().getOriginalFilename();
+        // 상품 저장
+        String originalFilename = parameter.getItemDetailImage().getOriginalFilename();
         String imgName;
 
         try {
-            imgName = fileService.uploadFile(location, originalFilename, parameter.getImage().getBytes());
+            imgName = fileService.uploadFile(location, originalFilename, parameter.getItemDetailImage().getBytes());
         } catch (IOException e) {
             throw new RuntimeException("파일 업로드에 실패하였습니다.");
         }
@@ -65,6 +77,22 @@ public class ItemService {
                 .build();
 
         Item savedItem = itemRepository.save(item);
+
+        // 상품 썸네일 이미지 저장
+        for (MultipartFile file : parameter.getItemImages()) {
+            try {
+                imgName = fileService.uploadFile(location, originalFilename, file.getBytes());
+            } catch (IOException e) {
+                throw new RuntimeException("파일 업로드에 실패하였습니다.");
+            }
+
+            ItemImage itemImage = ItemImage.builder()
+                    .item(savedItem)
+                    .imagePath(resourceHandlerItemURL + imgName)
+                    .build();
+
+            itemImageRepository.save(itemImage);
+        }
 
         return savedItem.getId();
     }
@@ -95,14 +123,14 @@ public class ItemService {
             throw new AccessDeniedException("상품 등록자가 아닙니다.");
         }
 
-        String originalFilename = parameter.getImage().getOriginalFilename();
+        String originalFilename = parameter.getItemDetailImage().getOriginalFilename();
         String newImageName;
 
         try {
             String currentImageName = fileService.extractFileNameFromUrl(item.getImagePath());
             fileService.deleteFile(location, currentImageName);
 
-            newImageName = fileService.uploadFile(location, originalFilename, parameter.getImage().getBytes());
+            newImageName = fileService.uploadFile(location, originalFilename, parameter.getItemDetailImage().getBytes());
         } catch (IOException e) {
             throw new RuntimeException("파일 업로드에 실패하였습니다.");
         }

@@ -6,8 +6,10 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 @Data
-@Schema(description = "상품 등록 및 수정에 필요한 요청 정보", requiredProperties = {"name", "price", "sale", "quantity", "image"})
+@Schema(description = "상품 등록 및 수정에 필요한 요청 정보", requiredProperties = {"name", "price", "sale", "quantity", "itemDetailImage", "itemImages"})
 public class ItemRequestDTO {
 
     @Schema(description = "상품명")
@@ -31,5 +33,9 @@ public class ItemRequestDTO {
 
     @Schema(description = "상품 설명 이미지")
     @NotNull(message = "해당 값은 필수값 입니다.")
-    private MultipartFile image;
+    private MultipartFile itemDetailImage;
+
+    @Schema(description = "상품 이미지들")
+    @NotNull(message = "해당 값은 필수값 입니다.")
+    private List<MultipartFile> itemImages;
 }
