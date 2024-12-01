@@ -2,6 +2,7 @@ package toy.shop.domain.item;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -22,4 +23,10 @@ public class ItemImage {
 
     @Column(nullable = false)
     private String imagePath;
+
+    @Builder
+    public ItemImage(Item item, String imagePath) {
+        this.item = item;
+        this.imagePath = imagePath;
+    }
 }

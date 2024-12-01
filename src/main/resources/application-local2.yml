@@ -92,7 +92,6 @@ props:
 path:
   profileImage: /home/minki/Documents/shopImages/profileImages/
   itemImage: /home/minki/Documents/shopImages/itemImages/
-  itemTmpImage: /home/minki/Documents/shopImages/itemImages/tmp/
   noticeImage: /home/minki/Documents/shopImages/noticeImages/
   noticeTmpImage: /home/minki/Documents/shopImages/noticeImages/tmp/
   boardImage: /home/minki/Documents/shopImages/boardImages/

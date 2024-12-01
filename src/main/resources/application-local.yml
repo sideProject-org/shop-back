@@ -92,7 +92,6 @@ props:
 path:
   profileImage: C://shopImages/profileImages/
   itemImage: C://shopImages/itemImages/
-  itemTmpImage: C://shopImages/itemImages//tmp/
   noticeImage: C://shopImages/noticeImages/
   noticeTmpImage: C://shopImages/noticeImages/tmp/
   boardImage: C://shopImages/boardImages/
