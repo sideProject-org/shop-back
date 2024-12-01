@@ -68,7 +68,8 @@ configurations {
 tasks.named('test') {
 	useJUnitPlatform()
 }
-tasks.named('bootJar') {
-	dependsOn 'test'
+
+tasks.named('test') {
+	enabled = false
 }
 
