@@ -128,4 +128,40 @@ public interface GlobalControllerDocs {
                     """))),
     })
     ResponseEntity<Response<?>> noticeCommentList(Long noticeId);
+
+    @Operation(summary = "상품 목록 조회", description = "페이지네이션 값을 통해 상품 목록 조회")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "상품 목록 조회 성공", content = @Content(mediaType = "application/json", schema = @Schema(example = """
+                {
+                    "status": 200,
+                    "message": "상품 목록 조회 성공",
+                    "data": {
+                        "content": [
+                            {
+                                "name": "상품명",
+                                "price": "상품 정가",
+                                "sale": "할인율",
+                                "itemImages": [
+                                    "이미지 경로"
+                                ]
+                            }
+                        ],
+                        "page": {
+                            "size": "페이징 사이즈",
+                            "number": "페이지 넘버",
+                            "totalElements": "총 개수",
+                            "totalPages": "총 페이지수"
+                        }
+                    }
+                }
+                """))),
+            @ApiResponse(responseCode = "401", description = "상품 목록 조회 실패 - 존재하지 않음", content = @Content(mediaType = "application/json", schema = @Schema(example = """
+                    {
+                        "status": 401,
+                        "message": "상품이 존재하지 않습니다.",
+                        "data": null
+                    }
+                    """)))
+    })
+    ResponseEntity<Response<?>> itemList(Pageable pageable);
 }

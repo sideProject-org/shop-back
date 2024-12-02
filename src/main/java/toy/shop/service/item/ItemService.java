@@ -3,6 +3,8 @@ package toy.shop.service.item;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,6 +14,7 @@ import toy.shop.cmmn.exception.NotFoundException;
 import toy.shop.domain.item.Item;
 import toy.shop.domain.item.ItemImage;
 import toy.shop.domain.member.Member;
+import toy.shop.dto.item.ItemListResponseDTO;
 import toy.shop.dto.item.ItemRequestDTO;
 import toy.shop.jwt.UserDetailsImpl;
 import toy.shop.repository.item.ItemImageRepository;
@@ -21,6 +24,8 @@ import toy.shop.service.FileService;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -29,14 +34,46 @@ public class ItemService {
 
     private final MemberRepository memberRepository;
     private final ItemRepository itemRepository;
+    private final ItemImageRepository itemImageRepository;
 
     private final FileService fileService;
-    private final ItemImageRepository itemImageRepository;
 
     @Value("${path.itemImage}")
     private String location;
 
     private final String resourceHandlerItemURL = "/images/itemImage/";
+
+    /**
+     * 페이지 단위로 상품 목록을 조회하고, 각 상품의 이미지 경로를 포함한 DTO 리스트를 반환합니다.
+     *
+     * @param pageable 페이징 정보를 포함한 {@link Pageable} 객체
+     * @return {@link Page} 객체로 반환된 {@link ItemListResponseDTO} 리스트
+     * @throws NotFoundException 조회된 상품이 없을 경우 발생
+     */
+    @Transactional
+    public Page<ItemListResponseDTO> itemList(Pageable pageable) {
+        Page<Item> itemList = itemRepository.findAll(pageable);
+
+        if (itemList.getContent().isEmpty()) {
+            throw new NotFoundException("상품이 존재하지 않습니다.");
+        }
+
+        Map<Long, List<ItemImage>> itemImageMap = itemImageRepository.findAllByItemIds(
+                itemList.stream().map(Item::getId).collect(Collectors.toList())
+        ).stream().collect(Collectors.groupingBy(itemImage -> itemImage.getItem().getId()));
+
+        Page<ItemListResponseDTO> result = itemList.map(item -> ItemListResponseDTO.builder()
+                .name(item.getName())
+                .price(item.getPrice())
+                .sale(item.getSale())
+                .itemImages(itemImageMap.getOrDefault(item.getId(), List.of())
+                        .stream()
+                        .map(ItemImage::getImagePath)
+                        .collect(Collectors.toList()))
+                .build());
+
+        return result;
+    }
 
     /**
      * 상품 정보와 이미지를 저장하는 메서드입니다.
