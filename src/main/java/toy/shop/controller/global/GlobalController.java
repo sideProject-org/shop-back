@@ -14,6 +14,7 @@ import toy.shop.dto.Response;
 import toy.shop.dto.admin.notice.NoticeDetailResponseDTO;
 import toy.shop.dto.admin.notice.NoticeListResponseDTO;
 import toy.shop.dto.admin.notice.comment.NoticeCommentResponseDTO;
+import toy.shop.dto.item.ItemDetailResponseDTO;
 import toy.shop.dto.item.ItemListResponseDTO;
 import toy.shop.service.admin.notice.NoticeCommentService;
 import toy.shop.service.admin.notice.NoticeService;
@@ -66,5 +67,12 @@ public class GlobalController implements GlobalControllerDocs {
         Page<ItemListResponseDTO> result = itemService.itemList(pageable);
 
         return buildResponse(HttpStatus.OK, "상품 목록 조회 성공", result);
+    }
+
+    @GetMapping("/items/{itemId}")
+    public ResponseEntity<Response<?>> itemDetail(@PathVariable("itemId") Long itemId) {
+        ItemDetailResponseDTO result = itemService.itemDetail(itemId);
+
+        return buildResponse(HttpStatus.OK, "상품 상세정보 조회 성공", result);
     }
 }

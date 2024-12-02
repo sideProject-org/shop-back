@@ -138,6 +138,7 @@ public interface GlobalControllerDocs {
                     "data": {
                         "content": [
                             {
+                                "id": "상품 ID",
                                 "name": "상품명",
                                 "price": "상품 정가",
                                 "sale": "할인율",
@@ -164,4 +165,33 @@ public interface GlobalControllerDocs {
                     """)))
     })
     ResponseEntity<Response<?>> itemList(Pageable pageable);
+
+    @Operation(summary = "상품 상세 조회", description = "상품 ID를 통한 상세 조회")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "상품 상세정보 조회 성공", content = @Content(mediaType = "application/json", schema = @Schema(example = """
+                {
+                    "status": 200,
+                    "message": "상품 상세정보 조회 성공",
+                    "data": {
+                        "id": "상품 ID",
+                        "name": "상품명",
+                        "price": "상품 정가",
+                        "sale": "할인율",
+                        "content": "상품 상세정보 부가 설명",
+                        "imageDetail": "상품 상세정보 이미지 경로",
+                        "imageList": [
+                            "상품 이미지 경로"
+                        ]
+                    }
+                }
+                """))),
+            @ApiResponse(responseCode = "401", description = "상품 상세정보 조회 실패 - 존재하지 않음", content = @Content(mediaType = "application/json", schema = @Schema(example = """
+                    {
+                        "status": 401,
+                        "message": "상품이 존재하지 않습니다.",
+                        "data": null
+                    }
+                    """)))
+    })
+    ResponseEntity<Response<?>> itemDetail(Long itemId);
 }

@@ -14,6 +14,7 @@ import toy.shop.cmmn.exception.NotFoundException;
 import toy.shop.domain.item.Item;
 import toy.shop.domain.item.ItemImage;
 import toy.shop.domain.member.Member;
+import toy.shop.dto.item.ItemDetailResponseDTO;
 import toy.shop.dto.item.ItemListResponseDTO;
 import toy.shop.dto.item.ItemRequestDTO;
 import toy.shop.jwt.UserDetailsImpl;
@@ -63,6 +64,7 @@ public class ItemService {
         ).stream().collect(Collectors.groupingBy(itemImage -> itemImage.getItem().getId()));
 
         Page<ItemListResponseDTO> result = itemList.map(item -> ItemListResponseDTO.builder()
+                .id(item.getId())
                 .name(item.getName())
                 .price(item.getPrice())
                 .sale(item.getSale())
@@ -73,6 +75,31 @@ public class ItemService {
                 .build());
 
         return result;
+    }
+
+    /**
+     * 특정 상품의 상세 정보를 조회하여 반환합니다.
+     *
+     * @param itemId 조회할 상품의 ID
+     * @return {@link ItemDetailResponseDTO} 객체로, 상품의 상세 정보와 이미지 경로 리스트를 포함
+     * @throws NotFoundException 요청한 상품이 존재하지 않을 경우 발생
+     */
+
+    @Transactional
+    public ItemDetailResponseDTO itemDetail(Long itemId) {
+        Item item = itemRepository.findById(itemId).orElseThrow(() -> new NotFoundException("상품이 존재하지 않습니다."));
+        List<ItemImage> itemImages = itemImageRepository.findByItemId(item.getId());
+        List<String> itemImagesPath = itemImages.stream().map(ItemImage::getImagePath).collect(Collectors.toList());
+
+        return ItemDetailResponseDTO.builder()
+                .id(item.getId())
+                .name(item.getName())
+                .price(item.getPrice())
+                .sale(item.getSale())
+                .content(item.getContent())
+                .imageDetail(item.getImagePath())
+                .imageList(itemImagesPath)
+                .build();
     }
 
     /**

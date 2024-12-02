@@ -7,11 +7,13 @@ import java.util.List;
 
 @Data
 @Builder
-public class ItemListResponseDTO {
+public class ItemDetailResponseDTO {
 
     private Long id;
     private String name;
     private int price;
     private int sale;
-    private List<String> itemImages;
+    private String content;
+    private String imageDetail;
+    private List<String> imageList;
 }
