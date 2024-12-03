@@ -57,12 +57,15 @@ public class Item extends BaseEntity {
         this.member = member;
     }
 
-    public void updateItem(String name, String content, int price, int sale, int quantity, String imagePath) {
+    public void updateItem(String name, String content, int price, int sale, int quantity) {
         this.name = name;
         this.content = content;
         this.price = price;
         this.sale = sale;
         this.quantity = quantity;
+    }
+
+    public void updateImagePath(String imagePath) {
         this.imagePath = imagePath;
     }
 }

@@ -7,7 +7,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import toy.shop.dto.Response;
-import toy.shop.dto.item.ItemRequestDTO;
+import toy.shop.dto.item.ItemSaveRequestDTO;
+import toy.shop.dto.item.ItemUpdateRequestDTO;
 import toy.shop.jwt.UserDetailsImpl;
 import toy.shop.service.item.ItemService;
 
@@ -21,7 +22,7 @@ public class ItemController implements ItemControllerDocs {
     private final ItemService itemService;
 
     @PostMapping
-    public ResponseEntity<Response<?>> saveItem(@ModelAttribute @Valid ItemRequestDTO parameter, Authentication authentication) {
+    public ResponseEntity<Response<?>> saveItem(@ModelAttribute @Valid ItemSaveRequestDTO parameter, Authentication authentication) {
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
         Long result = itemService.saveItem(parameter, userDetails);
 
@@ -29,7 +30,7 @@ public class ItemController implements ItemControllerDocs {
     }
 
     @PutMapping("/{itemId}")
-    public ResponseEntity<Response<?>> updateItem(@PathVariable("itemId") Long itemId, @ModelAttribute @Valid ItemRequestDTO parameter, Authentication authentication) {
+    public ResponseEntity<Response<?>> updateItem(@PathVariable("itemId") Long itemId, @ModelAttribute @Valid ItemUpdateRequestDTO parameter, Authentication authentication) {
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
         Long result = itemService.updateItem(itemId, parameter, userDetails);
 

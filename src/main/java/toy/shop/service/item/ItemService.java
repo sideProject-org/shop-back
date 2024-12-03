@@ -16,7 +16,8 @@ import toy.shop.domain.item.ItemImage;
 import toy.shop.domain.member.Member;
 import toy.shop.dto.item.ItemDetailResponseDTO;
 import toy.shop.dto.item.ItemListResponseDTO;
-import toy.shop.dto.item.ItemRequestDTO;
+import toy.shop.dto.item.ItemSaveRequestDTO;
+import toy.shop.dto.item.ItemUpdateRequestDTO;
 import toy.shop.jwt.UserDetailsImpl;
 import toy.shop.repository.item.ItemImageRepository;
 import toy.shop.repository.item.ItemRepository;
@@ -117,7 +118,7 @@ public class ItemService {
      * @throws UsernameNotFoundException 사용자 정보를 찾을 수 없을 경우 예외를 발생시킵니다.
      */
     @Transactional
-    public Long saveItem(ItemRequestDTO parameter, UserDetailsImpl userDetails) {
+    public Long saveItem(ItemSaveRequestDTO parameter, UserDetailsImpl userDetails) {
         // 상품 저장
         String originalFilename = parameter.getItemDetailImage().getOriginalFilename();
         String imgName;
@@ -178,7 +179,7 @@ public class ItemService {
      * @throws RuntimeException          파일 업로드 또는 삭제 실패 시 발생
      */
     @Transactional
-    public Long updateItem(Long itemId, ItemRequestDTO parameter, UserDetailsImpl userDetails) {
+    public Long updateItem(Long itemId, ItemUpdateRequestDTO parameter, UserDetailsImpl userDetails) {
         Member member = memberRepository.findById(userDetails.getUserId())
                 .orElseThrow(() -> new UsernameNotFoundException("존재하지 않는 사용자입니다."));
         Item item = itemRepository.findById(itemId)
@@ -188,26 +189,33 @@ public class ItemService {
             throw new AccessDeniedException("상품 등록자가 아닙니다.");
         }
 
-        String originalFilename = parameter.getItemDetailImage().getOriginalFilename();
-        String newImageName;
-
-        try {
-            String currentImageName = fileService.extractFileNameFromUrl(item.getImagePath());
-            fileService.deleteFile(location, currentImageName);
-
-            newImageName = fileService.uploadFile(location, originalFilename, parameter.getItemDetailImage().getBytes());
-        } catch (IOException e) {
-            throw new RuntimeException("파일 업로드에 실패하였습니다.");
+        if (!parameter.getItemImages().isEmpty()) {
+            log.info("itemImage's not empty");
         }
 
-        item.updateItem(
-                parameter.getName(),
-                parameter.getContent(),
-                parameter.getPrice(),
-                parameter.getSale(),
-                parameter.getQuantity(),
-                resourceHandlerItemURL + newImageName
-        );
+        if (!parameter.getItemDetailImage().isEmpty()) {
+            log.info("itemDetailImage's not empty");
+        }
+
+//        String originalFilename = parameter.getItemDetailImage().getOriginalFilename();
+//        String newImageName;
+//
+//        try {
+//            String currentImageName = fileService.extractFileNameFromUrl(item.getImagePath());
+//            fileService.deleteFile(location, currentImageName);
+//
+//            newImageName = fileService.uploadFile(location, originalFilename, parameter.getItemDetailImage().getBytes());
+//        } catch (IOException e) {
+//            throw new RuntimeException("파일 업로드에 실패하였습니다.");
+//        }
+//
+//        item.updateItem(
+//                parameter.getName(),
+//                parameter.getContent(),
+//                parameter.getPrice(),
+//                parameter.getSale(),
+//                parameter.getQuantity()
+//        );
 
         return item.getId();
     }
