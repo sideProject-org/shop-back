@@ -2,6 +2,7 @@ package toy.shop.domain.member;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
@@ -14,7 +15,7 @@ public class Address {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "team_id")
+    @Column(name = "address_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -41,5 +42,16 @@ public class Address {
 
     @Column(nullable = false)
     @ColumnDefault("'N'")
-    private char defaultType;
+    private char defaultType = 'N';
+
+    @Builder
+    public Address(Member member, String name, String addr, String addrDetail, String phone, String zipCode, String request) {
+        this.member = member;
+        this.name = name;
+        this.addr = addr;
+        this.addrDetail = addrDetail;
+        this.phone = phone;
+        this.zipCode = zipCode;
+        this.request = request;
+    }
 }
