@@ -7,6 +7,7 @@ import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Optional;
 
 @Data
 @Schema(description = "상품 수정에 필요한 요청 정보", requiredProperties = {"name", "price", "sale", "quantity"})
@@ -32,8 +33,8 @@ public class ItemUpdateRequestDTO {
     private int quantity;
 
     @Schema(description = "상품 설명 이미지")
-    private MultipartFile itemDetailImage;
+    private Optional<MultipartFile> itemDetailImage = Optional.empty();
 
     @Schema(description = "상품 이미지들")
-    private List<MultipartFile> itemImages;
+    private List<MultipartFile> itemImages = List.of();
 }
