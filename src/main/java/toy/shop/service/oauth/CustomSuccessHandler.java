@@ -1,7 +1,6 @@
 package toy.shop.service.oauth;
 
 import jakarta.servlet.ServletException;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -48,14 +47,5 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
             // 예외 발생 시 클라이언트에 에러 메시지를 전달하기 위해 리디렉트
             response.sendRedirect(clientIp + "/error?message=" + URLEncoder.encode(ex.getMessage(), "UTF-8"));
         }
-    }
-
-    private Cookie createCookie(String key, String value) {
-        Cookie cookie = new Cookie(key, value);
-        cookie.setMaxAge(60*60*60);
-        cookie.setPath("/");
-        cookie.setHttpOnly(true);
-
-        return cookie;
     }
 }
