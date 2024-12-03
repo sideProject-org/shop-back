@@ -16,7 +16,8 @@ import toy.shop.domain.item.ItemImage;
 import toy.shop.domain.member.Member;
 import toy.shop.dto.item.ItemDetailResponseDTO;
 import toy.shop.dto.item.ItemListResponseDTO;
-import toy.shop.dto.item.ItemRequestDTO;
+import toy.shop.dto.item.ItemSaveRequestDTO;
+import toy.shop.dto.item.ItemUpdateRequestDTO;
 import toy.shop.jwt.UserDetailsImpl;
 import toy.shop.repository.item.ItemImageRepository;
 import toy.shop.repository.item.ItemRepository;
@@ -51,7 +52,7 @@ public class ItemService {
      * @return {@link Page} 객체로 반환된 {@link ItemListResponseDTO} 리스트
      * @throws NotFoundException 조회된 상품이 없을 경우 발생
      */
-    @Transactional
+    @Transactional(readOnly = true)
     public Page<ItemListResponseDTO> itemList(Pageable pageable) {
         Page<Item> itemList = itemRepository.findAll(pageable);
 
@@ -85,7 +86,7 @@ public class ItemService {
      * @throws NotFoundException 요청한 상품이 존재하지 않을 경우 발생
      */
 
-    @Transactional
+    @Transactional(readOnly = true)
     public ItemDetailResponseDTO itemDetail(Long itemId) {
         Item item = itemRepository.findById(itemId).orElseThrow(() -> new NotFoundException("상품이 존재하지 않습니다."));
         List<ItemImage> itemImages = itemImageRepository.findByItemId(item.getId());
@@ -117,16 +118,10 @@ public class ItemService {
      * @throws UsernameNotFoundException 사용자 정보를 찾을 수 없을 경우 예외를 발생시킵니다.
      */
     @Transactional
-    public Long saveItem(ItemRequestDTO parameter, UserDetailsImpl userDetails) {
+    public Long saveItem(ItemSaveRequestDTO parameter, UserDetailsImpl userDetails) {
         // 상품 저장
         String originalFilename = parameter.getItemDetailImage().getOriginalFilename();
-        String imgName;
-
-        try {
-            imgName = fileService.uploadFile(location, originalFilename, parameter.getItemDetailImage().getBytes());
-        } catch (IOException e) {
-            throw new RuntimeException("파일 업로드에 실패하였습니다.");
-        }
+        String imgName = uploadFile(parameter.getItemDetailImage());
 
         Member member = memberRepository.findById(userDetails.getUserId())
                 .orElseThrow(() -> new UsernameNotFoundException("존재하지 않는 사용자입니다."));
@@ -163,50 +158,37 @@ public class ItemService {
     }
 
     /**
-     * 주어진 아이템 ID에 해당하는 상품 정보를 업데이트합니다.
-     * - 상품 등록자와 요청 사용자가 일치하지 않으면 예외를 던집니다.
-     * - 기존 이미지를 삭제하고 새로운 이미지를 업로드합니다.
-     * - 상품 정보를 수정한 뒤, 데이터베이스에 저장합니다.
+     * 기존 상품의 세부 정보(이미지 및 메타데이터 포함)를 업데이트합니다.
      *
-     * @param itemId      업데이트할 상품의 고유 ID
-     * @param parameter   업데이트 요청 데이터(상품명, 내용, 가격, 할인율, 수량, 이미지 파일 등)를 포함한 DTO
-     * @param userDetails 현재 로그인한 사용자의 정보
-     * @return 업데이트된 상품의 고유 ID
-     * @throws UsernameNotFoundException 존재하지 않는 사용자일 경우 발생
-     * @throws NotFoundException         존재하지 않는 상품일 경우 발생
-     * @throws AccessDeniedException     상품 등록자가 아닌 사용자가 요청한 경우 발생
-     * @throws RuntimeException          파일 업로드 또는 삭제 실패 시 발생
+     * @param itemId 업데이트할 상품의 ID
+     * @param parameter 업데이트할 상품 정보와 이미지를 포함한 DTO
+     * @param userDetails 인증된 사용자 정보
+     * @return 업데이트된 상품의 ID
+     * @throws UsernameNotFoundException 사용자가 존재하지 않을 경우 발생
+     * @throws NotFoundException 상품이 존재하지 않을 경우 발생
+     * @throws AccessDeniedException 인증된 사용자가 해당 상품의 소유자가 아닐 경우 발생
+     * @throws RuntimeException 파일 업로드 또는 삭제 중 오류가 발생할 경우 발생
      */
     @Transactional
-    public Long updateItem(Long itemId, ItemRequestDTO parameter, UserDetailsImpl userDetails) {
-        Member member = memberRepository.findById(userDetails.getUserId())
-                .orElseThrow(() -> new UsernameNotFoundException("존재하지 않는 사용자입니다."));
-        Item item = itemRepository.findById(itemId)
-                .orElseThrow(() -> new NotFoundException("존재하지 않는 상품입니다."));
+    public Long updateItem(Long itemId, ItemUpdateRequestDTO parameter, UserDetailsImpl userDetails) {
+        // 사용자와 상품 검증
+        Member member = getMemberById(userDetails.getUserId());
+        Item item = getItemById(itemId);
+        validateItemOwnership(item, member);
 
-        if (!item.getMember().getId().equals(member.getId())) {
-            throw new AccessDeniedException("상품 등록자가 아닙니다.");
-        }
+        // 상품 이미지 업데이트
+        updateItemImages(itemId, item, parameter);
 
-        String originalFilename = parameter.getItemDetailImage().getOriginalFilename();
-        String newImageName;
+        // 상세 이미지 업데이트
+        parameter.getItemDetailImage().ifPresent(detailImage -> updateDetailImage(item, detailImage));
 
-        try {
-            String currentImageName = fileService.extractFileNameFromUrl(item.getImagePath());
-            fileService.deleteFile(location, currentImageName);
-
-            newImageName = fileService.uploadFile(location, originalFilename, parameter.getItemDetailImage().getBytes());
-        } catch (IOException e) {
-            throw new RuntimeException("파일 업로드에 실패하였습니다.");
-        }
-
+        // 상품 정보 업데이트
         item.updateItem(
                 parameter.getName(),
                 parameter.getContent(),
                 parameter.getPrice(),
                 parameter.getSale(),
-                parameter.getQuantity(),
-                resourceHandlerItemURL + newImageName
+                parameter.getQuantity()
         );
 
         return item.getId();
@@ -225,14 +207,11 @@ public class ItemService {
      */
     @Transactional
     public void deleteItem(Long itemId, UserDetailsImpl userDetails) {
-        Item item = itemRepository.findById(itemId)
-                .orElseThrow(() -> new NotFoundException("존재하지 않는 상품입니다."));
+        Member member = getMemberById(userDetails.getUserId());
+        Item item = getItemById(itemId);
+        validateItemOwnership(item, member);
 
         List<ItemImage> itemImages = itemImageRepository.findByItemId(itemId);
-
-        if (!item.getMember().getId().equals(userDetails.getUserId())) {
-            throw new AccessDeniedException("상품 등록자가 아닙니다.");
-        }
 
         String detailImageName = fileService.extractFileNameFromUrl(item.getImagePath());
         fileService.deleteFile(location, detailImageName);
@@ -242,6 +221,71 @@ public class ItemService {
             fileService.deleteFile(location, imageName);
         }
 
+        itemImageRepository.deleteAllByItemId(itemId);
         itemRepository.delete(item);
+    }
+
+    private Member getMemberById(Long userId) {
+        return memberRepository.findById(userId)
+                .orElseThrow(() -> new UsernameNotFoundException("존재하지 않는 사용자입니다."));
+    }
+
+    private Item getItemById(Long itemId) {
+        return itemRepository.findById(itemId)
+                .orElseThrow(() -> new NotFoundException("존재하지 않는 상품입니다."));
+    }
+
+    private void validateItemOwnership(Item item, Member member) {
+        if (!item.getMember().getId().equals(member.getId())) {
+            throw new AccessDeniedException("상품 등록자가 아닙니다.");
+        }
+    }
+
+    private void updateItemImages(Long itemId, Item item, ItemUpdateRequestDTO parameter) {
+        List<MultipartFile> itemImages = parameter.getItemImages();
+        if (itemImages != null && itemImages.stream().anyMatch(file -> file != null && !file.isEmpty())) {
+            // 기존 이미지 삭제
+            deleteExistingItemImages(itemId);
+
+            // 새로운 이미지 등록
+            for (MultipartFile file : itemImages) {
+                String newImagePath = uploadFile(file);
+                ItemImage itemImage = ItemImage.builder()
+                        .item(item)
+                        .imagePath(resourceHandlerItemURL + newImagePath)
+                        .build();
+                itemImageRepository.save(itemImage);
+            }
+        }
+    }
+
+    private void deleteExistingItemImages(Long itemId) {
+        List<ItemImage> existingImages = itemImageRepository.findByItemId(itemId);
+        for (ItemImage itemImage : existingImages) {
+            String currentImageName = fileService.extractFileNameFromUrl(itemImage.getImagePath());
+            fileService.deleteFile(location, currentImageName);
+        }
+        itemImageRepository.deleteAllByItemId(itemId);
+    }
+
+    private void updateDetailImage(Item item, MultipartFile detailImage) {
+        if (!detailImage.isEmpty()) {
+            // 기존 이미지 삭제
+            String currentImageName = fileService.extractFileNameFromUrl(item.getImagePath());
+            fileService.deleteFile(location, currentImageName);
+
+            // 새로운 이미지 등록
+            String newImagePath = uploadFile(detailImage);
+            item.updateImagePath(resourceHandlerItemURL + newImagePath);
+        }
+    }
+
+    private String uploadFile(MultipartFile file) {
+        try {
+            String originalFilename = file.getOriginalFilename();
+            return fileService.uploadFile(location, originalFilename, file.getBytes());
+        } catch (IOException e) {
+            throw new RuntimeException("파일 업로드에 실패하였습니다.", e);
+        }
     }
 }

@@ -9,7 +9,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import toy.shop.dto.Response;
-import toy.shop.dto.item.ItemRequestDTO;
+import toy.shop.dto.item.ItemSaveRequestDTO;
+import toy.shop.dto.item.ItemUpdateRequestDTO;
 
 @Tag(name = "상품 API", description = "상품 기능들에 대한 API")
 public interface ItemControllerDocs {
@@ -38,7 +39,7 @@ public interface ItemControllerDocs {
                     }
                     """)))
     })
-    ResponseEntity<Response<?>> saveItem(ItemRequestDTO parameter, Authentication authentication);
+    ResponseEntity<Response<?>> saveItem(ItemSaveRequestDTO parameter, Authentication authentication);
 
     @Operation(summary = "상품 수정", description = "상품 ID와 request, 사용자 정보를 통해 상품 삭제")
     @ApiResponses({
@@ -71,7 +72,7 @@ public interface ItemControllerDocs {
                     }
                     """)))
     })
-    ResponseEntity<Response<?>> updateItem(Long itemId, ItemRequestDTO parameter, Authentication authentication);
+    ResponseEntity<Response<?>> updateItem(Long itemId, ItemUpdateRequestDTO parameter, Authentication authentication);
 
     @Operation(summary = "상품 삭제", description = "상품 ID와 사용자 정보를 통해 상품 삭제")
     @ApiResponses({
