@@ -41,7 +41,7 @@ public interface ItemControllerDocs {
     })
     ResponseEntity<Response<?>> saveItem(ItemSaveRequestDTO parameter, Authentication authentication);
 
-    @Operation(summary = "상품 수정", description = "상품 ID와 request, 사용자 정보를 통해 상품 삭제")
+    @Operation(summary = "상품 수정", description = "상품 ID와 request, 사용자 정보를 통해 상품 수정")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "상품 수정 성공", content = @Content(mediaType = "application/json", schema = @Schema(example = """
                     {
