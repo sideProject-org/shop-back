@@ -30,10 +30,18 @@ public class AddressController implements AddressControllerDocs{
     }
 
     @PutMapping("/{addressId}")
-    public ResponseEntity<Response<?>> updateAddress(@PathVariable Long addressId, @RequestBody @Valid AddressUpdateRequestDTO parameter, Authentication authentication) {
+    public ResponseEntity<Response<?>> updateAddress(@PathVariable("addressId") Long addressId, @RequestBody @Valid AddressUpdateRequestDTO parameter, Authentication authentication) {
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
         Long result = addressService.updateAddress(addressId, parameter, userDetails);
 
         return buildResponse(HttpStatus.OK, "배송지 수정 성공", result);
+    }
+
+    @DeleteMapping("/{addressId}")
+    public ResponseEntity<Response<?>> deleteAddress(@PathVariable("addressId") Long addressId, Authentication authentication) {
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+        addressService.deleteAddress(addressId, userDetails);
+
+        return buildResponse(HttpStatus.OK, "배송지 삭제 성공", null);
     }
 }

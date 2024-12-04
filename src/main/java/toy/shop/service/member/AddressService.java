@@ -1,6 +1,5 @@
 package toy.shop.service.member;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -59,12 +58,9 @@ public class AddressService {
      * @throws NotFoundException 배송지 정보가 존재하지 않을 경우 발생
      * @throws AccessDeniedException 로그인된 사용자의 배송지가 아닐 경우 발생
      */
-    @Transactional
     public Long updateAddress(Long addressId, AddressUpdateRequestDTO parameter, UserDetailsImpl userDetails) {
-        Member member = memberRepository.findById(userDetails.getUserId())
-                .orElseThrow(() -> new UsernameNotFoundException("존재하지 않는 사용자입니다."));
-        Address address = addressRepository.findById(addressId)
-                .orElseThrow(() -> new NotFoundException("존재하지 않는 배송지입니다."));
+        Member member = getMember(userDetails.getUserId());
+        Address address = getAddress(addressId);
 
         if (!address.getMember().getId().equals(member.getId())) {
             throw new AccessDeniedException("로그인 된 회원의 배송지가 아닙니다.");
@@ -73,5 +69,33 @@ public class AddressService {
         address.updateAddress(parameter);
 
         return address.getId();
+    }
+
+    /**
+     * 사용자의 배송지 정보를 삭제합니다.
+     *
+     * @param addressId 삭제할 배송지의 ID
+     * @param userDetails 현재 인증된 사용자의 정보를 담고 있는 객체
+     * @throws AccessDeniedException 로그인된 사용자의 배송지가 아닐 경우 발생
+     */
+    public void deleteAddress(Long addressId, UserDetailsImpl userDetails) {
+        Member member = getMember(userDetails.getUserId());
+        Address address = getAddress(addressId);
+
+        if (!address.getMember().getId().equals(member.getId())) {
+            throw new AccessDeniedException("로그인 된 회원의 배송지가 아닙니다.");
+        }
+
+        addressRepository.deleteById(addressId);
+    }
+
+    private Member getMember(Long userId) {
+        return memberRepository.findById(userId)
+                .orElseThrow(() -> new UsernameNotFoundException("존재하지 않는 사용자입니다."));
+    }
+
+    private Address getAddress(Long addressId) {
+        return addressRepository.findById(addressId)
+                .orElseThrow(() -> new NotFoundException("존재하지 않는 배송지입니다."));
     }
 }

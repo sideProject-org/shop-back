@@ -59,4 +59,30 @@ public interface AddressControllerDocs {
                     """)))
     })
     ResponseEntity<Response<?>> updateAddress(Long addressId, AddressUpdateRequestDTO parameter, Authentication authentication);
+
+    @Operation(summary = "배송지 삭제", description = "배송지 ID와 사용자 정보를 통해 배송지 삭제")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "배송지 삭제 성공", content = @Content(mediaType = "application/json", schema = @Schema(example = """
+                    {
+                        "status": 200,
+                        "message": "배송지 삭제 성공",
+                        "data": null
+                    }
+                    """))),
+            @ApiResponse(responseCode = "401", description = "배송지 삭제 실패 - 배송지 없음", content = @Content(mediaType = "application/json", schema = @Schema(example = """
+                    {
+                        "status": 401,
+                        "message": "존재하지 않는 배송지입니다.",
+                        "data": null
+                    }
+                    """))),
+            @ApiResponse(responseCode = "403", description = "배송지 삭제 실패 - 사용자 오류", content = @Content(mediaType = "application/json", schema = @Schema(example = """
+                    {
+                        "status": 403,
+                        "message": "로그인 된 회원의 배송지가 아닙니다.",
+                        "data": null
+                    }
+                    """)))
+    })
+    ResponseEntity<Response<?>> deleteAddress(Long addressId, Authentication authentication);
 }
