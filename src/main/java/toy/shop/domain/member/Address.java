@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
+import toy.shop.dto.member.address.AddressUpdateRequestDTO;
 
 @Entity
 @Getter
@@ -21,6 +22,9 @@ public class Address {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
+
+    @Column
+    private String addrName;
 
     @Column(nullable = false)
     private String name;
@@ -53,5 +57,14 @@ public class Address {
         this.phone = phone;
         this.zipCode = zipCode;
         this.request = request;
+    }
+
+    public void updateAddress(AddressUpdateRequestDTO parameter) {
+        this.name = parameter.getName();
+        this.addr = parameter.getAddr();
+        this.addrDetail = parameter.getAddrDetail();
+        this.phone = parameter.getPhone();
+        this.zipCode = parameter.getZipCode();
+        this.request = parameter.getRequest();
     }
 }
