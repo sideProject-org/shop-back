@@ -85,4 +85,30 @@ public interface AddressControllerDocs {
                     """)))
     })
     ResponseEntity<Response<?>> deleteAddress(Long addressId, Authentication authentication);
+
+    @Operation(summary = "기본 배송지 설정", description = "배송지 ID와 사용자 정보를 통해 기본 배송지 설정")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "기본 배송지 설정 성공", content = @Content(mediaType = "application/json", schema = @Schema(example = """
+                    {
+                        "status": 200,
+                        "message": "기본 배송지 설정 성공",
+                        "data": "배송지 ID"
+                    }
+                    """))),
+            @ApiResponse(responseCode = "401", description = "기본 배송지 설정 실패 - 배송지 없음", content = @Content(mediaType = "application/json", schema = @Schema(example = """
+                    {
+                        "status": 401,
+                        "message": "존재하지 않는 배송지입니다.",
+                        "data": null
+                    }
+                    """))),
+            @ApiResponse(responseCode = "403", description = "기본 배송지 설정 실패 - 사용자 오류", content = @Content(mediaType = "application/json", schema = @Schema(example = """
+                    {
+                        "status": 403,
+                        "message": "로그인 된 회원의 배송지가 아닙니다.",
+                        "data": null
+                    }
+                    """)))
+    })
+    ResponseEntity<Response<?>> updateDefaultAddress(Long addressId, Authentication authentication);
 }

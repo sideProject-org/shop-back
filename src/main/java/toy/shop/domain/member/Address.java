@@ -67,4 +67,8 @@ public class Address {
         this.zipCode = parameter.getZipCode();
         this.request = parameter.getRequest();
     }
+
+    public void updateDefaultType(char ch) {
+        this.defaultType = ch;
+    }
 }
