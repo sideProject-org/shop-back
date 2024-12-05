@@ -8,11 +8,15 @@ import toy.shop.cmmn.exception.AccessDeniedException;
 import toy.shop.cmmn.exception.NotFoundException;
 import toy.shop.domain.member.Address;
 import toy.shop.domain.member.Member;
+import toy.shop.dto.member.address.AddressListResponseDTO;
 import toy.shop.dto.member.address.AddressSaveRequestDTO;
 import toy.shop.dto.member.address.AddressUpdateRequestDTO;
 import toy.shop.jwt.UserDetailsImpl;
 import toy.shop.repository.member.AddressRepository;
 import toy.shop.repository.member.MemberRepository;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -20,6 +24,28 @@ public class AddressService {
 
     private final MemberRepository memberRepository;
     private final AddressRepository addressRepository;
+
+    public List<AddressListResponseDTO> addressList(UserDetailsImpl userDetails) {
+        Member member = getMember(userDetails.getUserId());
+        List<AddressListResponseDTO> DTOList = new ArrayList<>();
+
+        addressRepository.findAllByMember(member).forEach(address -> {
+            AddressListResponseDTO dto = AddressListResponseDTO.builder()
+                    .id(address.getId())
+                    .name(address.getName())
+                    .addr(address.getAddr())
+                    .addrDetail(address.getAddrDetail())
+                    .addrNickName(address.getAddrName())
+                    .phone(address.getPhone())
+                    .request(address.getRequest())
+                    .defaultType(address.getDefaultType())
+                    .build();
+
+            DTOList.add(dto);
+        });
+
+        return DTOList;
+    }
 
     /**
      * 사용자의 주소 정보를 저장합니다.
