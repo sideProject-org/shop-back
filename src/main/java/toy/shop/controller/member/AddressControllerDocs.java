@@ -15,6 +15,29 @@ import toy.shop.dto.member.address.AddressUpdateRequestDTO;
 @Tag(name = "배송지 API", description = "회원 배송지에 대한 API")
 public interface AddressControllerDocs {
 
+    @Operation(summary = "배송지 목록 조회", description = "authentication 정보를 통해 배송지 목록 조회")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "배송지 목록 조회 성공", content = @Content(mediaType = "application/json", schema = @Schema(example = """
+                    {
+                        "status": 201,
+                        "message": "배송지 목록 조회 성공",
+                        "data": [
+                            {
+                                "id": "배송지 ID",
+                                "name": "받는 분",
+                                "addr": "배송지 주소",
+                                "addrDetail": "배송지 세부 주소",
+                                "addrNickName": "배송지 별명",
+                                "phone": "전화번호",
+                                "request": "요청 사항",
+                                "defaultType: "기본 배송지 여부 'Y' or 'N'"
+                            }
+                        ]
+                    }
+                    """)))
+    })
+    ResponseEntity<Response<?>> addressList(Authentication authentication);
+
     @Operation(summary = "배송지 등록", description = "request와 authentication 정보를 통해 배송지 등록")
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "배송지 등록 성공", content = @Content(mediaType = "application/json", schema = @Schema(example = """

@@ -7,10 +7,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import toy.shop.dto.Response;
+import toy.shop.dto.member.address.AddressListResponseDTO;
 import toy.shop.dto.member.address.AddressSaveRequestDTO;
 import toy.shop.dto.member.address.AddressUpdateRequestDTO;
 import toy.shop.jwt.UserDetailsImpl;
 import toy.shop.service.member.AddressService;
+
+import java.util.List;
 
 import static toy.shop.controller.ResponseBuilder.buildResponse;
 
@@ -20,6 +23,14 @@ import static toy.shop.controller.ResponseBuilder.buildResponse;
 public class AddressController implements AddressControllerDocs{
 
     private final AddressService addressService;
+
+    @GetMapping
+    public ResponseEntity<Response<?>> addressList(Authentication authentication) {
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+        List<AddressListResponseDTO> result = addressService.addressList(userDetails);
+
+        return buildResponse(HttpStatus.OK, "배송지 목록 조회 성공", result);
+    }
 
     @PostMapping
     public ResponseEntity<Response<?>> saveAddress(@RequestBody @Valid AddressSaveRequestDTO parameter, Authentication authentication) {
