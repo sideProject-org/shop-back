@@ -35,6 +35,7 @@ public class AddressService {
         Address address = Address.builder()
                 .name(parameter.getName())
                 .addr(parameter.getAddr())
+                .addrName(parameter.getAddrNickName())
                 .addrDetail(parameter.getAddrDetail())
                 .phone(parameter.getPhone())
                 .zipCode(parameter.getZipCode())

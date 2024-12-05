@@ -16,6 +16,9 @@ public class AddressUpdateRequestDTO {
     @NotBlank(message = "해당 값은 필수값 입니다.")
     private String addr;
 
+    @Schema(description = "배송지 별명")
+    private String addrNickName;
+
     @Schema(description = "상세주소")
     @NotBlank(message = "해당 값은 필수값 입니다.")
     private String addrDetail;
