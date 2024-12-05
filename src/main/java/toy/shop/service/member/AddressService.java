@@ -1,5 +1,6 @@
 package toy.shop.service.member;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -35,6 +36,7 @@ public class AddressService {
         Address address = Address.builder()
                 .name(parameter.getName())
                 .addr(parameter.getAddr())
+                .addrName(parameter.getAddrNickName())
                 .addrDetail(parameter.getAddrDetail())
                 .phone(parameter.getPhone())
                 .zipCode(parameter.getZipCode())
@@ -87,6 +89,32 @@ public class AddressService {
         }
 
         addressRepository.deleteById(addressId);
+    }
+
+    /**
+     * 사용자의 특정 배송지를 기본 배송지로 설정합니다.
+     *
+     * <p>현재 로그인한 사용자의 배송지 목록 중 기존 기본 배송지를 해제하고,
+     * 선택한 배송지를 기본 배송지로 설정합니다.</p>
+     *
+     * @param addressId 기본 배송지로 설정할 배송지의 ID
+     * @param userDetails 로그인한 사용자의 정보
+     * @return 기본 배송지로 설정된 배송지의 ID
+     * @throws AccessDeniedException 선택한 배송지가 로그인한 사용자의 배송지가 아닌 경우
+     */
+    @Transactional
+    public Long chooseDefaultAddress(Long addressId, UserDetailsImpl userDetails) {
+        Member member = getMember(userDetails.getUserId());
+        Address address = getAddress(addressId);
+
+        if (!address.getMember().getId().equals(member.getId())) {
+            throw new AccessDeniedException("로그인 된 회원의 배송지가 아닙니다.");
+        }
+
+        addressRepository.resetDefaultTypeForMember(member.getId());
+        address.updateDefaultType('Y');
+
+        return address.getId();
     }
 
     private Member getMember(Long userId) {

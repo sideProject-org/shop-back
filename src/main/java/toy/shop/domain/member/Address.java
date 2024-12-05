@@ -23,14 +23,14 @@ public class Address {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @Column
-    private String addrName;
-
     @Column(nullable = false)
     private String name;
 
     @Column(nullable = false)
     private String addr;
+
+    @Column
+    private String addrName;
 
     @Column(nullable = false)
     private String addrDetail;
@@ -49,10 +49,11 @@ public class Address {
     private char defaultType = 'N';
 
     @Builder
-    public Address(Member member, String name, String addr, String addrDetail, String phone, String zipCode, String request) {
+    public Address(Member member, String name, String addr, String addrName, String addrDetail, String phone, String zipCode, String request) {
         this.member = member;
         this.name = name;
         this.addr = addr;
+        this.addrName = addrName;
         this.addrDetail = addrDetail;
         this.phone = phone;
         this.zipCode = zipCode;
@@ -62,9 +63,14 @@ public class Address {
     public void updateAddress(AddressUpdateRequestDTO parameter) {
         this.name = parameter.getName();
         this.addr = parameter.getAddr();
+        this.addrName = parameter.getAddrNickName();
         this.addrDetail = parameter.getAddrDetail();
         this.phone = parameter.getPhone();
         this.zipCode = parameter.getZipCode();
         this.request = parameter.getRequest();
+    }
+
+    public void updateDefaultType(char ch) {
+        this.defaultType = ch;
     }
 }
