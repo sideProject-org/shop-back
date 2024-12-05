@@ -44,4 +44,12 @@ public class AddressController implements AddressControllerDocs{
 
         return buildResponse(HttpStatus.OK, "배송지 삭제 성공", null);
     }
+
+    @PostMapping("/defaultAddress/{addressId}")
+    public ResponseEntity<Response<?>> updateDefaultAddress(@PathVariable("addressId") Long addressId, Authentication authentication) {
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+        Long result = addressService.chooseDefaultAddress(addressId, userDetails);
+
+        return buildResponse(HttpStatus.OK, "기본 배송지 설정 성공", result);
+    }
 }
