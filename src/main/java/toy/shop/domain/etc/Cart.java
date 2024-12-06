@@ -2,6 +2,7 @@ package toy.shop.domain.etc;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import toy.shop.domain.item.Item;
@@ -28,4 +29,11 @@ public class Cart {
 
     @Column(nullable = false)
     private int quantity;
+
+    @Builder
+    public Cart(Member member, Item item, int quantity) {
+        this.member = member;
+        this.item = item;
+        this.quantity = quantity;
+    }
 }
