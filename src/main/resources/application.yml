@@ -92,7 +92,7 @@ jwt:
   refresh_expire_time: ${R_EX_TIME}
 
 props:
-  reset-password-url: 127.0.0.1:8080/pw
+  reset-password-url: http://localhost:3000/profile/change-password
 
 path:
   profileImage: /home/ubuntu/shopImages/profileImages/
