@@ -91,6 +91,11 @@ jwt:
   access_expire_time: ${A_EX_TIME}
   refresh_expire_time: ${R_EX_TIME}
 
+imp:
+  code: ${IMP_CODE}
+  key: ${IMP_KEY}
+  secret: ${IMP_SECRET}
+
 props:
   reset-password-url: http://localhost:3000/profile/change-password
 

@@ -68,4 +68,13 @@ public class Item extends BaseEntity {
     public void updateImagePath(String imagePath) {
         this.imagePath = imagePath;
     }
+
+    public boolean updateQuantity(int quantity) {
+        if (this.quantity < quantity) {
+            return false;
+        } else {
+            this.quantity -= quantity;
+            return true;
+        }
+    }
 }

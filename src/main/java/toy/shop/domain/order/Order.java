@@ -2,12 +2,16 @@ package toy.shop.domain.order;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 import toy.shop.domain.BaseEntity;
 import toy.shop.domain.member.Address;
 import toy.shop.domain.member.Member;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -28,21 +32,31 @@ public class Order extends BaseEntity {
     @JoinColumn(name = "address_id")
     private Address address;
 
-    @OneToOne
-    private OrderDetail orderDetail;
+    @Column(nullable = false)
+    private String orderNumber;
 
     @Column(nullable = false)
-    private int price;
-
-    @Column(nullable = false)
-    private char status;
+    @ColumnDefault("'0'")
+    private char status = '0';
 
     @Column
     private String reason;
 
     @Column
-    private String card;
+    private String paymentMethod;
 
     @Column(nullable = false)
-    private int itemCnt;
+    private int totalPrice;
+
+    @OneToMany(mappedBy = "order")
+    private List<OrderDetail> orderDetails = new ArrayList<>();
+
+    @Builder
+    public Order (Member member, Address address, String orderNumber, String paymentMethod, int totalPrice) {
+        this.member = member;
+        this.address = address;
+        this.orderNumber = orderNumber;
+        this.paymentMethod = paymentMethod;
+        this.totalPrice = totalPrice;
+    }
 }

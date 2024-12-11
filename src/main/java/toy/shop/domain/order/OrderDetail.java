@@ -2,6 +2,7 @@ package toy.shop.domain.order;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import toy.shop.domain.item.Item;
@@ -17,7 +18,8 @@ public class OrderDetail {
     @Column(name = "order_detail_id")
     private Long id;
 
-    @OneToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_id")
     private Order order;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -29,4 +31,12 @@ public class OrderDetail {
 
     @Column(nullable = false)
     private int quantity;
+
+    @Builder
+    public OrderDetail(Order order, Item item, int price, int quantity) {
+        this.order = order;
+        this.item = item;
+        this.price = price;
+        this.quantity = quantity;
+    }
 }
