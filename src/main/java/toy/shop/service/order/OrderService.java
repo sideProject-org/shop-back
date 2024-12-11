@@ -39,6 +39,18 @@ public class OrderService {
 
     private static final String IMP_URL = "https://api.iamport.kr/payments/cancel";
 
+    /**
+     * 결제 메서드.
+     *
+     * 주어진 회원, 배송지, 아이템 상세 정보를 기반으로 주문 DB를 생성합니다.
+     * 또한, 상품의 재고 수량을 확인하여, 재고가 부족할 경우 예외를 발생시킵니다.
+     *
+     * @param parameter    주문 정보를 담고 있는 {@link OrderSaveRequestDTO}.
+     * @param userDetails  현재 로그인한 사용자의 정보를 담고 있는 {@link UserDetailsImpl}.
+     * @throws UsernameNotFoundException   사용자가 존재하지 않을 경우 발생.
+     * @throws NotFoundException           배송지 또는 상품이 존재하지 않을 경우 발생.
+     * @throws IllegalArgumentException    상품의 재고가 부족할 경우 발생.
+     */
     @Transactional
     public void saveOrder(OrderSaveRequestDTO parameter, UserDetailsImpl userDetails) {
         Member member = memberRepository.findById(userDetails.getUserId())
@@ -76,6 +88,17 @@ public class OrderService {
         }
     }
 
+    /**
+     * 아임포트(IMP) 환불 요청 메서드.
+     *
+     * 주어진 액세스 토큰, 주문 고유 ID(merchant_uid), 환불 사유를 사용하여
+     * 아임포트(IMP) API를 호출하고 환불 요청을 수행합니다.
+     *
+     * @param access_token   아임포트 API 호출에 필요한 액세스 토큰.
+     * @param merchant_uid   환불을 요청할 주문의 고유 식별자.
+     * @param reason         환불 요청 사유.
+     * @throws IOException   API 요청 중 네트워크 문제 또는 I/O 오류가 발생할 경우 발생.
+     */
     public void refundRequest(String access_token, String merchant_uid, String reason) throws IOException {
         URL url = new URL(IMP_URL);
         HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
@@ -108,6 +131,18 @@ public class OrderService {
         conn.disconnect();
     }
 
+    /**
+     * 아임포트(IMP) 액세스 토큰 요청 메서드.
+     *
+     * 주어진 API 키와 시크릿 키를 사용하여 아임포트(IMP) API에서 액세스 토큰을 발급받습니다.
+     * 발급받은 액세스 토큰은 API 인증에 사용됩니다.
+     *
+     * @param apiKey      아임포트 API 호출에 필요한 API 키.
+     * @param secretKey   아임포트 API 호출에 필요한 시크릿 키.
+     * @return            발급받은 액세스 토큰(String).
+     * @throws IOException           API 요청 중 네트워크 문제 또는 I/O 오류가 발생할 경우 발생.
+     * @throws MalformedURLException URL 형식이 잘못되었을 경우 발생.
+     */
     public String getToken(String apiKey, String secretKey) throws IOException, MalformedURLException {
         URL url = new URL(IMP_URL);
         HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
