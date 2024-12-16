@@ -31,8 +31,8 @@
   - [x] 공지사항
     - [x] 공지사항 댓글 작성
   - [ ] 상품
-    - [ ] 찜 기능 구현
-    - [ ] 상품 목록 조회
+    - [x] 찜 기능 구현
+    - [x] 상품 목록 조회
     - [ ] 상품 주문 / 결제 기능 구현
     - [ ] 상품 문의 및 후기 작성
     - [ ] 상품 후기 댓글 작성
@@ -58,7 +58,7 @@
 
 ## ERD
 
-![img.png](images/img2.png)
+![img.png](images/img3.png)
 
 https://www.erdcloud.com/d/NhQeqSxtmF3Yz5NFQ   
 

@@ -39,7 +39,7 @@ public class WishController implements WishControllerDocs {
         return buildResponse(HttpStatus.CREATED, "찜 등록 성공", result);
     }
 
-    @DeleteMapping
+    @DeleteMapping("/{wishId}")
     public ResponseEntity<Response<?>> deleteWish(@PathVariable("wishId") Long wishId, Authentication authentication) {
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
         wishService.deleteWish(wishId, userDetails);
