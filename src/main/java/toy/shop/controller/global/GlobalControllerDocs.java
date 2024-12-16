@@ -194,4 +194,40 @@ public interface GlobalControllerDocs {
                     """)))
     })
     ResponseEntity<Response<?>> itemDetail(Long itemId);
+
+    @Operation(summary = "상품 문의 목록 조회", description = "상품 ID, 페이지네이션 값을 통해 상품 문의 목록 조회")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "상품 문의 목록 조회 성공", content = @Content(mediaType = "application/json", schema = @Schema(example = """
+                {
+                    "status": 200,
+                    "message": "상품 문의 목록 조회 성공",
+                    "data": {
+                        "content": [
+                            {
+                                "id": "상품 문의 ID",
+                                "title": "상품 문의 제목",
+                                "content": "상품 문의 내용",
+                                "answerStatus": "답변 여부",
+                                "nickname": "사용자 닉네임",
+                                "createdAt": "등록 일자"
+                            }
+                        ],
+                        "page": {
+                            "size": "페이징 사이즈",
+                            "number": "페이지 넘버",
+                            "totalElements": "총 개수",
+                            "totalPages": "총 페이지수"
+                        }
+                    }
+                }
+                """))),
+            @ApiResponse(responseCode = "401", description = "상품 문의 목록 조회 실패 - 존재하지 않음", content = @Content(mediaType = "application/json", schema = @Schema(example = """
+                    {
+                        "status": 401,
+                        "message": "상품 문의가 존재하지 않습니다.",
+                        "data": null
+                    }
+                    """)))
+    })
+    ResponseEntity<Response<?>> itemInquiryList(Long itemId,Pageable pageable);
 }

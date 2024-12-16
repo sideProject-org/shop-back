@@ -5,6 +5,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 import toy.shop.domain.BaseEntity;
 import toy.shop.domain.item.Item;
 import toy.shop.domain.member.Member;
@@ -27,6 +28,10 @@ public class ItemInquiry extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
+
+    @Column(nullable = false)
+    @ColumnDefault("'0'")
+    private char answerStatus = '0';      // 0: 미완료, 1: 답변완료
 
     @Column(nullable = false)
     private String title;

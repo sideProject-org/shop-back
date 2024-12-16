@@ -14,10 +14,12 @@ import toy.shop.dto.Response;
 import toy.shop.dto.admin.notice.NoticeDetailResponseDTO;
 import toy.shop.dto.admin.notice.NoticeListResponseDTO;
 import toy.shop.dto.admin.notice.comment.NoticeCommentResponseDTO;
+import toy.shop.dto.inquiry.ItemInquiryResponseDTO;
 import toy.shop.dto.item.ItemDetailResponseDTO;
 import toy.shop.dto.item.ItemListResponseDTO;
 import toy.shop.service.admin.notice.NoticeCommentService;
 import toy.shop.service.admin.notice.NoticeService;
+import toy.shop.service.inquiry.ItemInquiryService;
 import toy.shop.service.item.ItemService;
 
 import java.util.List;
@@ -31,8 +33,8 @@ public class GlobalController implements GlobalControllerDocs {
 
     private final NoticeService noticeService;
     private final NoticeCommentService noticeCommentService;
-
     private final ItemService itemService;
+    private final ItemInquiryService itemInquiryService;
 
     @GetMapping("/notices")
     public ResponseEntity<Response<?>> noticeList(@PageableDefault(size = 10) Pageable pageable) {
@@ -74,5 +76,12 @@ public class GlobalController implements GlobalControllerDocs {
         ItemDetailResponseDTO result = itemService.itemDetail(itemId);
 
         return buildResponse(HttpStatus.OK, "상품 상세정보 조회 성공", result);
+    }
+
+    @GetMapping("/itemInquiries/{itemId}")
+    public ResponseEntity<Response<?>> itemInquiryList(@PathVariable("itemId") Long itemId, @PageableDefault(size = 10) Pageable pageable) {
+        Page<ItemInquiryResponseDTO> result = itemInquiryService.itemInquiryList(itemId, pageable);
+
+        return buildResponse(HttpStatus.OK, "상품 문의 목록 조회 성공", result);
     }
 }
