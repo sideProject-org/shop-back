@@ -76,7 +76,7 @@ public interface AddressControllerDocs {
             @ApiResponse(responseCode = "403", description = "배송지 수정 실패 - 사용자 오류", content = @Content(mediaType = "application/json", schema = @Schema(example = """
                     {
                         "status": 403,
-                        "message": "로그인 된 회원의 배송지가 아닙니다.",
+                        "message": "로그인된 회원의 배송지가 아닙니다.",
                         "data": null
                     }
                     """)))
@@ -102,7 +102,7 @@ public interface AddressControllerDocs {
             @ApiResponse(responseCode = "403", description = "배송지 삭제 실패 - 사용자 오류", content = @Content(mediaType = "application/json", schema = @Schema(example = """
                     {
                         "status": 403,
-                        "message": "로그인 된 회원의 배송지가 아닙니다.",
+                        "message": "로그인된 회원의 배송지가 아닙니다.",
                         "data": null
                     }
                     """)))
@@ -128,7 +128,7 @@ public interface AddressControllerDocs {
             @ApiResponse(responseCode = "403", description = "기본 배송지 설정 실패 - 사용자 오류", content = @Content(mediaType = "application/json", schema = @Schema(example = """
                     {
                         "status": 403,
-                        "message": "로그인 된 회원의 배송지가 아닙니다.",
+                        "message": "로그인된 회원의 배송지가 아닙니다.",
                         "data": null
                     }
                     """)))

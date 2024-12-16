@@ -68,7 +68,7 @@ public interface CartControllerDocs {
             @ApiResponse(responseCode = "403", description = "장바구니 수량 변경 실패 - 사용자 에러", content = @Content(mediaType = "application/json", schema = @Schema(example = """
                     {
                         "status": 403,
-                        "message": "로그인 된 사용자의 장바구니 품목이 아닙니다.",
+                        "message": "로그인된 사용자의 장바구니 품목이 아닙니다.",
                         "data": null
                     }
                     """))),
@@ -101,7 +101,7 @@ public interface CartControllerDocs {
             @ApiResponse(responseCode = "403", description = "장바구니 삭제 실패 - 사용자 에러", content = @Content(mediaType = "application/json", schema = @Schema(example = """
                     {
                         "status": 403,
-                        "message": "로그인 된 사용자의 장바구니 품목이 아닙니다.",
+                        "message": "로그인된 사용자의 장바구니 품목이 아닙니다.",
                         "data": null
                     }
                     """))),

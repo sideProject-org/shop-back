@@ -2,6 +2,7 @@ package toy.shop.domain.item;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import toy.shop.domain.member.Member;
@@ -24,4 +25,10 @@ public class Wish {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "item_id")
     private Item item;
+
+    @Builder
+    public Wish(Member member, Item item) {
+        this.member = member;
+        this.item = item;
+    }
 }
