@@ -91,7 +91,7 @@ public class AddressService {
         Address address = getAddress(addressId);
 
         if (!address.getMember().getId().equals(member.getId())) {
-            throw new AccessDeniedException("로그인 된 회원의 배송지가 아닙니다.");
+            throw new AccessDeniedException("로그인된 회원의 배송지가 아닙니다.");
         }
 
         address.updateAddress(parameter);
@@ -111,7 +111,7 @@ public class AddressService {
         Address address = getAddress(addressId);
 
         if (!address.getMember().getId().equals(member.getId())) {
-            throw new AccessDeniedException("로그인 된 회원의 배송지가 아닙니다.");
+            throw new AccessDeniedException("로그인된 회원의 배송지가 아닙니다.");
         }
 
         addressRepository.deleteById(addressId);
@@ -134,7 +134,7 @@ public class AddressService {
         Address address = getAddress(addressId);
 
         if (!address.getMember().getId().equals(member.getId())) {
-            throw new AccessDeniedException("로그인 된 회원의 배송지가 아닙니다.");
+            throw new AccessDeniedException("로그인된 회원의 배송지가 아닙니다.");
         }
 
         addressRepository.resetDefaultTypeForMember(member.getId());

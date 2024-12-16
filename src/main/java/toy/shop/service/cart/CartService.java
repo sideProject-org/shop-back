@@ -70,7 +70,7 @@ public class CartService {
         Cart cart = getCart(cartId);
 
         if (!cart.getMember().getId().equals(member.getId())) {
-            throw new AccessDeniedException("로그인 된 사용자의 장바구니 품목이 아닙니다.");
+            throw new AccessDeniedException("로그인된 사용자의 장바구니 품목이 아닙니다.");
         }
 
         cart.updateQuantity(parameter.getQuantity());
@@ -90,7 +90,7 @@ public class CartService {
         Cart cart = getCart(cartId);
 
         if (!cart.getMember().getId().equals(member.getId())) {
-            throw new AccessDeniedException("로그인 된 사용자의 장바구니 품목이 아닙니다.");
+            throw new AccessDeniedException("로그인된 사용자의 장바구니 품목이 아닙니다.");
         }
 
         cartRepository.deleteById(cartId);
