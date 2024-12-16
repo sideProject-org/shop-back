@@ -7,9 +7,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import toy.shop.dto.Response;
+import toy.shop.dto.item.ItemListResponseDTO;
 import toy.shop.dto.item.WishSaveRequestDTO;
 import toy.shop.jwt.UserDetailsImpl;
 import toy.shop.service.item.WishService;
+
+import java.util.List;
 
 import static toy.shop.controller.ResponseBuilder.buildResponse;
 
@@ -19,6 +22,14 @@ import static toy.shop.controller.ResponseBuilder.buildResponse;
 public class WishController implements WishControllerDocs {
 
     private final WishService wishService;
+
+    @GetMapping
+    public ResponseEntity<Response<?>> wishList(Authentication authentication) {
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+        List<ItemListResponseDTO> result = wishService.wishList(userDetails);
+
+        return buildResponse(HttpStatus.OK, "찜 목록 조회 성공", result);
+    }
 
     @PostMapping
     public ResponseEntity<Response<?>> registerWish(@RequestBody @Valid WishSaveRequestDTO parameter, Authentication authentication) {

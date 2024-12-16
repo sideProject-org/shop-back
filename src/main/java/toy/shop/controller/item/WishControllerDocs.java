@@ -14,6 +14,28 @@ import toy.shop.dto.item.WishSaveRequestDTO;
 @Tag(name = "찜 API", description = "찜 기능들에 대한 API")
 public interface WishControllerDocs {
 
+    @Operation(summary = "찜 목록 조회", description = "사용자 정보를 통해 찜 목록 조회")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "찜 목록 조회 성공", content = @Content(mediaType = "application/json", schema = @Schema(example = """
+                {
+                    "status": 200,
+                    "message": "찜 목록 조회 성공",
+                    "data": [
+                        {
+                            "id": "상품 ID",
+                            "name": "상품명",
+                            "price": "상품 정가",
+                            "sale": "할인율",
+                            "itemImages": [
+                                "이미지 경로"
+                            ]
+                        }
+                    ]
+                }
+                """)))
+    })
+    ResponseEntity<Response<?>> wishList(Authentication authentication);
+
     @Operation(summary = "찜 등록", description = "request와 사용자 정보를 통해 찜 등록")
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "찜 등록 성공", content = @Content(mediaType = "application/json", schema = @Schema(example = """
