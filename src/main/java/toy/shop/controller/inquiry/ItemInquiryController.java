@@ -22,7 +22,6 @@ public class ItemInquiryController implements ItemInquiryControllerDocs {
 
     @PostMapping
     public ResponseEntity<Response<?>> registerItemInquiry(@RequestBody @Valid ItemInquiryRequestDTO parameter, Authentication authentication) {
-
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
         Long result = itemInquiryService.registerItemInquiry(parameter, userDetails);
 

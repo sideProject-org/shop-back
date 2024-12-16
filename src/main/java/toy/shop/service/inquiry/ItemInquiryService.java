@@ -1,6 +1,8 @@
 package toy.shop.service.inquiry;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -10,6 +12,7 @@ import toy.shop.domain.inquiry.ItemInquiry;
 import toy.shop.domain.item.Item;
 import toy.shop.domain.member.Member;
 import toy.shop.dto.inquiry.ItemInquiryRequestDTO;
+import toy.shop.dto.inquiry.ItemInquiryResponseDTO;
 import toy.shop.jwt.UserDetailsImpl;
 import toy.shop.repository.inquiry.ItemInquiryRepository;
 import toy.shop.repository.item.ItemRepository;
@@ -22,6 +25,32 @@ public class ItemInquiryService {
     private final ItemRepository itemRepository;
     private final ItemInquiryRepository itemInquiryRepository;
     private final MemberRepository memberRepository;
+
+    /**
+     * 특정 상품의 문의 목록을 조회합니다.
+     *
+     * @param itemId 조회할 상품의 ID
+     * @param pageable 페이지 정보 {@link Pageable}
+     * @return 상품 문의 목록을 담은 {@link Page<ItemInquiryResponseDTO>}
+     * @throws NotFoundException 상품 문의가 존재하지 않을 경우
+     */
+    public Page<ItemInquiryResponseDTO> itemInquiryList(Long itemId, Pageable pageable) {
+        Page<ItemInquiry> itemInquiryList = itemInquiryRepository.findAllByItemId(itemId, pageable);
+
+        if (itemInquiryList.getContent().isEmpty()) {
+            throw new NotFoundException("상품 문의가 존재하지 않습니다.");
+        }
+
+        return itemInquiryList.map(itemInquiry -> ItemInquiryResponseDTO.builder()
+                .id(itemInquiry.getId())
+                .title(itemInquiry.getTitle())
+                .content(itemInquiry.getContent())
+                .answerStatus(itemInquiry.getAnswerStatus() == '0' ? "미완료" : "답변완료")
+                .nickname(itemInquiry.getMember().getNickName())
+                .createdAt(itemInquiry.getCreatedAt())
+                .build()
+        );
+    }
 
     /**
      * 상품 문의를 등록합니다.
