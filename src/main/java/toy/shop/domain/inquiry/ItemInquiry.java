@@ -51,4 +51,8 @@ public class ItemInquiry extends BaseEntity {
         this.title = title;
         this.content = content;
     }
+
+    public void updateAnswer(char answerStatus) {
+        this.answerStatus = answerStatus;
+    }
 }
