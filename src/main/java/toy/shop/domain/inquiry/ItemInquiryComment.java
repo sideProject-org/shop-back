@@ -2,6 +2,7 @@ package toy.shop.domain.inquiry;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import toy.shop.domain.BaseEntity;
@@ -28,4 +29,15 @@ public class ItemInquiryComment extends BaseEntity {
 
     @Column(nullable = false)
     private String content;
+
+    @Builder
+    public ItemInquiryComment(Member member, ItemInquiry itemInquiry, String content) {
+        this.member = member;
+        this.itemInquiry = itemInquiry;
+        this.content = content;
+    }
+
+    public void updateContent(String content) {
+        this.content = content;
+    }
 }
