@@ -10,6 +10,7 @@ import toy.shop.cmmn.exception.NotFoundException;
 import toy.shop.domain.inquiry.ItemInquiry;
 import toy.shop.domain.inquiry.ItemInquiryComment;
 import toy.shop.domain.member.Member;
+import toy.shop.dto.inquiry.ItemInquiryCommentResponseDTO;
 import toy.shop.dto.inquiry.ItemInquiryCommentSaveRequestDTO;
 import toy.shop.dto.inquiry.ItemInquiryCommentUpdateRequestDTO;
 import toy.shop.jwt.UserDetailsImpl;
@@ -24,6 +25,11 @@ public class ItemInquiryCommentService {
     private final ItemInquiryRepository itemInquiryRepository;
     private final ItemInquiryCommentRepository itemInquiryCommentRepository;
     private final MemberRepository memberRepository;
+
+    public ItemInquiryCommentResponseDTO itemInquiryComment(Long itemInquiryId) {
+        itemInquiryCommentRepository.findByItemInquiry_Id(itemInquiryId)
+                .orElseThrow(() -> new NotFoundException("해당 문의의 답변이 존재하지 않습니다."));
+    }
 
     /**
      * 상품 문의에 대한 댓글을 등록하고 해당 문의를 답변 완료 상태로 변경합니다.
