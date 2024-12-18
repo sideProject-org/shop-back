@@ -78,10 +78,15 @@ public class GlobalController implements GlobalControllerDocs {
         return buildResponse(HttpStatus.OK, "상품 상세정보 조회 성공", result);
     }
 
-    @GetMapping("/itemInquiries/{itemId}")
+    @GetMapping("/items/itemInquiries/{itemId}")
     public ResponseEntity<Response<?>> itemInquiryList(@PathVariable("itemId") Long itemId, @PageableDefault(size = 10) Pageable pageable) {
         Page<ItemInquiryResponseDTO> result = itemInquiryService.itemInquiryList(itemId, pageable);
 
         return buildResponse(HttpStatus.OK, "상품 문의 목록 조회 성공", result);
+    }
+
+    @GetMapping("/itemInquiry/{itemInquiryId}")
+    public ResponseEntity<Response<?>> itemInquiryComment(@PathVariable("itemInquiryId") Long itemInquiryId) {
+
     }
 }
