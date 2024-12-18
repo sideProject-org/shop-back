@@ -11,9 +11,11 @@ import toy.shop.cmmn.exception.NotFoundException;
 import toy.shop.domain.inquiry.ItemInquiry;
 import toy.shop.domain.item.Item;
 import toy.shop.domain.member.Member;
+import toy.shop.dto.inquiry.ItemInquiryCommentResponseDTO;
 import toy.shop.dto.inquiry.ItemInquiryRequestDTO;
 import toy.shop.dto.inquiry.ItemInquiryResponseDTO;
 import toy.shop.jwt.UserDetailsImpl;
+import toy.shop.repository.inquiry.ItemInquiryCommentRepository;
 import toy.shop.repository.inquiry.ItemInquiryRepository;
 import toy.shop.repository.item.ItemRepository;
 import toy.shop.repository.member.MemberRepository;
@@ -24,10 +26,11 @@ public class ItemInquiryService {
 
     private final ItemRepository itemRepository;
     private final ItemInquiryRepository itemInquiryRepository;
+    private final ItemInquiryCommentRepository itemInquiryCommentRepository;
     private final MemberRepository memberRepository;
 
     /**
-     * 특정 상품의 문의 목록을 조회합니다.
+     * 특정 상품의 문의 목록 및 답변 내용을 조회합니다.
      *
      * @param itemId 조회할 상품의 ID
      * @param pageable 페이지 정보 {@link Pageable}
@@ -41,14 +44,29 @@ public class ItemInquiryService {
             throw new NotFoundException("상품 문의가 존재하지 않습니다.");
         }
 
-        return itemInquiryList.map(itemInquiry -> ItemInquiryResponseDTO.builder()
-                .id(itemInquiry.getId())
-                .title(itemInquiry.getTitle())
-                .content(itemInquiry.getContent())
-                .answerStatus(itemInquiry.getAnswerStatus() == '0' ? "미완료" : "답변완료")
-                .nickname(itemInquiry.getMember().getNickName())
-                .createdAt(itemInquiry.getCreatedAt())
-                .build()
+        return itemInquiryList.map(itemInquiry -> {
+            // 관련된 ItemInquiryComment 조회
+            ItemInquiryCommentResponseDTO commentDTO = itemInquiryCommentRepository
+                    .findByItemInquiry_Id(itemInquiry.getId())
+                    .map(comment -> ItemInquiryCommentResponseDTO.builder()
+                            .itemInquiryCommentId(comment.getId())
+                            .content(comment.getContent())
+                            .nickname(comment.getMember().getNickName())
+                            .email(comment.getMember().getEmail())
+                            .createdAt(comment.getCreatedAt())
+                            .build())
+                    .orElse(null); // 답변이 없을 경우 null 처리
+
+            return ItemInquiryResponseDTO.builder()
+                    .id(itemInquiry.getId())
+                    .title(itemInquiry.getTitle())
+                    .content(itemInquiry.getContent())
+                    .answerStatus(itemInquiry.getAnswerStatus() == '0' ? "미완료" : "답변완료")
+                    .nickname(itemInquiry.getMember().getNickName())
+                    .createdAt(itemInquiry.getCreatedAt())
+                    .itemInquiryComment(commentDTO) // 답변 DTO 추가
+                    .build();
+            }
         );
     }
 

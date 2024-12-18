@@ -209,7 +209,14 @@ public interface GlobalControllerDocs {
                                 "content": "상품 문의 내용",
                                 "answerStatus": "답변 여부",
                                 "nickname": "사용자 닉네임",
-                                "createdAt": "등록 일자"
+                                "createdAt": "등록 일자",
+                                "itemInquiryComment": {
+                                    "itemInquiryCommentId": "상품 문의 답변 ID",
+                                    "content": "답변 내용",
+                                    "nickname": "판매자 닉네임",
+                                    "email": "판매자 이메일",
+                                    "createdAt": "등록 일자"
+                                }
                             }
                         ],
                         "page": {

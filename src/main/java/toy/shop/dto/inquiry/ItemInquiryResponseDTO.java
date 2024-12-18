@@ -15,4 +15,5 @@ public class ItemInquiryResponseDTO {
     private String answerStatus;
     private String nickname;
     private LocalDateTime createdAt;
+    private ItemInquiryCommentResponseDTO itemInquiryComment;
 }
