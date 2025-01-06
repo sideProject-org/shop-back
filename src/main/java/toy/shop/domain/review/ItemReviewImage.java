@@ -2,6 +2,7 @@ package toy.shop.domain.review;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -22,4 +23,10 @@ public class ItemReviewImage {
 
     @Column(nullable = false)
     private String imagePath;
+
+    @Builder
+    public ItemReviewImage(ItemReview itemReview, String imagePath) {
+        this.itemReview = itemReview;
+        this.imagePath = imagePath;
+    }
 }

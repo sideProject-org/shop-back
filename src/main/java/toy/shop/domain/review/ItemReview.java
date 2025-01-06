@@ -2,6 +2,7 @@ package toy.shop.domain.review;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import toy.shop.domain.BaseEntity;
@@ -34,5 +35,14 @@ public class ItemReview extends BaseEntity {
     private String content;
 
     @Column(nullable = false)
-    private int rate;
+    private Double rate;
+
+    @Builder
+    public ItemReview(Member member, Item item, String title, String content, Double rate) {
+        this.member = member;
+        this.item = item;
+        this.title = title;
+        this.content = content;
+        this.rate = rate;
+    }
 }
