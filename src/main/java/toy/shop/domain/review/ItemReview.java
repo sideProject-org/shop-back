@@ -45,4 +45,10 @@ public class ItemReview extends BaseEntity {
         this.content = content;
         this.rate = rate;
     }
+
+    public void updateReview(String title, String content, Double rate) {
+        this.title = title;
+        this.content = content;
+        this.rate = rate;
+    }
 }
