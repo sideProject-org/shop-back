@@ -14,6 +14,9 @@ public class WebConfig implements WebMvcConfigurer {
     @Value("${path.itemImage}")
     private String itemImagePath;
 
+    @Value("${path.reviewImage}")
+    private String reviewImagePath;
+
     @Value("${path.noticeTmpImage}")
     private String noticeTmpImagePath;
 
@@ -33,6 +36,9 @@ public class WebConfig implements WebMvcConfigurer {
 
         registry.addResourceHandler("/images/itemImage/**")
                 .addResourceLocations("file:" + itemImagePath + "/");
+
+        registry.addResourceHandler("/images/reviewImage/**")
+                .addResourceLocations("file:" + reviewImagePath + "/");
 
         registry.addResourceHandler("/images/noticeTmpImage/**")
                 .addResourceLocations("file:" + noticeTmpImagePath + "/");
