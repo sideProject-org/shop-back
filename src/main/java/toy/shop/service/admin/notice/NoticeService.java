@@ -2,6 +2,7 @@ package toy.shop.service.admin.notice;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -30,17 +31,27 @@ public class NoticeService {
     private final NoticeImageService noticeImageService;
 
     /**
-     * 공지사항 목록을 페이징 처리하여 조회합니다.
+     * 공지사항 리스트를 페이징 처리하여 반환합니다.
      *
-     * @param pageable 페이징 정보를 포함하는 {@link Pageable} 객체
-     * @return 공지사항 목록을 포함하는 {@link Page} 객체, 각 공지사항은 {@link NoticeListResponseDTO}로 변환됨
-     * @throws NotFoundException 공지사항 목록이 비어 있는 경우 예외 발생
+     * @param pageable 페이징 및 정렬 정보를 포함하는 {@link Pageable} 객체
+     * @return 공지사항 리스트를 포함하는 {@link Page} 객체. 각 항목은 {@link NoticeListResponseDTO}로 매핑됩니다.
+     * @throws NotFoundException 공지사항이 없거나 유효하지 않은 페이지를 요청한 경우 발생합니다.
      */
     public Page<NoticeListResponseDTO> noticeList(Pageable pageable) {
+        long totalCount = noticeRepository.count();
+        if (totalCount == 0) {
+            throw new NotFoundException("공지사항이 존재하지 않습니다.");
+        }
+
         Page<Notice> list = noticeRepository.findAllWithMember(pageable);
 
-        if (list.getContent().isEmpty()) {
-            throw new NotFoundException("공지사항이 존재하지 않습니다.");
+        if (list.getContent().isEmpty() && pageable.getPageNumber() > 0) {
+            int lastPage = list.getTotalPages() - 1;
+            if (lastPage < 0) {
+                throw new NotFoundException("공지사항이 존재하지 않습니다.");
+            }
+            Pageable correctedPageable = PageRequest.of(lastPage, pageable.getPageSize(), pageable.getSort());
+            list = noticeRepository.findAllWithMember(correctedPageable);
         }
 
         Page<NoticeListResponseDTO> result = list.map(notice -> NoticeListResponseDTO.builder()
