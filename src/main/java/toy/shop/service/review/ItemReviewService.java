@@ -3,6 +3,7 @@ package toy.shop.service.review;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -59,10 +60,21 @@ public class ItemReviewService {
      * @throws NotFoundException 해당 상품에 대한 후기가 존재하지 않는 경우 발생합니다.
      */
     public Page<ItemReviewResponseDTO> itemReviewList(Long itemId, Pageable pageable) {
+        long totalCount = itemReviewRepository.countByItemId(itemId);
+        if (totalCount == 0) {
+            throw new NotFoundException("상품 후기가 존재하지 않습니다.");
+        }
+
         Page<ItemReview> itemReviews = itemReviewRepository.findAllByItemId(itemId, pageable);
 
-        if (itemReviews.getContent().isEmpty()) {
-            throw new NotFoundException("상품 후기가 존재하지 않습니다.");
+        if (itemReviews.getContent().isEmpty() && pageable.getPageNumber() > 0) {
+            int lastPage = itemReviews.getTotalPages() - 1;
+            if (lastPage < 0) {
+                throw new NotFoundException("상품 후기가 존재하지 않습니다.");
+            }
+
+            Pageable correctedPageable = PageRequest.of(lastPage, pageable.getPageSize(), pageable.getSort());
+            itemReviews = itemReviewRepository.findAllByItemId(itemId, correctedPageable);
         }
 
         return itemReviews.map(itemReview -> {

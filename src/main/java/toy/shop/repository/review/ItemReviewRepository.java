@@ -8,4 +8,6 @@ import toy.shop.domain.review.ItemReview;
 public interface ItemReviewRepository extends JpaRepository<ItemReview, Long> {
 
     Page<ItemReview> findAllByItemId(Long itemId, Pageable pageable);
+
+    long countByItemId(Long itemId);
 }

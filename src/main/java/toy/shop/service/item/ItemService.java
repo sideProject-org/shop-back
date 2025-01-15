@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -54,10 +55,21 @@ public class ItemService {
      */
     @Transactional(readOnly = true)
     public Page<ItemListResponseDTO> itemList(Pageable pageable) {
+        long totalCount = itemRepository.count();
+        if (totalCount == 0) {
+            throw new NotFoundException("상품이 존재하지 않습니다.");
+        }
+
         Page<Item> itemList = itemRepository.findAll(pageable);
 
-        if (itemList.getContent().isEmpty()) {
-            throw new NotFoundException("상품이 존재하지 않습니다.");
+        if (itemList.getContent().isEmpty() && pageable.getPageNumber() > 0) {
+            int lastPage = itemList.getTotalPages() - 1;
+            if (lastPage < 0) {
+                throw new NotFoundException("상품이 존재하지 않습니다.");
+            }
+
+            Pageable correctedPageable = PageRequest.of(lastPage, pageable.getPageSize(), pageable.getSort());
+            itemList = itemRepository.findAll(correctedPageable);
         }
 
         Map<Long, List<ItemImage>> itemImageMap = itemImageRepository.findAllByItemIds(
