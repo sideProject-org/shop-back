@@ -9,7 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 @Data
-@Schema(description = "상품 등록에 필요한 요청 정보", requiredProperties = {"name", "price", "sale", "quantity", "itemDetailImage", "itemImages"})
+@Schema(description = "상품 등록에 필요한 요청 정보", requiredProperties = {"name", "price", "sale", "quantity", "itemDescriptionImage", "itemImages"})
 public class ItemSaveRequestDTO {
 
     @Schema(description = "상품명")
@@ -33,7 +33,7 @@ public class ItemSaveRequestDTO {
 
     @Schema(description = "상품 설명 이미지")
     @NotNull(message = "해당 값은 필수값 입니다.")
-    private MultipartFile itemDetailImage;
+    private MultipartFile itemDescriptionImage;
 
     @Schema(description = "상품 이미지들")
     @NotNull(message = "해당 값은 필수값 입니다.")

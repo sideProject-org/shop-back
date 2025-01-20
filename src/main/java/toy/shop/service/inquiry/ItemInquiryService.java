@@ -2,6 +2,7 @@ package toy.shop.service.inquiry;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -38,10 +39,20 @@ public class ItemInquiryService {
      * @throws NotFoundException 상품 문의가 존재하지 않을 경우
      */
     public Page<ItemInquiryResponseDTO> itemInquiryList(Long itemId, Pageable pageable) {
+        long totalCount = itemInquiryRepository.countByItemId(itemId);
+        if (totalCount == 0) {
+            throw new NotFoundException("상품 문의가 존재하지 않습니다.");
+        }
+
         Page<ItemInquiry> itemInquiryList = itemInquiryRepository.findAllByItemId(itemId, pageable);
 
-        if (itemInquiryList.getContent().isEmpty()) {
-            throw new NotFoundException("상품 문의가 존재하지 않습니다.");
+        if (itemInquiryList.getContent().isEmpty() && pageable.getPageNumber() > 0) {
+            int lastPage = itemInquiryList.getTotalPages() - 1;
+            if (lastPage < 0) {
+                throw new NotFoundException("상품 문의가 존재하지 않습니다.");
+            }
+            Pageable correctedPageable = PageRequest.of(lastPage, pageable.getPageSize(), pageable.getSort());
+            itemInquiryList = itemInquiryRepository.findAllByItemId(itemId, correctedPageable);
         }
 
         return itemInquiryList.map(itemInquiry -> {

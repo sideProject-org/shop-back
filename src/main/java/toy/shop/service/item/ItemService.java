@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -54,25 +55,36 @@ public class ItemService {
      */
     @Transactional(readOnly = true)
     public Page<ItemListResponseDTO> itemList(Pageable pageable) {
-        Page<Item> itemList = itemRepository.findAll(pageable);
-
-        if (itemList.getContent().isEmpty()) {
+        long totalCount = itemRepository.count();
+        if (totalCount == 0) {
             throw new NotFoundException("상품이 존재하지 않습니다.");
         }
 
-        Map<Long, List<ItemImage>> itemImageMap = itemImageRepository.findAllByItemIds(
+        Page<Item> itemList = itemRepository.findAll(pageable);
+
+        if (itemList.getContent().isEmpty() && pageable.getPageNumber() > 0) {
+            int lastPage = itemList.getTotalPages() - 1;
+            if (lastPage < 0) {
+                throw new NotFoundException("상품이 존재하지 않습니다.");
+            }
+
+            Pageable correctedPageable = PageRequest.of(lastPage, pageable.getPageSize(), pageable.getSort());
+            itemList = itemRepository.findAll(correctedPageable);
+        }
+
+        Map<Long, String> itemImageMap = itemImageRepository.findFirstImageByItemIds(
                 itemList.stream().map(Item::getId).collect(Collectors.toList())
-        ).stream().collect(Collectors.groupingBy(itemImage -> itemImage.getItem().getId()));
+        ).stream().collect(Collectors.toMap(
+                itemImage -> itemImage.getItem().getId(),
+                ItemImage::getImagePath
+        ));
 
         Page<ItemListResponseDTO> result = itemList.map(item -> ItemListResponseDTO.builder()
                 .id(item.getId())
                 .name(item.getName())
                 .price(item.getPrice())
                 .sale(item.getSale())
-                .itemImages(itemImageMap.getOrDefault(item.getId(), List.of())
-                        .stream()
-                        .map(ItemImage::getImagePath)
-                        .collect(Collectors.toList()))
+                .itemImage(itemImageMap.getOrDefault(item.getId(), null))
                 .build());
 
         return result;
@@ -98,7 +110,7 @@ public class ItemService {
                 .price(item.getPrice())
                 .sale(item.getSale())
                 .content(item.getContent())
-                .imageDetail(item.getImagePath())
+                .itemDescriptionImage(item.getImagePath())
                 .imageList(itemImagesPath)
                 .build();
     }
@@ -120,8 +132,8 @@ public class ItemService {
     @Transactional
     public Long saveItem(ItemSaveRequestDTO parameter, UserDetailsImpl userDetails) {
         // 상품 저장
-        String originalFilename = parameter.getItemDetailImage().getOriginalFilename();
-        String imgName = uploadFile(parameter.getItemDetailImage());
+        String originalFilename = parameter.getItemDescriptionImage().getOriginalFilename();
+        String imgName = uploadFile(parameter.getItemDescriptionImage());
 
         Member member = memberRepository.findById(userDetails.getUserId())
                 .orElseThrow(() -> new UsernameNotFoundException("존재하지 않는 사용자입니다."));

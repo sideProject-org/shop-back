@@ -8,4 +8,6 @@ import toy.shop.domain.inquiry.ItemInquiry;
 public interface ItemInquiryRepository extends JpaRepository<ItemInquiry, Long> {
 
     Page<ItemInquiry> findAllByItemId(Long itemId, Pageable pageable);
+
+    long countByItemId(Long itemId);
 }

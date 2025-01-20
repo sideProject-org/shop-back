@@ -14,5 +14,9 @@ public interface ItemImageRepository extends JpaRepository<ItemImage, Long> {
     @Query("SELECT i FROM ItemImage i JOIN FETCH i.item item WHERE item.id IN :itemIds")
     List<ItemImage> findAllByItemIds(@Param("itemIds") List<Long> itemIds);
 
+    @Query("SELECT ii FROM ItemImage ii WHERE ii.item.id IN :itemIds AND ii.id IN " +
+            "(SELECT MIN(ii2.id) FROM ItemImage ii2 WHERE ii2.item.id IN :itemIds GROUP BY ii2.item.id)")
+    List<ItemImage> findFirstImageByItemIds(@Param("itemIds") List<Long> itemIds);
+
     void deleteAllByItemId(Long itemId);
 }
