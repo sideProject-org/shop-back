@@ -142,9 +142,7 @@ public interface GlobalControllerDocs {
                                 "name": "상품명",
                                 "price": "상품 정가",
                                 "sale": "할인율",
-                                "itemImages": [
-                                    "이미지 경로"
-                                ]
+                                "itemImage": "이미지 경로"
                             }
                         ],
                         "page": {
@@ -178,7 +176,7 @@ public interface GlobalControllerDocs {
                         "price": "상품 정가",
                         "sale": "할인율",
                         "content": "상품 상세정보 부가 설명",
-                        "imageDetail": "상품 상세정보 이미지 경로",
+                        "itemDescriptionImage": "상품 상세정보 이미지 경로",
                         "imageList": [
                             "상품 이미지 경로"
                         ]

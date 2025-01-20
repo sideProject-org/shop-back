@@ -14,6 +14,6 @@ public class ItemDetailResponseDTO {
     private int price;
     private int sale;
     private String content;
-    private String imageDetail;
+    private String itemDescriptionImage;
     private List<String> imageList;
 }

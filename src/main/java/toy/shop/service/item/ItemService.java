@@ -72,19 +72,19 @@ public class ItemService {
             itemList = itemRepository.findAll(correctedPageable);
         }
 
-        Map<Long, List<ItemImage>> itemImageMap = itemImageRepository.findAllByItemIds(
+        Map<Long, String> itemImageMap = itemImageRepository.findFirstImageByItemIds(
                 itemList.stream().map(Item::getId).collect(Collectors.toList())
-        ).stream().collect(Collectors.groupingBy(itemImage -> itemImage.getItem().getId()));
+        ).stream().collect(Collectors.toMap(
+                itemImage -> itemImage.getItem().getId(),
+                ItemImage::getImagePath
+        ));
 
         Page<ItemListResponseDTO> result = itemList.map(item -> ItemListResponseDTO.builder()
                 .id(item.getId())
                 .name(item.getName())
                 .price(item.getPrice())
                 .sale(item.getSale())
-                .itemImages(itemImageMap.getOrDefault(item.getId(), List.of())
-                        .stream()
-                        .map(ItemImage::getImagePath)
-                        .collect(Collectors.toList()))
+                .itemImage(itemImageMap.getOrDefault(item.getId(), null))
                 .build());
 
         return result;
@@ -110,7 +110,7 @@ public class ItemService {
                 .price(item.getPrice())
                 .sale(item.getSale())
                 .content(item.getContent())
-                .imageDetail(item.getImagePath())
+                .itemDescriptionImage(item.getImagePath())
                 .imageList(itemImagesPath)
                 .build();
     }
@@ -132,8 +132,8 @@ public class ItemService {
     @Transactional
     public Long saveItem(ItemSaveRequestDTO parameter, UserDetailsImpl userDetails) {
         // 상품 저장
-        String originalFilename = parameter.getItemDetailImage().getOriginalFilename();
-        String imgName = uploadFile(parameter.getItemDetailImage());
+        String originalFilename = parameter.getItemDescriptionImage().getOriginalFilename();
+        String imgName = uploadFile(parameter.getItemDescriptionImage());
 
         Member member = memberRepository.findById(userDetails.getUserId())
                 .orElseThrow(() -> new UsernameNotFoundException("존재하지 않는 사용자입니다."));

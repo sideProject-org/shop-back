@@ -17,7 +17,6 @@ import toy.shop.repository.item.ItemRepository;
 import toy.shop.repository.item.WishRepository;
 import toy.shop.repository.member.MemberRepository;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -57,13 +56,13 @@ public class WishService {
                 .collect(Collectors.toList());
 
         // ItemImages 조회 (한 번에 로드)
-        List<ItemImage> itemImages = itemImageRepository.findAllByItemIds(itemIds);
+        List<ItemImage> itemImages = itemImageRepository.findFirstImageByItemIds(itemIds);
 
         // Item ID를 Key로, 이미지 경로 리스트를 Value로 하는 Map 생성
-        Map<Long, List<String>> itemImagesMap = itemImages.stream()
-                .collect(Collectors.groupingBy(
-                        itemImage -> itemImage.getItem().getId(), // Group by Item ID
-                        Collectors.mapping(ItemImage::getImagePath, Collectors.toList()) // Map to List of image paths
+        Map<Long, String> itemImagesMap = itemImages.stream()
+                .collect(Collectors.toMap(
+                        itemImage -> itemImage.getItem().getId(),
+                        ItemImage::getImagePath
                 ));
 
         // Wish 리스트를 ItemListResponseDTO로 변환
@@ -73,7 +72,7 @@ public class WishService {
                         .name(wish.getItem().getName())
                         .price(wish.getItem().getPrice())
                         .sale(wish.getItem().getSale())
-                        .itemImages(itemImagesMap.getOrDefault(wish.getItem().getId(), Collections.emptyList()))
+                        .itemImage(itemImagesMap.getOrDefault(wish.getItem().getId(), null))
                         .build()
                 ).collect(Collectors.toList());
     }

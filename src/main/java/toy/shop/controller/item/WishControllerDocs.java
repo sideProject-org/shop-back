@@ -26,9 +26,7 @@ public interface WishControllerDocs {
                             "name": "상품명",
                             "price": "상품 정가",
                             "sale": "할인율",
-                            "itemImages": [
-                                "이미지 경로"
-                            ]
+                            "itemImage": "이미지 경로"
                         }
                     ]
                 }
