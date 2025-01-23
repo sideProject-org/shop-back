@@ -9,13 +9,20 @@ import toy.shop.cmmn.exception.ConflictException;
 import toy.shop.cmmn.exception.NotFoundException;
 import toy.shop.domain.etc.Cart;
 import toy.shop.domain.item.Item;
+import toy.shop.domain.item.ItemImage;
 import toy.shop.domain.member.Member;
+import toy.shop.dto.cart.CartResponseDTO;
 import toy.shop.dto.cart.CartSaveRequestDTO;
 import toy.shop.dto.cart.CartUpdateRequestDTO;
+import toy.shop.dto.item.ItemListResponseDTO;
 import toy.shop.jwt.UserDetailsImpl;
 import toy.shop.repository.cart.CartRepository;
+import toy.shop.repository.item.ItemImageRepository;
 import toy.shop.repository.item.ItemRepository;
 import toy.shop.repository.member.MemberRepository;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -23,7 +30,39 @@ public class CartService {
 
     private final MemberRepository memberRepository;
     private final ItemRepository itemRepository;
+    private final ItemImageRepository itemImageRepository;
     private final CartRepository cartRepository;
+
+    public List<CartResponseDTO> cartList(UserDetailsImpl userDetails) {
+        Member member = getMember(userDetails.getUserId());
+        List<Cart> cartList = cartRepository.findAllByMemberId(member.getId());
+        List<CartResponseDTO> cartResponseDTOList = new ArrayList<>();
+
+        if (cartList.isEmpty()) {
+            throw new NotFoundException("장바구니에 상품이 존재하지 않습니다.");
+        }
+
+        for (Cart cart : cartList) {
+            ItemImage itemImage = itemImageRepository.findFirstImageByItemId(cart.getItem().getId());
+            ItemListResponseDTO itemListResponseDTO = ItemListResponseDTO.builder()
+                    .id(cart.getItem().getId())
+                    .name(cart.getItem().getName())
+                    .price(cart.getItem().getPrice())
+                    .sale(cart.getItem().getSale())
+                    .itemImage(itemImage.getImagePath())
+                    .build();
+
+            CartResponseDTO cartResponseDTO = CartResponseDTO.builder()
+                    .cartId(cart.getId())
+                    .quantity(cart.getQuantity())
+                    .item(itemListResponseDTO)
+                    .build();
+
+            cartResponseDTOList.add(cartResponseDTO);
+        }
+
+        return cartResponseDTOList;
+    }
 
     /**
      * 사용자의 장바구니에 새로운 상품을 추가합니다.
