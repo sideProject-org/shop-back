@@ -15,6 +15,43 @@ import toy.shop.dto.cart.CartUpdateRequestDTO;
 @Tag(name = "장바구니 API", description = "장바구니 기능들에 대한 API")
 public interface CartControllerDocs {
 
+    @Operation(summary = "장바구니 조회", description = "사용자 정보를 통해 장바구니 목록 조회")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "장바구니 목록 조회 성공", content = @Content(mediaType = "application/json", schema = @Schema(example = """
+                    {
+                        "status": 200,
+                        "message": "장바구니 목록 조회 성공",
+                        "data": [
+                            {
+                                "cartId": "장바구니 ID",
+                                "quantity": "수량",
+                                "item": {
+                                    "id": "상품 ID",
+                                    "name": "상품명",
+                                    "price: "상품 가격",
+                                    "sale": "상품 할인율",
+                                    "itemImage": "상품 썸네일 경로"
+                                }
+                            }
+                        ]
+                    }
+                    """))),
+            @ApiResponse(responseCode = "401", description = "장바구니 목록 조회 실패 - 상품 에러", content = @Content(mediaType = "application/json", schema = @Schema(example = """
+                    {
+                        "status": 401,
+                        "message": "장바구니에 상품이 존재하지 않습니다.",
+                        "data": null
+                    }
+                    """))),
+            @ApiResponse(responseCode = "404", description = "장바구니 목록 조회 실패 - 사용자 에러", content = @Content(mediaType = "application/json", schema = @Schema(example = """
+                    {
+                        "status": 404,
+                        "message": "존재하지 않는 사용자입니다.",
+                        "data": null
+                    }
+                    """))),
+    })
+    ResponseEntity<Response<?>> cartList(Authentication authentication);
 
     @Operation(summary = "장바구니 담기", description = "request와 사용자 정보를 통해 장바구니 담기")
     @ApiResponses({
