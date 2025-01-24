@@ -25,6 +25,12 @@ public class AddressService {
     private final MemberRepository memberRepository;
     private final AddressRepository addressRepository;
 
+    /**
+     * 사용자의 모든 주소 정보를 조회하여 AddressListResponseDTO 리스트로 반환합니다.
+     *
+     * @param userDetails 현재 로그인된 사용자의 정보를 담고 있는 객체
+     * @return 사용자의 주소 정보를 포함하는 AddressListResponseDTO 리스트
+     */
     public List<AddressListResponseDTO> addressList(UserDetailsImpl userDetails) {
         Member member = getMember(userDetails.getUserId());
         List<AddressListResponseDTO> DTOList = new ArrayList<>();
