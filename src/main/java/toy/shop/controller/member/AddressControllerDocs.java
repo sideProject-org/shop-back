@@ -30,7 +30,7 @@ public interface AddressControllerDocs {
                                 "addrNickName": "배송지 별명",
                                 "phone": "전화번호",
                                 "request": "요청 사항",
-                                "defaultType: "기본 배송지 여부 'Y' or 'N'"
+                                "defaultType": "기본 배송지 여부 'Y' or 'N'"
                             }
                         ]
                     }
