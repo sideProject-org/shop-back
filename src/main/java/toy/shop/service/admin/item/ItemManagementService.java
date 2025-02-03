@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import toy.shop.cmmn.exception.NotFoundException;
 import toy.shop.domain.item.Item;
 import toy.shop.domain.item.ItemImage;
+import toy.shop.repository.cart.CartRepository;
 import toy.shop.repository.item.ItemImageRepository;
 import toy.shop.repository.item.ItemRepository;
 import toy.shop.service.FileService;
@@ -19,6 +20,7 @@ public class ItemManagementService {
 
     private final ItemRepository itemRepository;
     private final ItemImageRepository itemImageRepository;
+    private final CartRepository cartRepository;
     private final FileService fileService;
 
     @Value("${path.itemImage}")
