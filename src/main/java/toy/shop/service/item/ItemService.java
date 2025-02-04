@@ -207,9 +207,8 @@ public class ItemService {
     }
 
     /**
-     * 특정 상품과 해당 상품에 연결된 이미지를 삭제하는 메서드입니다.
+     * 특정 상품을 삭제하는 메서드
      *
-     * 이 메서드는 주어진 상품 ID를 기반으로 상품을 검색한 후, 해당 상품과 연관된 이미지를 삭제합니다.
      * 상품을 삭제하기 전에 요청한 사용자가 상품 등록자인지 확인하여 권한 검사를 수행합니다.
      *
      * @param itemId          삭제하려는 상품의 고유 ID.
@@ -223,18 +222,7 @@ public class ItemService {
         Item item = getItemById(itemId);
         validateItemOwnership(item, member);
 
-        List<ItemImage> itemImages = itemImageRepository.findByItemId(itemId);
-
-        String detailImageName = fileService.extractFileNameFromUrl(item.getImagePath());
-        fileService.deleteFile(location, detailImageName);
-
-        for (ItemImage itemImage : itemImages) {
-            String imageName = fileService.extractFileNameFromUrl(itemImage.getImagePath());
-            fileService.deleteFile(location, imageName);
-        }
-
-        itemImageRepository.deleteAllByItemId(itemId);
-        itemRepository.delete(item);
+        item.deleteItem();
     }
 
     private Member getMemberById(Long userId) {
