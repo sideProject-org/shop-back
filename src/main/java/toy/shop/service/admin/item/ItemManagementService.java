@@ -28,7 +28,7 @@ public class ItemManagementService {
     }
 
     private Item getItemById(Long itemId) {
-        return itemRepository.findById(itemId)
+        return itemRepository.findActiveItemById(itemId)
                 .orElseThrow(() -> new NotFoundException("존재하지 않는 상품입니다."));
     }
 }

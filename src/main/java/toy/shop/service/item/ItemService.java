@@ -55,12 +55,12 @@ public class ItemService {
      */
     @Transactional(readOnly = true)
     public Page<ItemListResponseDTO> itemList(Pageable pageable) {
-        long totalCount = itemRepository.count();
+        long totalCount = itemRepository.countActiveItems();
         if (totalCount == 0) {
             throw new NotFoundException("상품이 존재하지 않습니다.");
         }
 
-        Page<Item> itemList = itemRepository.findAll(pageable);
+        Page<Item> itemList = itemRepository.findActiveItems(pageable);
 
         if (itemList.getContent().isEmpty() && pageable.getPageNumber() > 0) {
             int lastPage = itemList.getTotalPages() - 1;
@@ -69,7 +69,7 @@ public class ItemService {
             }
 
             Pageable correctedPageable = PageRequest.of(lastPage, pageable.getPageSize(), pageable.getSort());
-            itemList = itemRepository.findAll(correctedPageable);
+            itemList = itemRepository.findActiveItems(correctedPageable);
         }
 
         Map<Long, String> itemImageMap = itemImageRepository.findFirstImageByItemIds(
@@ -100,7 +100,7 @@ public class ItemService {
 
     @Transactional(readOnly = true)
     public ItemDetailResponseDTO itemDetail(Long itemId) {
-        Item item = itemRepository.findById(itemId).orElseThrow(() -> new NotFoundException("상품이 존재하지 않습니다."));
+        Item item = itemRepository.findActiveItemById(itemId).orElseThrow(() -> new NotFoundException("상품이 존재하지 않습니다."));
         List<ItemImage> itemImages = itemImageRepository.findByItemId(item.getId());
         List<String> itemImagesPath = itemImages.stream().map(ItemImage::getImagePath).collect(Collectors.toList());
 
@@ -231,7 +231,7 @@ public class ItemService {
     }
 
     private Item getItemById(Long itemId) {
-        return itemRepository.findById(itemId)
+        return itemRepository.findActiveItemById(itemId)
                 .orElseThrow(() -> new NotFoundException("존재하지 않는 상품입니다."));
     }
 
