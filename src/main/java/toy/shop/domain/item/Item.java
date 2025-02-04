@@ -77,4 +77,12 @@ public class Item extends BaseEntity {
             return true;
         }
     }
+
+    public void deleteItem() {
+        this.deleteType = 'Y';
+    }
+
+    public void recoverItem() {
+        this.deleteType = 'N';
+    }
 }

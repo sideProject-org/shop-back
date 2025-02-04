@@ -55,12 +55,12 @@ public class ItemService {
      */
     @Transactional(readOnly = true)
     public Page<ItemListResponseDTO> itemList(Pageable pageable) {
-        long totalCount = itemRepository.count();
+        long totalCount = itemRepository.countActiveItems();
         if (totalCount == 0) {
             throw new NotFoundException("상품이 존재하지 않습니다.");
         }
 
-        Page<Item> itemList = itemRepository.findAll(pageable);
+        Page<Item> itemList = itemRepository.findActiveItems(pageable);
 
         if (itemList.getContent().isEmpty() && pageable.getPageNumber() > 0) {
             int lastPage = itemList.getTotalPages() - 1;
@@ -69,7 +69,7 @@ public class ItemService {
             }
 
             Pageable correctedPageable = PageRequest.of(lastPage, pageable.getPageSize(), pageable.getSort());
-            itemList = itemRepository.findAll(correctedPageable);
+            itemList = itemRepository.findActiveItems(correctedPageable);
         }
 
         Map<Long, String> itemImageMap = itemImageRepository.findFirstImageByItemIds(
@@ -100,7 +100,7 @@ public class ItemService {
 
     @Transactional(readOnly = true)
     public ItemDetailResponseDTO itemDetail(Long itemId) {
-        Item item = itemRepository.findById(itemId).orElseThrow(() -> new NotFoundException("상품이 존재하지 않습니다."));
+        Item item = itemRepository.findActiveItemById(itemId).orElseThrow(() -> new NotFoundException("상품이 존재하지 않습니다."));
         List<ItemImage> itemImages = itemImageRepository.findByItemId(item.getId());
         List<String> itemImagesPath = itemImages.stream().map(ItemImage::getImagePath).collect(Collectors.toList());
 
@@ -207,9 +207,8 @@ public class ItemService {
     }
 
     /**
-     * 특정 상품과 해당 상품에 연결된 이미지를 삭제하는 메서드입니다.
+     * 특정 상품을 삭제하는 메서드
      *
-     * 이 메서드는 주어진 상품 ID를 기반으로 상품을 검색한 후, 해당 상품과 연관된 이미지를 삭제합니다.
      * 상품을 삭제하기 전에 요청한 사용자가 상품 등록자인지 확인하여 권한 검사를 수행합니다.
      *
      * @param itemId          삭제하려는 상품의 고유 ID.
@@ -223,18 +222,7 @@ public class ItemService {
         Item item = getItemById(itemId);
         validateItemOwnership(item, member);
 
-        List<ItemImage> itemImages = itemImageRepository.findByItemId(itemId);
-
-        String detailImageName = fileService.extractFileNameFromUrl(item.getImagePath());
-        fileService.deleteFile(location, detailImageName);
-
-        for (ItemImage itemImage : itemImages) {
-            String imageName = fileService.extractFileNameFromUrl(itemImage.getImagePath());
-            fileService.deleteFile(location, imageName);
-        }
-
-        itemImageRepository.deleteAllByItemId(itemId);
-        itemRepository.delete(item);
+        item.deleteItem();
     }
 
     private Member getMemberById(Long userId) {
@@ -243,7 +231,7 @@ public class ItemService {
     }
 
     private Item getItemById(Long itemId) {
-        return itemRepository.findById(itemId)
+        return itemRepository.findActiveItemById(itemId)
                 .orElseThrow(() -> new NotFoundException("존재하지 않는 상품입니다."));
     }
 

@@ -150,7 +150,7 @@ public class ItemInquiryService {
     }
 
     private Item getItem(Long itemId) {
-        return itemRepository.findById(itemId)
+        return itemRepository.findActiveItemById(itemId)
                 .orElseThrow(() -> new NotFoundException("존재하지 않는 상품입니다."));
     }
 
