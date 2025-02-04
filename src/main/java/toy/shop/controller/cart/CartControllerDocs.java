@@ -28,7 +28,7 @@ public interface CartControllerDocs {
                                 "item": {
                                     "id": "상품 ID",
                                     "name": "상품명",
-                                    "price: "상품 가격",
+                                    "price": "상품 가격",
                                     "sale": "상품 할인율",
                                     "itemImage": "상품 썸네일 경로"
                                 }

@@ -56,6 +56,13 @@ public interface WishControllerDocs {
                         "message": "존재하지 않는 사용자입니다.",
                         "data": null
                     }
+                    """))),
+            @ApiResponse(responseCode = "409", description = "찜 등록 실패 - 찜 오류", content = @Content(mediaType = "application/json", schema = @Schema(example = """
+                    {
+                        "status": 409,
+                        "message": "이미 찜한 상품입니다.",
+                        "data": null
+                    }
                     """)))
     })
     ResponseEntity<Response<?>> registerWish(WishSaveRequestDTO parameter, Authentication authentication);

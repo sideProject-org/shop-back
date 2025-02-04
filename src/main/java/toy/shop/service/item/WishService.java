@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import toy.shop.cmmn.exception.AccessDeniedException;
+import toy.shop.cmmn.exception.ConflictException;
 import toy.shop.cmmn.exception.NotFoundException;
 import toy.shop.domain.item.Item;
 import toy.shop.domain.item.ItemImage;
@@ -78,21 +79,22 @@ public class WishService {
     }
 
     /**
-     * 관심 상품 등록 메서드.
+     * 사용자의 찜 목록에 상품을 등록합니다.
      *
-     * 주어진 사용자와 상품 정보를 기반으로 관심 상품(Wish)을 등록합니다.
-     * 등록된 관심 상품의 고유 ID를 반환합니다.
-     *
-     * @param parameter    관심 상품 등록 요청 데이터를 담고 있는 {@link WishSaveRequestDTO}.
-     * @param userDetails  현재 로그인한 사용자의 정보를 담고 있는 {@link UserDetailsImpl}.
-     * @return             등록된 관심 상품의 고유 ID.
-     * @throws UsernameNotFoundException   사용자가 존재하지 않을 경우 발생.
-     * @throws NotFoundException           상품이 존재하지 않을 경우 발생.
+     * @param parameter   찜 등록 요청 정보를 담은 DTO
+     * @param userDetails 현재 인증된 사용자 정보
+     * @return 등록된 찜(Wish)의 ID
+     * @throws NotFoundException 존재하지 않는 상품일 경우 발생
+     * @throws ConflictException 이미 찜한 상품일 경우 발생
      */
     public Long registerWish(WishSaveRequestDTO parameter, UserDetailsImpl userDetails) {
         Member member = getMember(userDetails.getUserId());
+
         Item item = itemRepository.findById(parameter.getItemId())
                 .orElseThrow(() -> new NotFoundException("존재하지 않는 상품입니다."));
+        if (wishRepository.existsByItemAndMember(item, member)) {
+            throw new ConflictException("이미 찜한 상품입니다.");
+        }
 
         Wish wish = Wish.builder()
                 .item(item)
