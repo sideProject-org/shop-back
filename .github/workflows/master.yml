@@ -13,8 +13,8 @@ jobs:
     env:
       HOST: ${{ secrets.EC2_HOST }}
       USER: ${{ secrets.EC2_USER }}
-      DOCKER_COMPOSE_PATH: /home/ubuntu/compose/docker-compose.yml
-      ENV_FILE_PATH: /home/ubuntu/.env  # .env 파일의 위치
+      DOCKER_COMPOSE_PATH: /home/ubuntu/shop/compose/docker-compose.yml
+      ENV_FILE_PATH: /home/ubuntu/shop/.env  # .env 파일의 위치
       IMAGE_NAME: rlaalsrl9569/shop_was
 
     steps:
