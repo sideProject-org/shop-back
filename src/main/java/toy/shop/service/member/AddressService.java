@@ -41,6 +41,7 @@ public class AddressService {
                     .name(address.getName())
                     .addr(address.getAddr())
                     .addrDetail(address.getAddrDetail())
+                    .zipCode(address.getZipCode())
                     .addrNickName(address.getAddrName())
                     .phone(address.getPhone())
                     .request(address.getRequest())
