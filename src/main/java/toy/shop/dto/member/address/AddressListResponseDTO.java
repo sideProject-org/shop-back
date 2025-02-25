@@ -11,6 +11,7 @@ public class AddressListResponseDTO {
     private String name;
     private String addr;
     private String addrDetail;
+    private String zipCode;
     private String addrNickName;
     private String phone;
     private String request;
